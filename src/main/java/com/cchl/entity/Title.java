@@ -2,16 +2,19 @@ package com.cchl.entity;
 
 import java.util.Date;
 
+/**
+ * 题目表
+ */
 public class Title {
-
+    //编号
     private Integer id;
-
+    //题目内容
     private String content;
-
+    //题目介绍
     private String instruction;
-
+    //状态，未通过审核为0，通过审核为1
     private Byte status;
-
+    //创建时间
     private Date createTime;
 
     public Integer getId() {

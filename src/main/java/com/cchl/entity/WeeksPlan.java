@@ -1,12 +1,25 @@
 package com.cchl.entity;
 
+/**
+ * 周计划
+ */
 public class WeeksPlan {
-
+    //编号
     private Integer id;
-
+    //文件路径
     private String filePath;
-
+    //论文计划编号
     private Integer paperPlanId;
+    //论文计划实体
+    private PaperPlan paperPlan;
+
+    public PaperPlan getPaperPlan() {
+        return paperPlan;
+    }
+
+    public void setPaperPlan(PaperPlan paperPlan) {
+        this.paperPlan = paperPlan;
+    }
 
     public Integer getId() {
         return id;

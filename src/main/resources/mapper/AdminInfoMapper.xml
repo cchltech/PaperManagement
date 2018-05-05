@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cchl.dao.AdminInfoMapper">
-  <resultMap id="BaseResultMap" type="com.cchl.entity.AdminInfo">
+  <resultMap id="admin_info" type="com.cchl.entity.AdminInfo">
     <result column="id" jdbcType="INTEGER" property="id" />
     <result column="power" jdbcType="TINYINT" property="power" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />

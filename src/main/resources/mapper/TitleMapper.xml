@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cchl.dao.TitleMapper">
-  <resultMap id="BaseResultMap" type="com.cchl.entity.Title">
+  <resultMap id="title" type="com.cchl.entity.Title">
     <result column="id" jdbcType="INTEGER" property="id" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="instruction" jdbcType="VARCHAR" property="instruction" />

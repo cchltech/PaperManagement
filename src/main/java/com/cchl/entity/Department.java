@@ -1,5 +1,8 @@
 package com.cchl.entity;
 
+/**
+ * 学院信息表
+ */
 public class Department {
 
     private Integer id;

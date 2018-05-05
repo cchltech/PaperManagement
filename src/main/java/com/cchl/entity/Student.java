@@ -1,26 +1,59 @@
 package com.cchl.entity;
 
+/**
+ * 学生表
+ */
 public class Student {
-
+    //学号
     private Long id;
-
+    //姓名
     private String name;
-
+    //密码
     private String password;
-
+    //性别，女生为1，男生为1
     private Byte sex;
-
+    //邮箱
     private String email;
-
+    //学院id
     private Integer departmentId;
-
+    //年级
     private Byte grade;
-
+    //专业id
     private Integer majorId;
-
+    //账户id
     private Integer userId;
+    //电话
+    private Long phone;
+    //关联学院表
+    private Department department;
+    //关联专业表
+    private Major major;
+    //关联账户表
+    private User user;
 
-    private String phone;
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public Major getMajor() {
+        return major;
+    }
+
+    public void setMajor(Major major) {
+        this.major = major;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
@@ -94,11 +127,11 @@ public class Student {
         this.userId = userId;
     }
 
-    public String getPhone() {
+    public Long getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(Long phone) {
         this.phone = phone;
     }
 }

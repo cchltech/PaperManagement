@@ -2,17 +2,18 @@ package com.cchl.entity;
 
 import java.util.Date;
 
+/**
+ * 用户表
+ */
 public class User {
-
+    //编号
     private Integer id;
-
+    //状态
     private Byte status;
-
+    //类型，学生为0，教师为1
     private Byte type;
-
+    //创建时间
     private Date createTime;
-
-    private Integer paperPlanId;
 
     public Integer getId() {
         return id;
@@ -46,11 +47,4 @@ public class User {
         this.createTime = createTime;
     }
 
-    public Integer getPaperPlanId() {
-        return paperPlanId;
-    }
-
-    public void setPaperPlanId(Integer paperPlanId) {
-        this.paperPlanId = paperPlanId;
-    }
 }

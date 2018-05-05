@@ -1,14 +1,27 @@
 package com.cchl.entity;
 
+/**
+ * 论文实体类
+ */
 public class Paper {
-
+    //编号
     private Integer id;
-
+    //文件路径
     private String filePath;
-
+    //分数
     private Integer score;
-
+    //论文计划id
     private Integer paperPlanId;
+    //关联论文计划
+    private PaperPlan paperPlan;
+
+    public PaperPlan getPaperPlan() {
+        return paperPlan;
+    }
+
+    public void setPaperPlan(PaperPlan paperPlan) {
+        this.paperPlan = paperPlan;
+    }
 
     public Integer getId() {
         return id;

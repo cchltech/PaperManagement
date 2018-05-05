@@ -1,12 +1,26 @@
 package com.cchl.entity;
 
+/**
+ * 管理员信息实体类
+ */
 public class AdminInfo {
 
+    //编号
     private Integer id;
-
+    //权限
     private Byte power;
-
+    //账户id
     private Integer userId;
+    //账户关联
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Integer getId() {
         return id;

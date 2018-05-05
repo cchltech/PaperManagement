@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cchl.dao.StudentMapper">
-  <resultMap id="BaseResultMap" type="com.cchl.entity.Student">
+  <resultMap id="student" type="com.cchl.entity.Student">
     <result column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="password" jdbcType="VARCHAR" property="password" />
@@ -11,7 +11,7 @@
     <result column="grade" jdbcType="TINYINT" property="grade" />
     <result column="major_id" jdbcType="INTEGER" property="majorId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="phone" jdbcType="LONGVARCHAR" property="phone" />
+    <result column="phone" jdbcType="LONG" property="phone" />
   </resultMap>
   <insert id="insert" parameterType="com.cchl.entity.Student">
     <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Long">
@@ -44,10 +44,6 @@
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{gradeId,jdbcType=INTEGER}
       )
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, name, grade_id
-    from student
-  </select>
   <resultMap id="BaseResultMap" type="com.cchl.entity.Student">
     <result column="student_id" jdbcType="VARCHAR" property="studentId" />
     <result column="name" jdbcType="VARCHAR" property="name" />

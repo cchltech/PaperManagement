@@ -16,8 +16,16 @@ CREATE TABLE user(
   paper_plan_id INT NOT NULL COMMENT '关联论文计划表的id',
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 COMMENT '账户表';
+# 账户与论文计划的关联表
+CREATE TABLE user_paper(
+  id INT AUTO_INCREMENT NOT NULL ,
+  user_id INT NOT NULL ,
+  paper_plan_id INT NOT NULL ,
+  PRIMARY KEY (id)
+)AUTO_INCREMENT = 1000 COMMENT '账户与论文计划的关系表';
 # 添加外键约束
-ALTER TABLE user ADD CONSTRAINT fk_user_paper_plan FOREIGN KEY user(paper_plan_id) REFERENCES paper_plan(id) ;
+ALTER TABLE user_paper ADD CONSTRAINT fk_user_id_paper FOREIGN KEY user_paper(user_id) REFERENCES user(id);
+ALTER TABLE user_paper ADD CONSTRAINT fk_plan_id_paper FOREIGN KEY user_paper(paper_plan_id) REFERENCES paper_plan(id);
 # 管理员信息表
 CREATE TABLE admin_info(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -45,7 +53,7 @@ CREATE TABLE student(
   name VARCHAR(8) NOT NULL COMMENT '姓名' ,
   password VARCHAR(50) NOT NULL COMMENT '账目密码' ,
   sex TINYINT NOT NULL ,
-  phone LONG NOT NULL ,
+  phone BIGINT NOT NULL ,
   email VARCHAR(18) ,
   department_id INT NOT NULL COMMENT '学院对应的id，关联学院表' ,
   grade TINYINT NOT NULL COMMENT '年级' ,
@@ -54,6 +62,7 @@ CREATE TABLE student(
   PRIMARY KEY (id)
 )CHARSET = utf8 COMMENT '学生表';
 # 添加外键约束
+ALTER TABLE student ADD CONSTRAINT fk_student_user FOREIGN KEY student(user_id) REFERENCES user(id);
 ALTER TABLE student ADD CONSTRAINT fk_student_department FOREIGN KEY student(department_id) REFERENCES department(id);
 ALTER TABLE student ADD CONSTRAINT fk_student_major FOREIGN KEY student(major_id) REFERENCES major(id);
 # 教师表
@@ -62,13 +71,14 @@ CREATE TABLE teacher(
   name VARCHAR(8) NOT NULL ,
   password VARCHAR(50) NOT NULL COMMENT '账户密码',
   sex TINYINT NOT NULL ,
-  phone LONG NOT NULL ,
+  phone BIGINT NOT NULL ,
   email VARCHAR(18) ,
   department_id INT NOT NULL COMMENT '所属学院',
   user_id INT NOT NULL COMMENT '账户编号',
   PRIMARY KEY (id)
 )CHARSET = utf8 COMMENT '教师表';
 # 添加外键约束
+ALTER TABLE teacher ADD CONSTRAINT fk_teacher_user FOREIGN KEY teacher(user_id) REFERENCES user(id);
 ALTER TABLE teacher ADD CONSTRAINT fk_teacher_department FOREIGN KEY teacher(department_id) REFERENCES department(id);
 # 题目表
 CREATE TABLE title(
@@ -136,6 +146,8 @@ CREATE TABLE evaluate(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '评价表，用于记录师生之间互评的数据';
 # 添加外键约束
+ALTER TABLE evaluate ADD CONSTRAINT fk_evaluator_user FOREIGN KEY evaluate(evaluator) REFERENCES user(id);
+ALTER TABLE evaluate ADD CONSTRAINT fk_target_user FOREIGN KEY evaluate(target) REFERENCES user(id);
 ALTER TABLE evaluate ADD CONSTRAINT fk_evaluate_paper_plan FOREIGN KEY evaluate(paper_plan_id) REFERENCES paper_plan(id);
 # 时间表
 CREATE TABLE timer(

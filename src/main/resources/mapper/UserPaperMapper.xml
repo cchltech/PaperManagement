@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.UserPaperMapper">
+    <resultMap id="userPaper" type="com.cchl.entity.UserPaper">
+        <id property="id" column="id"/>
+        <association property="user" columnPrefix="user_"
+                     resultMap="mapper.UserMapper.user"/>
+        <association property="paperPlan" columnPrefix="paper_plan_"
+                     resultMap="mapper.PaperPlanMapper.paper_plan"/>
+    </resultMap>
+</mapper>
