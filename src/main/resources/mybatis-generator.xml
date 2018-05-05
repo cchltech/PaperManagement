@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="mgb" defaultModelType="flat" targetRuntime="MyBatis3Simple">
+        <!--禁止生成注释-->
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="addRemarkComments" value="true"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        <!--连接数据库-->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/paper_management"
+                        userId="root"
+                        password="17876253432"/>
+        <!--生成实体类-->
+        <javaModelGenerator targetPackage="com.cchl.entity" targetProject="src/main/java">
+            <!--不适用构造方法入参-->
+            <property name="constructorBased" value="false"/>
+        </javaModelGenerator>
+        <!--生成mapper.xml文件-->
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
+        <!--生成mapper接口-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.cchl.dao" targetProject="src/main/java"/>
+        <table tableName="admin_info">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="department">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="evaluate">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="major">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="mid_check">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="open_report">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="paper">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="paper_plan">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="student">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="task">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="teacher">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="timer">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="title">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="user">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+        <table tableName="weeks_plan">
+            <generatedKey column="id" sqlStatement="MySql"/>
+        </table>
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.EvaluateMapper">
+  <resultMap id="BaseResultMap" type="com.cchl.entity.Evaluate">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="score" jdbcType="TINYINT" property="score" />
+    <result column="evaluator" jdbcType="INTEGER" property="evaluator" />
+    <result column="target" jdbcType="INTEGER" property="target" />
+    <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.Evaluate">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into evaluate (id, content, score, 
+      evaluator, target, paper_plan_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{score,jdbcType=TINYINT}, 
+      #{evaluator,jdbcType=INTEGER}, #{target,jdbcType=INTEGER}, #{paperPlanId,jdbcType=INTEGER}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, content, score, evaluator, target, paper_plan_id
+    from evaluate
+  </select>
+</mapper>

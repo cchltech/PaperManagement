@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.PaperPlanMapper">
+  <resultMap id="BaseResultMap" type="com.cchl.entity.PaperPlan">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="title_id" jdbcType="INTEGER" property="titleId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.PaperPlan">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into paper_plan (id, create_time, title_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{titleId,jdbcType=INTEGER}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, create_time, title_id
+    from paper_plan
+  </select>
+</mapper>

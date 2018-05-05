@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.TimerMapper">
+  <resultMap id="BaseResultMap" type="com.cchl.entity.Timer">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="target_type" jdbcType="TINYINT" property="targetType" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.Timer">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into timer (id, content, begin_time, 
+      end_time, create_time, target_type
+      )
+    values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{beginTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{targetType,jdbcType=TINYINT}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, content, begin_time, end_time, create_time, target_type
+    from timer
+  </select>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.TeacherMapper">
+  <resultMap id="BaseResultMap" type="com.cchl.entity.Teacher">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="sex" jdbcType="TINYINT" property="sex" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="phone" jdbcType="LONGVARCHAR" property="phone" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.Teacher">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into teacher (id, name, password, 
+      sex, email, department_id, 
+      user_id, phone)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=TINYINT}, #{email,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{phone,jdbcType=LONGVARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, password, sex, email, department_id, user_id, phone
+    from teacher
+  </select>
+</mapper>

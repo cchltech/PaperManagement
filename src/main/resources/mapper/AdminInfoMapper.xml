@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.AdminInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cchl.entity.AdminInfo">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="power" jdbcType="TINYINT" property="power" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.AdminInfo">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into admin_info (id, power, user_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{power,jdbcType=TINYINT}, #{userId,jdbcType=INTEGER}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, power, user_id
+    from admin_info
+  </select>
+</mapper>

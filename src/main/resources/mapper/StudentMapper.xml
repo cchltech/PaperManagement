@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.StudentMapper">
+  <resultMap id="BaseResultMap" type="com.cchl.entity.Student">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="sex" jdbcType="TINYINT" property="sex" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="grade" jdbcType="TINYINT" property="grade" />
+    <result column="major_id" jdbcType="INTEGER" property="majorId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="phone" jdbcType="LONGVARCHAR" property="phone" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.Student">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student (id, name, password, 
+      sex, email, department_id, 
+      grade, major_id, user_id, 
+      phone)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{sex,jdbcType=TINYINT}, #{email,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER}, 
+      #{grade,jdbcType=TINYINT}, #{majorId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{phone,jdbcType=LONGVARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, password, sex, email, department_id, grade, major_id, user_id, phone
+    from student
+  </select>
+  <resultMap id="BaseResultMap" type="com.cchl.entity.Student">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="grade_id" jdbcType="INTEGER" property="gradeId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.Student">
+    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into student (id, name, grade_id
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{gradeId,jdbcType=INTEGER}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, grade_id
+    from student
+  </select>
+  <resultMap id="BaseResultMap" type="com.cchl.entity.Student">
+    <result column="student_id" jdbcType="VARCHAR" property="studentId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="department" jdbcType="VARCHAR" property="department" />
+    <result column="class_name" jdbcType="VARCHAR" property="className" />
+    <result column="yiban_id" jdbcType="VARCHAR" property="yibanId" />
+  </resultMap>
+  <insert id="insert" parameterType="com.cchl.entity.Student">
+    insert into student (student_id, name, department, 
+      class_name, yiban_id)
+    values (#{studentId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, 
+      #{className,jdbcType=VARCHAR}, #{yibanId,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select student_id, name, department, class_name, yiban_id
+    from student
+  </select>
+</mapper>
