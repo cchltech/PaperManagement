@@ -9,7 +9,7 @@
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="phone" jdbcType="LONG" property="phone" />
+    <result column="phone" jdbcType="BIGINT" property="phone" />
   </resultMap>
   <insert id="insert" parameterType="com.cchl.entity.Teacher">
     <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Long">
@@ -22,7 +22,7 @@
       #{sex,jdbcType=TINYINT}, #{email,jdbcType=VARCHAR}, #{departmentId,jdbcType=INTEGER}, 
       #{userId,jdbcType=INTEGER}, #{phone,jdbcType=LONGVARCHAR})
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="teacher">
     select id, name, password, sex, email, department_id, user_id, phone
     from teacher
   </select>

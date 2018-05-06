@@ -8,6 +8,34 @@ public class Major {
     private Integer id;
     //专业名
     private String name;
+    //学院id
+    private int departmentId;
+    //学院实体
+    private Department department;
+
+    @Override
+    public String toString() {
+        return "Major{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public int getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
+    }
 
     public Integer getId() {
         return id;

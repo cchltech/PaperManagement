@@ -31,6 +31,22 @@ public class Student {
     //关联账户表
     private User user;
 
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", sex=" + sex +
+                ", email='" + email + '\'' +
+                ", grade=" + grade +
+                ", phone=" + phone +
+                ", department=" + department +
+                ", major=" + major +
+                ", user=" + user +
+                '}';
+    }
+
     public Department getDepartment() {
         return department;
     }

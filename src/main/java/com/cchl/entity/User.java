@@ -15,6 +15,16 @@ public class User {
     //创建时间
     private Date createTime;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", status=" + status +
+                ", type=" + type +
+                ", createTime=" + createTime +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }

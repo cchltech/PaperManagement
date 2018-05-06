@@ -23,6 +23,18 @@ public class Evaluate {
     //关联论文计划
     private PaperPlan paperPlan;
 
+    @Override
+    public String toString() {
+        return "Evaluate{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", score=" + score +
+                ", userEvaluator=" + userEvaluator +
+                ", userTarget=" + userTarget +
+                ", paperPlan=" + paperPlan +
+                '}';
+    }
+
     public User getUserEvaluator() {
         return userEvaluator;
     }

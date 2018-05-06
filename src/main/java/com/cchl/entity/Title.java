@@ -17,6 +17,17 @@ public class Title {
     //创建时间
     private Date createTime;
 
+    @Override
+    public String toString() {
+        return "Title{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", instruction='" + instruction + '\'' +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }

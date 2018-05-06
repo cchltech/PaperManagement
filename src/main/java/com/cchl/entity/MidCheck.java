@@ -13,6 +13,15 @@ public class MidCheck {
     //关联论文计划
     private PaperPlan paperPlan;
 
+    @Override
+    public String toString() {
+        return "MidCheck{" +
+                "id=" + id +
+                ", filePath='" + filePath + '\'' +
+                ", paperPlan=" + paperPlan +
+                '}';
+    }
+
     public PaperPlan getPaperPlan() {
         return paperPlan;
     }

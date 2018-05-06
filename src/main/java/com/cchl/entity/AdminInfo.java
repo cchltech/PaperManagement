@@ -14,6 +14,16 @@ public class AdminInfo {
     //账户关联
     private User user;
 
+    @Override
+    public String toString() {
+        return "AdminInfo{" +
+                "id=" + id +
+                ", power=" + power +
+                ", userId=" + userId +
+                ", user=" + user +
+                '}';
+    }
+
     public User getUser() {
         return user;
     }

@@ -13,6 +13,15 @@ public class WeeksPlan {
     //论文计划实体
     private PaperPlan paperPlan;
 
+    @Override
+    public String toString() {
+        return "WeeksPlan{" +
+                "id=" + id +
+                ", filePath='" + filePath + '\'' +
+                ", paperPlan=" + paperPlan +
+                '}';
+    }
+
     public PaperPlan getPaperPlan() {
         return paperPlan;
     }

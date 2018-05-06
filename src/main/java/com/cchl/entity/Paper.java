@@ -15,6 +15,16 @@ public class Paper {
     //关联论文计划
     private PaperPlan paperPlan;
 
+    @Override
+    public String toString() {
+        return "Paper{" +
+                "id=" + id +
+                ", filePath='" + filePath + '\'' +
+                ", score=" + score +
+                ", paperPlan=" + paperPlan +
+                '}';
+    }
+
     public PaperPlan getPaperPlan() {
         return paperPlan;
     }

@@ -16,7 +16,7 @@
     values (#{id,jdbcType=INTEGER}, #{power,jdbcType=TINYINT}, #{userId,jdbcType=INTEGER}
       )
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="admin_info">
     select id, power, user_id
     from admin_info
   </select>

@@ -17,7 +17,7 @@
     values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{instruction,jdbcType=VARCHAR}, 
       #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="title">
     select id, content, instruction, status, create_time
     from title
   </select>

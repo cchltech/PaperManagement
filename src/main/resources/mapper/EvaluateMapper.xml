@@ -20,7 +20,7 @@
       #{evaluator,jdbcType=INTEGER}, #{target,jdbcType=INTEGER}, #{paperPlanId,jdbcType=INTEGER}
       )
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="evaluate">
     select id, content, score, evaluator, target, paper_plan_id
     from evaluate
   </select>

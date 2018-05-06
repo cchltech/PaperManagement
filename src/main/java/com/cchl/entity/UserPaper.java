@@ -11,6 +11,15 @@ public class UserPaper {
     //论文计划实体
     private PaperPlan paperPlan;
 
+    @Override
+    public String toString() {
+        return "UserPaper{" +
+                "id=" + id +
+                ", user=" + user +
+                ", paperPlan=" + paperPlan +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }

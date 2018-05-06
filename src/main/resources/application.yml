@@ -14,15 +14,23 @@ spring:
       max-total: 10
       max-wait-millis: 1000
       cache-state: false
+  freemarker:
+    suffix: .html
+    template-loader-path: /WEB-INF/view/
+    charset: UTF-8
+  mvc:
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .html
 # 配置mybatis
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.cchl.entity
   configuration:
     cache-enabled: false
-    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
     map-underscore-to-camel-case: true
-    aggressive-lazy-loading: false
+    aggressive-lazy-loading: true
+
 
 
 

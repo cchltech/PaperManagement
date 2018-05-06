@@ -19,6 +19,18 @@ public class Timer {
     //面向的用户类型
     private Byte targetType;
 
+    @Override
+    public String toString() {
+        return "Timer{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", beginTime=" + beginTime +
+                ", endTime=" + endTime +
+                ", createTime=" + createTime +
+                ", targetType=" + targetType +
+                '}';
+    }
+
     public Integer getId() {
         return id;
     }

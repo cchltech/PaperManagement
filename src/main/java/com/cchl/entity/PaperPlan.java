@@ -15,6 +15,15 @@ public class PaperPlan {
     //关联题目表
     private Title title;
 
+    @Override
+    public String toString() {
+        return "PaperPlan{" +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", title=" + title +
+                '}';
+    }
+
     public Title getTitle() {
         return title;
     }

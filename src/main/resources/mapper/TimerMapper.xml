@@ -20,7 +20,7 @@
       #{endTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{targetType,jdbcType=TINYINT}
       )
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="timer">
     select id, content, begin_time, end_time, create_time, target_type
     from timer
   </select>

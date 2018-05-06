@@ -12,7 +12,7 @@
     insert into department (id, name)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR})
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="department">
     select id, name
     from department
   </select>

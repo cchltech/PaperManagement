@@ -15,7 +15,7 @@
     values (#{id,jdbcType=INTEGER}, #{filePath,jdbcType=VARCHAR}, #{paperPlanId,jdbcType=INTEGER}
       )
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="open_report">
     select id, file_path, paper_plan_id
     from open_report
   </select>

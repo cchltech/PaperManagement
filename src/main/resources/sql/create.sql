@@ -45,8 +45,10 @@ CREATE TABLE department(
 CREATE TABLE major(
   id INT NOT NULL ,
   name VARCHAR(30) ,
+  department_id INT NOT NULL ,
   PRIMARY KEY (id)
 )CHARSET = utf8 COMMENT '专业表';
+ALTER TABLE major ADD CONSTRAINT fk_major_department FOREIGN KEY major(department_id) REFERENCES department(id);
 # 学生表
 CREATE TABLE student(
   id BIGINT NOT NULL ,
@@ -62,9 +64,9 @@ CREATE TABLE student(
   PRIMARY KEY (id)
 )CHARSET = utf8 COMMENT '学生表';
 # 添加外键约束
-ALTER TABLE student ADD CONSTRAINT fk_student_user FOREIGN KEY student(user_id) REFERENCES user(id);
-ALTER TABLE student ADD CONSTRAINT fk_student_department FOREIGN KEY student(department_id) REFERENCES department(id);
-ALTER TABLE student ADD CONSTRAINT fk_student_major FOREIGN KEY student(major_id) REFERENCES major(id);
+ALTER TABLE student ADD CONSTRAINT fk_student_user FOREIGN KEY student(user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE student ADD CONSTRAINT fk_student_department FOREIGN KEY student(department_id) REFERENCES department(id)  ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE student ADD CONSTRAINT fk_student_major FOREIGN KEY student(major_id) REFERENCES major(id)  ON DELETE CASCADE ON UPDATE CASCADE ;
 # 教师表
 CREATE TABLE teacher(
   id BIGINT AUTO_INCREMENT NOT NULL ,
@@ -78,8 +80,8 @@ CREATE TABLE teacher(
   PRIMARY KEY (id)
 )CHARSET = utf8 COMMENT '教师表';
 # 添加外键约束
-ALTER TABLE teacher ADD CONSTRAINT fk_teacher_user FOREIGN KEY teacher(user_id) REFERENCES user(id);
-ALTER TABLE teacher ADD CONSTRAINT fk_teacher_department FOREIGN KEY teacher(department_id) REFERENCES department(id);
+ALTER TABLE teacher ADD CONSTRAINT fk_teacher_user FOREIGN KEY teacher(user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE teacher ADD CONSTRAINT fk_teacher_department FOREIGN KEY teacher(department_id) REFERENCES department(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 题目表
 CREATE TABLE title(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -97,7 +99,7 @@ CREATE TABLE weeks_plan(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 COMMENT '周计划表';
 # 添加外键约束
-ALTER TABLE weeks_plan ADD CONSTRAINT fk_weeks_paper_plan FOREIGN KEY weeks_plan(paper_plan_id) REFERENCES paper_plan(id);
+ALTER TABLE weeks_plan ADD CONSTRAINT fk_weeks_paper_plan FOREIGN KEY weeks_plan(paper_plan_id) REFERENCES paper_plan(id) ON UPDATE CASCADE ON DELETE CASCADE ;
 # 任务书
 CREATE TABLE task(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -106,7 +108,7 @@ CREATE TABLE task(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 COMMENT '任务书表';
 # 添加外键约束
-ALTER TABLE task ADD CONSTRAINT fk_task_paper_plan FOREIGN KEY task(paper_plan_id) REFERENCES paper_plan(id);
+ALTER TABLE task ADD CONSTRAINT fk_task_paper_plan FOREIGN KEY task(paper_plan_id) REFERENCES paper_plan(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 开题报告
 CREATE TABLE open_report(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -115,7 +117,7 @@ CREATE TABLE open_report(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 COMMENT '开题报告表';
 # 添加外键约束
-ALTER TABLE open_report ADD CONSTRAINT fk_open_paper_plan FOREIGN KEY open_report(paper_plan_id) REFERENCES paper_plan(id);
+ALTER TABLE open_report ADD CONSTRAINT fk_open_paper_plan FOREIGN KEY open_report(paper_plan_id) REFERENCES paper_plan(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 中期检查
 CREATE TABLE mid_check(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -124,7 +126,7 @@ CREATE TABLE mid_check(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 COMMENT '中期检查表';
 # 添加外键约束
-ALTER TABLE mid_check ADD CONSTRAINT fk_mid_paper_plan FOREIGN KEY mid_check(paper_plan_id) REFERENCES paper_plan(id);
+ALTER TABLE mid_check ADD CONSTRAINT fk_mid_paper_plan FOREIGN KEY mid_check(paper_plan_id) REFERENCES paper_plan(id) ON UPDATE CASCADE ON DELETE CASCADE ;
 # 论文
 CREATE TABLE paper(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -134,7 +136,7 @@ CREATE TABLE paper(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 COMMENT '用于记录论文信息';
 # 添加外键约束
-ALTER TABLE paper ADD CONSTRAINT fk_paper_paper_plan FOREIGN KEY paper(paper_plan_id) REFERENCES paper_plan(id);
+ALTER TABLE paper ADD CONSTRAINT fk_paper_paper_plan FOREIGN KEY paper(paper_plan_id) REFERENCES paper_plan(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 评价表
 CREATE TABLE evaluate(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -146,9 +148,9 @@ CREATE TABLE evaluate(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '评价表，用于记录师生之间互评的数据';
 # 添加外键约束
-ALTER TABLE evaluate ADD CONSTRAINT fk_evaluator_user FOREIGN KEY evaluate(evaluator) REFERENCES user(id);
-ALTER TABLE evaluate ADD CONSTRAINT fk_target_user FOREIGN KEY evaluate(target) REFERENCES user(id);
-ALTER TABLE evaluate ADD CONSTRAINT fk_evaluate_paper_plan FOREIGN KEY evaluate(paper_plan_id) REFERENCES paper_plan(id);
+ALTER TABLE evaluate ADD CONSTRAINT fk_evaluator_user FOREIGN KEY evaluate(evaluator) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE evaluate ADD CONSTRAINT fk_target_user FOREIGN KEY evaluate(target) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE evaluate ADD CONSTRAINT fk_evaluate_paper_plan FOREIGN KEY evaluate(paper_plan_id) REFERENCES paper_plan(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 时间表
 CREATE TABLE timer(
   id INT AUTO_INCREMENT NOT NULL ,

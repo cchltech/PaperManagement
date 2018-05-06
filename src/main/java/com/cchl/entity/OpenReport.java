@@ -13,6 +13,15 @@ public class OpenReport {
     //关联论文计划表
     private PaperPlan paperPlan;
 
+    @Override
+    public String toString() {
+        return "OpenReport{" +
+                "id=" + id +
+                ", filePath='" + filePath + '\'' +
+                ", paperPlan=" + paperPlan +
+                '}';
+    }
+
     public PaperPlan getPaperPlan() {
         return paperPlan;
     }

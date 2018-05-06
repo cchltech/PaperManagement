@@ -4,6 +4,7 @@
   <resultMap id="major" type="com.cchl.entity.Major">
     <result column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="department_id" javaType="INTEGER" property="departmentId"/>
   </resultMap>
   <insert id="insert" parameterType="com.cchl.entity.Major">
     <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
@@ -12,7 +13,7 @@
     insert into major (id, name)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR})
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="major">
     select id, name
     from major
   </select>

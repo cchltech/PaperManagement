@@ -15,7 +15,7 @@
     values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{titleId,jdbcType=INTEGER}
       )
   </insert>
-  <select id="selectAll" resultMap="BaseResultMap">
+  <select id="selectAll" resultMap="paper_plan">
     select id, create_time, title_id
     from paper_plan
   </select>
