@@ -4,7 +4,7 @@ import com.cchl.dto.Result;
 import com.cchl.entity.Student;
 import com.cchl.entity.Teacher;
 import com.cchl.eumn.Dictionary;
-import com.cchl.execption.UnknowIdentity;
+import com.cchl.execption.UnknownIdentity;
 import com.cchl.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * 注册与登录控制
@@ -62,18 +65,22 @@ public class LoginController {
      */
     @RequestMapping(value = "/studentRegister", method = RequestMethod.POST)
     public Result studentRegister(@RequestBody(required = false) Student student) {
-        //验证信息是否有缺失
-        if (student != null
-                && student.getId() != null && student.getName() != null
-                && student.getPassword() != null && student.getSex() != null
-                && student.getDepartmentId() != null && student.getGrade() != null
-                && student.getMajorId() != null && student.getPhone() != null) {
-            logger.info("注册成功");
-            //执行注册操作
-            return studentLoginService.studentRegister(student);
-        } else {
-            logger.info("缺少id或密码");
-            return new Result(Dictionary.DATA_LOST);
+        try {
+            //验证信息是否有缺失
+            if (student != null
+                    && student.getId() != null && student.getName() != null
+                    && student.getPassword() != null && student.getSex() != null
+                    && student.getDepartmentId() != null && student.getGrade() != null
+                    && student.getMajorId() != null && student.getPhone() != null) {
+                logger.info("注册成功");
+                //执行注册操作
+                return studentLoginService.studentRegister(student);
+            } else {
+                logger.info("缺少必要信息");
+                return new Result(Dictionary.DATA_LOST);
+            }
+        } catch (Exception e) {
+            return new Result(Dictionary.SYSTEM_ERROR);
         }
     }
 
@@ -84,16 +91,20 @@ public class LoginController {
      */
     @RequestMapping(value = "/teacherRegister", method = RequestMethod.POST)
     public Result teacherRegister(@RequestBody(required = false) Teacher teacher) {
-        if (teacher != null
-                && teacher.getId() != null && teacher.getName() != null
-                && teacher.getPassword() != null && teacher.getSex() != null
-                && teacher.getDepartmentId() != null && teacher.getPhone() != null) {
-            logger.info("注册成功");
-            //执行注册操作
-            return teacherLoginService.teacherRegister(teacher);
-        } else {
-            logger.info("缺少id或密码");
-            return new Result(Dictionary.DATA_LOST);
+        try {
+            if (teacher != null
+                    && teacher.getId() != null && teacher.getName() != null
+                    && teacher.getPassword() != null && teacher.getSex() != null
+                    && teacher.getDepartmentId() != null && teacher.getPhone() != null) {
+                logger.info("注册成功");
+                //执行注册操作
+                return teacherLoginService.teacherRegister(teacher);
+            } else {
+                logger.info("缺少必要信息");
+                return new Result(Dictionary.DATA_LOST);
+            }
+        } catch (Exception e) {
+            return new Result(Dictionary.SYSTEM_ERROR);
         }
     }
 
@@ -107,8 +118,9 @@ public class LoginController {
      * @return 视图
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(@RequestParam(value = "id") String id, @RequestParam(value = "password") String password, @RequestParam(value = "type") String type) {
+    public ModelAndView login(@RequestParam(value = "id") String id, @RequestParam(value = "password") String password, @RequestParam(value = "type") String type, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
+        HttpSession session = request.getSession();
         try {
             /*
              * 判断登录身份
@@ -116,18 +128,22 @@ public class LoginController {
             if ("student".equals(type)) {
                 if (studentLoginService.loginCheck(id, password) > 0) {
                     model.setViewName("student");
+                    session.setAttribute("id", id);
                 }
             } else if ("teacher".equals(type)) {
                 if (teacherLoginService.loginCheck(id, password) > 0) {
                     model.setViewName("teacher");
+                    session.setAttribute("id", id);
                 }
             } else if ("admin".equals(type)) {
                 if (adminLoginService.loginCheck(id, password) > 0) {
                     model.setViewName("admin");
+                    session.setAttribute("id", id);
                 }
             } else {
                 logger.error("未知身份");
-                throw new UnknowIdentity("未知身份");
+                model.setViewName("login");
+                model.addObject("error", "账号或密码错误");
             }
             return model;
         } catch (Exception e) {

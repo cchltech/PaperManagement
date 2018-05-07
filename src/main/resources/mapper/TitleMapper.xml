@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cchl.dao.TitleMapper">
-  <resultMap id="title" type="com.cchl.entity.Title">
-    <result column="id" jdbcType="INTEGER" property="id" />
-    <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="instruction" jdbcType="VARCHAR" property="instruction" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-  </resultMap>
-  <insert id="insert" parameterType="com.cchl.entity.Title">
-    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into title (id, content, instruction, 
-      status, create_time)
-    values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{instruction,jdbcType=VARCHAR}, 
-      #{status,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP})
-  </insert>
-  <select id="selectAll" resultMap="title">
-    select id, content, instruction, status, create_time
-    from title
-  </select>
+    <resultMap id="title" type="com.cchl.entity.Title">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="instruction" jdbcType="VARCHAR" property="instruction"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.cchl.entity.Title">
+        INSERT INTO title (content, instruction, status) VALUE (#{content}, #{instruction}, #{status})
+    </insert>
+    <select id="selectAll" resultMap="title">
+        SELECT
+            id,
+            content,
+            instruction,
+            status,
+            create_time
+        FROM title
+    </select>
 </mapper>

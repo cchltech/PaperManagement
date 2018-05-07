@@ -7,7 +7,7 @@ import java.util.List;
 @Mapper
 public interface TitleMapper {
 
-    int insert(Title record);
+    int insert(Title title);
 
     List<Title> selectAll();
 }

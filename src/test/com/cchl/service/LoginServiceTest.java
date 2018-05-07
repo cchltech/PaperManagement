@@ -1,6 +1,7 @@
 package com.cchl.service;
 
 import com.cchl.entity.Student;
+import com.cchl.entity.Teacher;
 import com.cchl.service.Impl.StudentLoginServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,10 @@ public class LoginServiceTest {
     @Autowired
     @Qualifier(value = "student")
     private LoginService studentService;
+
+    @Autowired
+    @Qualifier(value = "teacher")
+    private LoginService teacherService;
 
     @Test
     public void loginCheck() throws Exception {
@@ -40,6 +45,14 @@ public class LoginServiceTest {
 
     @Test
     public void teacherRegister() throws Exception {
+        Teacher teacher = new Teacher();
+        teacher.setId(201001011L);
+        teacher.setName("Mr.Wu");
+        teacher.setPassword("123456");
+        teacher.setSex((byte)0);
+        teacher.setDepartmentId(1001);
+        teacher.setPhone(10086L);
+        System.out.println(teacherService.teacherRegister(teacher));
     }
 
 }

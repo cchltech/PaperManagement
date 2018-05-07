@@ -4,7 +4,9 @@ public enum Dictionary {
 
     SUCCESS(true,"操作成功"),
     DATA_LOST(false, "缺少信息"),
-    SYSTEM_ERROR(false, "系统异常");
+    SYSTEM_ERROR(false, "系统异常"),
+    DATA_INSERT_FAIL(false, "数据插入失败"),
+    UNKNOWN_IDENTITY(false, "未知身份")
     ;
 
     Dictionary(boolean success, String msg) {
@@ -24,4 +26,5 @@ public enum Dictionary {
     public boolean isSuccess() {
         return success;
     }
+
 }

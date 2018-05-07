@@ -1,0 +1,16 @@
+package com.cchl.execption;
+
+import com.cchl.eumn.Dictionary;
+
+/**
+ * 系统异常
+ */
+public class SystemException extends RuntimeException {
+
+    public SystemException() {
+    }
+
+    public SystemException(Dictionary dictionary) {
+        super(dictionary.getMsg());
+    }
+}
