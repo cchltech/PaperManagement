@@ -30,6 +30,11 @@ mybatis:
     cache-enabled: false
     map-underscore-to-camel-case: true
     aggressive-lazy-loading: true
+    log-impl: org.apache.ibatis.logging.log4j.Log4jImpl
+# 日志级别
+logging:
+  level:
+    com.cchl.dao: debug
 
 
 

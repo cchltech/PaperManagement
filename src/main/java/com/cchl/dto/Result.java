@@ -15,9 +15,18 @@ public class Result<T> {
         this.data = data;
     }
 
-    public Result(boolean success, Dictionary dictionary) {
-        this.success = success;
+    public Result(Dictionary dictionary) {
+        this.success = dictionary.isSuccess();
         this.message = dictionary.getMsg();
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "success=" + success +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
     }
 
     public boolean isSuccess() {

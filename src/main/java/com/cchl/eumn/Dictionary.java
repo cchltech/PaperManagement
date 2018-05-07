@@ -2,21 +2,26 @@ package com.cchl.eumn;
 
 public enum Dictionary {
 
-    SUCCESS(0,"操作成功"),
-    DATA_LOST(1, "缺少信息"),
+    SUCCESS(true,"操作成功"),
+    DATA_LOST(false, "缺少信息"),
+    SYSTEM_ERROR(false, "系统异常");
     ;
 
-    Dictionary(int code, String msg) {
-        this.code = code;
+    Dictionary(boolean success, String msg) {
+        this.success = success;
         this.msg = msg;
     }
 
-    //代码
-    private int code;
+    //结果
+    private boolean success;
     //信息
     private String msg;
 
     public String getMsg() {
         return msg;
+    }
+
+    public boolean isSuccess() {
+        return success;
     }
 }
