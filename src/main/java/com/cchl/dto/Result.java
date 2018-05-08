@@ -20,6 +20,12 @@ public class Result<T> {
         this.message = dictionary.getMsg();
     }
 
+    public Result(boolean success, String message, T data) {
+        this.success = success;
+        this.message = message;
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "Result{" +

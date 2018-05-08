@@ -20,4 +20,16 @@
             create_time
         FROM title
     </select>
+    <select id="totalNumber" resultType="java.lang.Integer">
+        SELECT count(id) FROM title
+        <if test="all">
+            WHERE status = #{status}
+        </if>
+    </select>
+    <select id="selectUnaudited" resultType="com.cchl.entity.Title">
+        SELECT id, content, instruction, create_time FROM title WHERE status = 0
+    </select>
+    <update id="updateStatus">
+        UPDATE title SET status = #{status} WHERE id = #{id}
+    </update>
 </mapper>

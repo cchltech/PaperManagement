@@ -20,6 +20,7 @@ public class TitleController {
 
     /**
      * 登录到题目审批表的页面
+     *
      * @param id 操作的账号id
      * @return 返回结果
      */
@@ -35,12 +36,13 @@ public class TitleController {
 
     /**
      * 填写题目审批表
-     * @param id 操作的账号id
+     *
+     * @param id    操作的账号id
      * @param title 题目审批表实体类
      * @return 返回结果
      */
     @RequestMapping(value = "/requestTitle", method = RequestMethod.POST)
-    public String requestTitle(@SessionAttribute(value = "id") String id, @RequestBody(required = false)Title title) {
+    public String requestTitle(@SessionAttribute(value = "id") String id, @RequestBody(required = false) Title title) {
         if (teacherLoginService.isTeacher(Long.parseLong(id))) {
 
             return "title";
