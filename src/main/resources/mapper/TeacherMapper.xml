@@ -10,7 +10,22 @@
         <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="phone" jdbcType="BIGINT" property="phone"/>
+        <association property="department" columnPrefix="department_"
+                     resultMap="com.cchl.dao.DepartmentMapper.department"/>
     </resultMap>
+    <select id="selectById" resultMap="teacher">
+        SELECT
+            t.id,
+            t.name,
+            t.sex,
+            t.email,
+            t.phone,
+            d.id   department_id,
+            d.name department_name
+        FROM teacher t
+            LEFT JOIN department d ON t.department_id = d.id
+        WHERE t.id = #{id}
+    </select>
     <insert id="insert" parameterType="com.cchl.entity.Teacher" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO teacher VALUE (#{id}, #{name}, #{password}, #{sex}, #{email}, #{departmentId}, #{userId}, #{phone})
     </insert>

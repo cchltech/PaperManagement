@@ -39,7 +39,10 @@ public class Student {
                 ", password='" + password + '\'' +
                 ", sex=" + sex +
                 ", email='" + email + '\'' +
+                ", departmentId=" + departmentId +
                 ", grade=" + grade +
+                ", majorId=" + majorId +
+                ", userId=" + userId +
                 ", phone=" + phone +
                 ", department=" + department +
                 ", major=" + major +

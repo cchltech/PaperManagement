@@ -12,8 +12,19 @@
         <result column="major_id" jdbcType="INTEGER" property="majorId"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
         <result column="phone" jdbcType="BIGINT" property="phone"/>
+        <association property="department" columnPrefix="department_" resultMap="com.cchl.dao.DepartmentMapper.department"/>
+        <association property="major" columnPrefix="major_" resultMap="com.cchl.dao.MajorMapper.major"/>
     </resultMap>
 
+    <select id="selectById" resultMap="student">
+        SELECT s.id,s.name,s.sex,s.email,s.department_id,s.grade,s.major_id,s.phone,
+               d.id department_id, d.name department_name,
+               m.id major_id, m.name major_name
+        FROM student s
+        LEFT JOIN department d ON s.department_id = d.id
+        LEFT JOIN major m ON s.major_id = m.id
+        WHERE s.id = #{id}
+    </select>
     <insert id="insert">
         INSERT IGNORE INTO student VALUES (#{id}, #{name}, #{password}, #{sex}, #{email}, #{departmentId}, #{grade}, #{majorId}, #{userId}, #{phone})
     </insert>

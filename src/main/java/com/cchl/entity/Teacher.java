@@ -33,6 +33,8 @@ public class Teacher {
                 ", password='" + password + '\'' +
                 ", sex=" + sex +
                 ", email='" + email + '\'' +
+                ", departmentId=" + departmentId +
+                ", userId=" + userId +
                 ", phone=" + phone +
                 ", department=" + department +
                 ", user=" + user +

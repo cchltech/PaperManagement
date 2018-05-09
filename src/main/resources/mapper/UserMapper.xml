@@ -6,6 +6,8 @@
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="type" jdbcType="TINYINT" property="type"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <association property="student" column="{id = student_id}" select="com.cchl.dao.StudentMapper.selectById"/>
+        <association property="teacher" column="{id = teacher_id}" select="com.cchl.dao.TeacherMapper.selectById"/>
     </resultMap>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user (status, type) VALUE (#{status}, #{type})
@@ -16,8 +18,14 @@
             WHERE status = #{status}
         </if>
     </select>
-    <select id="selectUnaudited" resultType="com.cchl.entity.User">
-        SELECT id, status,type,create_time FROM user LIMIT #{limit},#{number}
+    <select id="selectUnaudited" resultMap="user">
+        SELECT u.id, u.status, u.type, u.create_time,
+               s.id student_id,
+               t.id teacher_id
+        FROM user u
+        LEFT JOIN student s ON u.id = s.user_id
+        LEFT JOIN teacher t ON u.id = t.user_id
+        LIMIT #{limit},#{number}
     </select>
     <update id="updateStatus">
         UPDATE user SET status = #{status} WHERE id = #{id}

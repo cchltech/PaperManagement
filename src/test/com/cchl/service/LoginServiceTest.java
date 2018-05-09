@@ -31,15 +31,15 @@ public class LoginServiceTest {
     @Test
     public void studentRegister() throws Exception {
         Student student = new Student();
-        student.setId(201524133115L);
-        student.setName("chen");
+        student.setId(201524131001L);
+        student.setName("snow");
         student.setPassword("123456");
-        student.setSex((byte)1);
+        student.setSex((byte)0);
         student.setEmail("10010@qq.com");
-        student.setDepartmentId(1001);
-        student.setGrade((byte)15);
-        student.setMajorId(10012);
-        student.setPhone(17876253455L);
+        student.setDepartmentId(1002);
+        student.setGrade((byte)16);
+        student.setMajorId(10021);
+        student.setPhone(17876250123L);
         System.out.println(studentService.studentRegister(student));
     }
 

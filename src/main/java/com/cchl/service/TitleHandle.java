@@ -11,7 +11,8 @@ public class TitleHandle {
     @Autowired
     private TitleMapper titleMapper;
 
-    public int insert(Title title) {
+    public int insert(Title title, Integer id) {
+        title.setId(id);
         return titleMapper.insert(title);
     }
 }

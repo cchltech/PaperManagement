@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class AllInterceptor implements HandlerInterceptor {
 
+    //TODO 执行所有权限拦截
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object) throws Exception {
         return false;

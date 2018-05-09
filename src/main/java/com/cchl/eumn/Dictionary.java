@@ -2,12 +2,14 @@ package com.cchl.eumn;
 
 public enum Dictionary {
 
-    SUCCESS(true,"操作成功"),
+    SUCCESS(true, "操作成功"),
     DATA_LOST(false, "缺少信息"),
     SYSTEM_ERROR(false, "系统异常"),
     DATA_INSERT_FAIL(false, "数据插入失败"),
     UNKNOWN_IDENTITY(false, "未知身份"),
     NO_MORE_DATA(true, "没有更多数据了"),
+    SUBMIT_FAIL(false, "抱歉，提交失败"),
+    ILLEGAL(false, "非法操作"),
     ;
 
     Dictionary(boolean success, String msg) {

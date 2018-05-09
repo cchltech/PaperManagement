@@ -7,6 +7,8 @@ import com.cchl.entity.User;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.SystemException;
 import com.cchl.service.ExamineService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Service
 public class ExamineServiceImpl implements ExamineService {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private UserMapper userMapper;
@@ -24,9 +28,14 @@ public class ExamineServiceImpl implements ExamineService {
     public int totalNumber(int type) {
         int result = 0;
         switch (type) {
-            case 0: result = userMapper.totalNumber(false, (byte)0); break;
-            case 1: result = titleMapper.totalNumber(false, (byte)0); break;
-            default:break;
+            case 0:
+                result = userMapper.totalNumber(false, (byte) 0);
+                break;
+            case 1:
+                result = titleMapper.totalNumber(false, (byte) 0);
+                break;
+            default:
+                break;
         }
         return result;
     }
@@ -36,6 +45,7 @@ public class ExamineServiceImpl implements ExamineService {
         try {
             return userMapper.selectUnaudited(page, limit);
         } catch (Exception e) {
+            logger.error("异常信息：{}", e.getMessage());
             throw new SystemException(Dictionary.SYSTEM_ERROR);
         }
     }

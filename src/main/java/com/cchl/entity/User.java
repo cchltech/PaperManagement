@@ -14,6 +14,10 @@ public class User {
     private Byte type;
     //创建时间
     private Date createTime;
+    //添加学生实体
+    private Student student;
+    //添加教师实体
+    private Teacher teacher;
 
     @Override
     public String toString() {
@@ -22,7 +26,25 @@ public class User {
                 ", status=" + status +
                 ", type=" + type +
                 ", createTime=" + createTime +
+                ", student=" + student +
+                ", teacher=" + teacher +
                 '}';
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 
     public Integer getId() {
