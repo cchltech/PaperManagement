@@ -21,7 +21,7 @@ public class TitleHandleTest {
         title.setContent("test");
         title.setInstruction("test");
         title.setStatus((byte)0);
-        System.out.println(titleHandle.insert(title));
+        System.out.println(titleHandle.insert(title,0));
     }
 
 }
