@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cchl.dao.ChoiceTitleMapper">
+    <resultMap id="choiceTitle" type="com.cchl.entity.ChoiceTitle">
+        <id property="id" column="id"/>
+        <result property="beginTime" column="begin_time"/>
+        <result property="endTime" column="end_time"/>
+        <association property="department" resultMap="department" columnPrefix="department_"/>
+    </resultMap>
+
+    <select id="selectByDepartmentId" resultMap="choiceTitle">
+        SELECT
+            c.id,
+            c.begin_time,
+            c.end_time,
+            d.id   department_id,
+            d.name department_name
+        FROM choice_title c
+            LEFT JOIN department d ON c.id = d.id
+        WHERE c.department_id = #{id}
+    </select>
+    <insert id="insert">
+        INSERT INTO choice_title (id, begin_time, end_time, department_id)
+            VALUE (0, #{beginTime}, #{endTime}, #{department_id})
+    </insert>
+</mapper>

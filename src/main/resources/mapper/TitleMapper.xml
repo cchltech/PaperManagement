@@ -7,9 +7,13 @@
         <result column="instruction" jdbcType="VARCHAR" property="instruction"/>
         <result column="status" jdbcType="TINYINT" property="status"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="total_number" property="totalNumber"/>
+        <result column="has_select" property="hasSelect"/>
+        <association property="department" resultMap="department" columnPrefix="department_"/>
     </resultMap>
     <insert id="insert" parameterType="com.cchl.entity.Title">
-        INSERT INTO title (content, instruction, status) VALUE (#{content}, #{instruction}, #{status})
+        INSERT INTO title (content, instruction, status, total_number, department_id)
+            VALUE (#{content}, #{instruction}, #{status}, #{totalNumber}, #{department.id})
     </insert>
     <select id="selectAll" resultMap="title">
         SELECT
@@ -27,9 +31,22 @@
         </if>
     </select>
     <select id="selectUnaudited" resultType="com.cchl.entity.Title">
-        SELECT id, content, instruction, create_time FROM title WHERE status = 0
+        SELECT
+            id,
+            content,
+            instruction,
+            create_time
+        FROM title
+        WHERE status = 0
     </select>
     <update id="updateStatus">
-        UPDATE title SET status = #{status} WHERE id = #{id}
+        UPDATE title
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+    <update id="updateTotal">
+        UPDATE title
+        SET has_select = has_select + 1
+        WHERE id = #{titleId} AND total_number - has_select > 0
     </update>
 </mapper>

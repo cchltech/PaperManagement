@@ -89,8 +89,12 @@ CREATE TABLE title(
   instruction VARCHAR(255) COMMENT '题目说明' ,
   status TINYINT COMMENT '题目当前状态，是否通过审核' ,
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+  total_number INT NOT NULL COMMENT '待选人数',
+  has_select INT DEFAULT 0 ,
+  department_id INT NOT NULL ,
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '题目表，用于记录论文题目的内容';
+ALTER TABLE title ADD CONSTRAINT fk_title_department FOREIGN KEY title(department_id) REFERENCES department(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 周计划表
 CREATE TABLE weeks_plan(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -161,3 +165,12 @@ CREATE TABLE timer(
   target_type TINYINT DEFAULT 0 COMMENT '设置此任务面向的用户类型，默认为0，表示向所有用户开放' ,
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '专业管理院可以设置时段让用户进行某些特定操作，如规定学生在一定时间内完成选题等，此表用于记录';
+# 选题表
+CREATE TABLE choice_title(
+  id INT AUTO_INCREMENT NOT NULL ,
+  begin_time DATETIME NOT NULL COMMENT '开始时间',
+  end_time DATETIME NOT NULL COMMENT '结束时间',
+  department_id INT NOT NULL COMMENT '面向的学院',
+  PRIMARY KEY (id)
+)AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '选题表，管理员为各个学院设置选题时间';
+ALTER TABLE choice_title ADD CONSTRAINT fk_choice_department FOREIGN KEY choice_title(id) REFERENCES department(id);

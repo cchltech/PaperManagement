@@ -10,6 +10,7 @@ public enum Dictionary {
     NO_MORE_DATA(true, "没有更多数据了"),
     SUBMIT_FAIL(false, "抱歉，提交失败"),
     ILLEGAL(false, "非法操作"),
+    NUMBER_IS_FULL(false, "人数已满"),
     ;
 
     Dictionary(boolean success, String msg) {

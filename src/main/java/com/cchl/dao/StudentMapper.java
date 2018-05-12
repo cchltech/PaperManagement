@@ -12,7 +12,7 @@ public interface StudentMapper {
 
     List<Student> selectAll();
 
-    Student select();
+    Student selectById(Long id);
 
     int loginCheck(@Param("id")Long id, @Param("password")String password);
 }

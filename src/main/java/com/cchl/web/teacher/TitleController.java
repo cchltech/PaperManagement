@@ -1,4 +1,4 @@
-package com.cchl.web;
+package com.cchl.web.teacher;
 
 import com.cchl.dto.Result;
 import com.cchl.entity.Title;
@@ -30,7 +30,6 @@ public class TitleController {
     public String title(@SessionAttribute(value = "id") String id) {
         //需要教师才可以进行题目的申请操作
         return "title";
-
     }
 
     /**

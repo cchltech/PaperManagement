@@ -19,4 +19,8 @@
     select id, create_time, title_id
     from paper_plan
   </select>
+  <insert id="insertTitle">
+      UPDATE paper_plan SET title_id = #{titleId}
+      WHERE id = (SELECT paper_plan_id FROM user_paper WHERE user_id = #{userId})
+  </insert>
 </mapper>

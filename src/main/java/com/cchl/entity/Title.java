@@ -16,6 +16,12 @@ public class Title {
     private Byte status;
     //创建时间
     private Date createTime;
+    //选题总人数
+    private int totalNumber;
+    //已选人数
+    private int hasSelect;
+    //所属学院
+    private Department department;
 
     @Override
     public String toString() {
@@ -25,7 +31,34 @@ public class Title {
                 ", instruction='" + instruction + '\'' +
                 ", status=" + status +
                 ", createTime=" + createTime +
+                ", totalNumber=" + totalNumber +
+                ", has_select=" + hasSelect +
+                ", department=" + department +
                 '}';
+    }
+
+    public int getTotalNumber() {
+        return totalNumber;
+    }
+
+    public void setTotalNumber(int totalNumber) {
+        this.totalNumber = totalNumber;
+    }
+
+    public int getHas_select() {
+        return hasSelect;
+    }
+
+    public void setHasSelect(int hasSelect) {
+        this.hasSelect = hasSelect;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public Integer getId() {

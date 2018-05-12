@@ -1,4 +1,4 @@
-package com.cchl.web;
+package com.cchl.web.admin;
 
 import com.cchl.dto.Result;
 import com.cchl.eumn.Dictionary;

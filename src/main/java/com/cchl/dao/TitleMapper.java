@@ -28,4 +28,19 @@ public interface TitleMapper {
      */
     int totalNumber(@Param(value = "all") boolean all, @Param(value = "status") byte status);
 
+    /**
+     * 按学院查找所有通过审核的题目
+     */
+    List<Title> selectByDepartmentId(int departmentId);
+
+    /**
+     * 按主键查找
+     */
+    Title selectById(int id);
+
+    /**
+     * 人数减一
+     */
+    int updateTotal(int titleId);
+
 }
