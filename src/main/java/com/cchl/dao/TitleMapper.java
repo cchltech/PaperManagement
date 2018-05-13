@@ -43,4 +43,10 @@ public interface TitleMapper {
      */
     int updateTotal(int titleId);
 
+    /**
+     * 查找未被学生选满的课程
+     * @return
+     */
+    List<Title> selectUnFull();
+
 }

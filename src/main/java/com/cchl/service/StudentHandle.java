@@ -9,7 +9,8 @@ import com.cchl.entity.ChoiceTitle;
 import com.cchl.entity.Title;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.NumberFullException;
-import com.cchl.execption.SystemException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ import java.util.List;
  */
 @Service
 public class StudentHandle {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ChoiceTitleMapper choiceTitleMapper;
@@ -36,7 +39,7 @@ public class StudentHandle {
      * @param studentId 学生学号
      * @return 获取题目列表
      */
-    public Result getTitleList(Long studentId){
+    public Result getTitleList(Long studentId) {
         /*
          * 先获取学生的学院id
          * 再判断是否到了选课时间
@@ -47,8 +50,9 @@ public class StudentHandle {
         long begin = choiceTitle.getBeginTime().getTime();
         //如果当前时间小于开始选题的时间
         if (times < begin) {
+            logger.info("选题为开始，剩余时间：{}", (begin - times));
             //返回剩余时间
-            return new Result<>(false,(begin - times));
+            return new Result<>(false, (begin - times));
         } else {
             long end = choiceTitle.getEndTime().getTime();
             //如果当前时间大于开始时间但小于结束时间
@@ -63,17 +67,18 @@ public class StudentHandle {
 
     /**
      * 选题操作
+     *
      * @param titleId 选题的id
-     * @param userId 用户id
+     * @param userId  用户id
      * @return 选题结果
      */
     @Transactional
     public Result selectTitles(int userId, int titleId) {
         //先在论文计划表中添加titleId,再将题目中的已选人数+1
         if (paperPlanMapper.insertTitle(userId, titleId) > 0) {
-            if (titleMapper.updateTotal(titleId) > 0){
+            if (titleMapper.updateTotal(titleId) > 0) {
                 return new Result(Dictionary.SUCCESS);
-            }else {
+            } else {
                 //手动抛出异常，让事务回滚
                 throw new NumberFullException(Dictionary.NUMBER_IS_FULL);
             }
@@ -84,6 +89,7 @@ public class StudentHandle {
 
     /**
      * 获取学生的学院号
+     *
      * @param studentId 学号
      * @return 学院号
      */
@@ -95,7 +101,7 @@ public class StudentHandle {
      * @param departmentId 学院号
      * @return 获取题目列表
      */
-    private List<Title> getList(int departmentId){
+    private List<Title> getList(int departmentId) {
         return titleMapper.selectByDepartmentId(departmentId);
     }
 }

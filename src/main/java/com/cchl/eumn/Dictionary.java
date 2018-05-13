@@ -11,6 +11,7 @@ public enum Dictionary {
     SUBMIT_FAIL(false, "抱歉，提交失败"),
     ILLEGAL(false, "非法操作"),
     NUMBER_IS_FULL(false, "人数已满"),
+    ILLEGAL_VISIT(false, "非法访问"),
     ;
 
     Dictionary(boolean success, String msg) {

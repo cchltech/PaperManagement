@@ -47,8 +47,9 @@
         WHERE id = #{id} AND password = #{password}
     </select>
     <select id="isTeacher" resultType="java.lang.Integer">
-        SELECT count(id)
-        FROM teacher
-        WHERE id = #{id}
+        SELECT count(t.id)
+        FROM teacher t, user
+        WHERE t.id = #{id} AND t.password = #{password}
+        AND user.id = t.id AND user.status = 1
     </select>
 </mapper>

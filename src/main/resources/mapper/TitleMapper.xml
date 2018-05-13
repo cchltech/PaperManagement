@@ -9,7 +9,8 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="total_number" property="totalNumber"/>
         <result column="has_select" property="hasSelect"/>
-        <association property="department" resultMap="department" columnPrefix="department_"/>
+        <association property="department" resultMap="com.cchl.dao.DepartmentMapper.department"
+                     columnPrefix="department_"/>
     </resultMap>
     <insert id="insert" parameterType="com.cchl.entity.Title">
         INSERT INTO title (content, instruction, status, total_number, department_id)
@@ -49,4 +50,19 @@
         SET has_select = has_select + 1
         WHERE id = #{titleId} AND total_number - has_select > 0
     </update>
+    <select id="selectUnFull" resultMap="title">
+        SELECT
+            t.id,
+            content,
+            instruction,
+            create_time,
+            has_select,
+            total_number,
+            d.id department_id,
+            d.name department_name
+        FROM title t, department d
+        WHERE t.has_select <![CDATA[ < ]]> t.total_number
+            AND t.status = 1 AND d.id = t.department_id
+        ORDER BY department_id
+    </select>
 </mapper>
