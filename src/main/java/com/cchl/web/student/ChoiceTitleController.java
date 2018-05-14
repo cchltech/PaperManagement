@@ -3,7 +3,7 @@ package com.cchl.web.student;
 import com.cchl.dto.Result;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.NumberFullException;
-import com.cchl.service.StudentHandle;
+import com.cchl.service.student.StudentHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

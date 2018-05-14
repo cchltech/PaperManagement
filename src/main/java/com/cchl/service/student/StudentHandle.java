@@ -1,4 +1,4 @@
-package com.cchl.service;
+package com.cchl.service.student;
 
 import com.cchl.dao.ChoiceTitleMapper;
 import com.cchl.dao.PaperPlanMapper;

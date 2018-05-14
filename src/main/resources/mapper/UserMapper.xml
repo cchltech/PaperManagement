@@ -27,6 +27,7 @@
         LEFT JOIN teacher t ON u.id = t.user_id
         LIMIT #{limit},#{number}
     </select>
+
     <update id="updateStatus">
         UPDATE user SET status = #{status} WHERE id = #{id}
     </update>

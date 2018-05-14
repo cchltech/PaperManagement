@@ -13,4 +13,6 @@ public interface PaperPlanMapper {
     List<PaperPlan> selectAll();
 
     int insertTitle(@Param("userId") int userId, @Param("titleId")int titleId);
+
+
 }

@@ -7,13 +7,11 @@
     <result column="title_id" jdbcType="INTEGER" property="titleId" />
   </resultMap>
   <insert id="insert" parameterType="com.cchl.entity.PaperPlan">
-    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
+    insert into paper_plan (title_id)
+    values (#{titleId,jdbcType=INTEGER})
+    <selectKey order="AFTER" keyProperty="id" keyColumn="id" resultType="Integer">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into paper_plan (id, create_time, title_id
-      )
-    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{titleId,jdbcType=INTEGER}
-      )
   </insert>
   <select id="selectAll" resultMap="paper_plan">
     select id, create_time, title_id

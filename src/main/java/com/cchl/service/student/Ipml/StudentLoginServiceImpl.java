@@ -1,6 +1,6 @@
-package com.cchl.service.Impl;
+package com.cchl.service.student.Ipml;
 
-import com.cchl.dao.TeacherMapper;
+import com.cchl.dao.StudentMapper;
 import com.cchl.dao.UserMapper;
 import com.cchl.dto.Result;
 import com.cchl.entity.Student;
@@ -18,18 +18,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 教师类处理登录和注册的请求
+ * 学生类处理登录与注册的请求
  */
 @Service
-@Qualifier(value = "teacher")
-public class TeacherLoginServiceImpl implements LoginService {
+@Qualifier(value = "student")
+public class StudentLoginServiceImpl implements LoginService {
 
-    private Logger logger = LoggerFactory.getLogger(TeacherLoginServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(StudentLoginServiceImpl.class);
 
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private TeacherMapper teacherMapper;
+    private StudentMapper studentMapper;
 
     /**
      * 登录校验
@@ -41,53 +41,46 @@ public class TeacherLoginServiceImpl implements LoginService {
     public int loginCheck(String id, String password) {
         try{
             Long id1 = Long.parseLong(id);
-            return teacherMapper.loginCheck(id1, password);
-        } catch (Exception e) {
+            return studentMapper.loginCheck(id1, password);
+        } catch (Exception e){
+            e.getMessage();
             return 0;
         }
-    }
 
-    /**
-     * 判断身份
-     * @param id 账号
-     * @return 返回结果
-     */
-    public boolean isTeacher(Long id) {
-        return teacherMapper.isTeacher(id) > 0;
     }
 
     @Override
     @Transactional
-    public Result teacherRegister(Teacher teacher) {
+    public Result studentRegister(Student student) {
         try {
-            //先添加一个用户，类型为教师（1），状态为待审核（0）
+            //注册学生前先添加一个user信息，类型为学生（0），状态为待审核（0）
             User user = new User();
-            user.setType((byte) 1);
             user.setStatus((byte) 0);
+            user.setType((byte) 0);
             if (userMapper.insert(user) > 0) {
-                teacher.setUserId(user.getId());
-                if (teacherMapper.insert(teacher) > 0) {
-                    logger.info("教师注册成功，教师实体为：{}", teacher.toString());
+                //如果插入成功
+                //获取数据库返回的主键值
+                student.setUserId(user.getId());
+                if (studentMapper.insert(student) > 0) {
+                    logger.info("学生注册成功，学生实体为：{}", student.toString());
                     return new Result(Dictionary.SUCCESS);
                 } else {
-                    //如果数据插入失败，抛出异常，事务回滚
-                    logger.error("教师信息插入失败，教师实体为：{}", teacher.toString());
+                    logger.error("学生信息插入失败，学生实体为：{}", student.toString());
                     throw new DataInsertException(Dictionary.DATA_INSERT_FAIL);
                 }
             } else {
-                //如果数据插入失败，抛出异常，事务回滚
+                //插入失败，返回失败信息
                 logger.error("用户信息插入失败，用户实体为：{}", user.toString());
                 throw new DataInsertException(Dictionary.DATA_INSERT_FAIL);
             }
         } catch (Exception e) {
-            //如果失败，抛出异常，事务回滚
             logger.error("系统出现异常，异常信息为：{}", e.getMessage());
             throw new SystemException(Dictionary.SYSTEM_ERROR);
         }
     }
 
     @Override
-    public Result studentRegister(Student student) {
+    public Result teacherRegister(Teacher teacher) {
         return null;
     }
 

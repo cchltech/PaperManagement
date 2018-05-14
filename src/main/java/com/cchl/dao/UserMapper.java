@@ -30,4 +30,5 @@ public interface UserMapper {
      */
     int totalNumber(@Param(value = "all") boolean all, @Param(value = "status") byte status);
 
+
 }

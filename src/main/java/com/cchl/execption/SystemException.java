@@ -10,6 +10,10 @@ public class SystemException extends RuntimeException {
     public SystemException() {
     }
 
+    public SystemException(String message) {
+        super(message);
+    }
+
     public SystemException(Dictionary dictionary) {
         super(dictionary.getMsg());
     }

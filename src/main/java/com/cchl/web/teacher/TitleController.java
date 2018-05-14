@@ -3,7 +3,7 @@ package com.cchl.web.teacher;
 import com.cchl.dto.Result;
 import com.cchl.entity.Title;
 import com.cchl.eumn.Dictionary;
-import com.cchl.service.TitleHandle;
+import com.cchl.service.admin.TitleHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

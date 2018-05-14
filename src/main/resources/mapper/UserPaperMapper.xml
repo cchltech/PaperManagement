@@ -9,4 +9,5 @@
         <association property="paperPlan" columnPrefix="paper_plan_"
                      resultMap="mapper.PaperPlanMapper.paper_plan"/>
     </resultMap>
+
 </mapper>

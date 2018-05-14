@@ -39,7 +39,7 @@ public interface TitleMapper {
     Title selectById(int id);
 
     /**
-     * 人数减一
+     * 人数加一
      */
     int updateTotal(int titleId);
 

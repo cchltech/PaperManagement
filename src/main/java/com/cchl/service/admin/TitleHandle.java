@@ -1,4 +1,4 @@
-package com.cchl.service;
+package com.cchl.service.admin;
 
 import com.cchl.dao.TitleMapper;
 import com.cchl.entity.Title;

@@ -1,4 +1,4 @@
-package com.cchl.service.Impl;
+package com.cchl.service.admin.Ipml;
 
 import com.cchl.dto.Result;
 import com.cchl.entity.Student;
