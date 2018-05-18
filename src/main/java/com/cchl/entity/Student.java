@@ -10,7 +10,7 @@ public class Student {
     private String name;
     //密码
     private String password;
-    //性别，女生为1，男生为1
+    //性别，女生为0，男生为1
     private Byte sex;
     //邮箱
     private String email;

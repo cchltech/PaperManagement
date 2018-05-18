@@ -6,7 +6,7 @@ public class ChoiceTitle {
     private Integer id;
     private Date beginTime;
     private Date endTime;
-    private Department department;
+    private Department department;////?
 
     @Override
     public String toString() {

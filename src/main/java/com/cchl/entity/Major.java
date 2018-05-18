@@ -9,7 +9,7 @@ public class Major {
     //专业名
     private String name;
     //学院id
-    private int departmentId;
+    private int departmentId;////?
     //学院实体
     private Department department;
 

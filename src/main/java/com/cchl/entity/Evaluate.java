@@ -21,7 +21,7 @@ public class Evaluate {
     //关联被评价人
     private User userTarget;
     //关联论文计划
-    private PaperPlan paperPlan;
+    private PaperPlan paperPlan;////?
 
     @Override
     public String toString() {
