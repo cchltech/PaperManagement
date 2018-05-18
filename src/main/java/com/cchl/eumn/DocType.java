@@ -2,13 +2,13 @@ package com.cchl.eumn;
 
 public enum DocType {
     //开题报告
-    OPEN_REPORT("open_report"),
+    OPEN_REPORT("OpenReport"),
     //中期检查
-    MID_CHECK("mid_check"),
+    MID_CHECK("MidReport"),
     //任务书
-    TASK("task"),
+    TASK("Task"),
     //周计划
-    WEEKS_PLAN("weeks_plan");
+    WEEKS_PLAN("WeeksPlan");
 
     //类型名
     private String type;

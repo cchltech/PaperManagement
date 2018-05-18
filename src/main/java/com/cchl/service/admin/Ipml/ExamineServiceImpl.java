@@ -6,7 +6,7 @@ import com.cchl.entity.Title;
 import com.cchl.entity.User;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.SystemException;
-import com.cchl.service.ExamineService;
+import com.cchl.service.admin.ExamineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,7 +13,6 @@ CREATE TABLE user(
   status TINYINT DEFAULT 0,
   type TINYINT DEFAULT 0,
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-  paper_plan_id INT NOT NULL COMMENT '关联论文计划表的id',
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 COMMENT '账户表';
 # 账户与论文计划的关联表
