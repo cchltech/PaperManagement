@@ -1,8 +1,13 @@
 package com.cchl.service.admin;
 
-import com.cchl.dao.*;
+import com.cchl.dao.PaperPlanMapper;
+import com.cchl.dao.StudentMapper;
+import com.cchl.dao.TitleMapper;
+import com.cchl.dao.UserPaperMapper;
 import com.cchl.dto.Result;
 import com.cchl.entity.PaperPlan;
+import com.cchl.entity.StudentMessage;
+import com.cchl.entity.TeacherMessage;
 import com.cchl.entity.UserPaper;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.DataInsertException;
@@ -10,8 +15,16 @@ import com.cchl.execption.SystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * 管理员的事项处理
@@ -29,9 +42,13 @@ public class AdminHandle {
     private PaperPlanMapper paperPlanMapper;
     @Autowired
     private UserPaperMapper userPaperMapper;
+    //mongodb的操作类
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     /**
      * 查找未选题的学生和选题未满的题目
+     *
      * @param data 代表查找学生还是题目
      * @return
      */
@@ -48,6 +65,7 @@ public class AdminHandle {
 
     /**
      * 管理员为学生进行题目调配
+     *
      * @param studentId
      * @param titleId
      * @return
@@ -89,5 +107,75 @@ public class AdminHandle {
         } catch (Exception e) {
             throw new SystemException(Dictionary.SYSTEM_ERROR);
         }
+    }
+
+    /**
+     * 专业管理员发送系统消息
+     * @param content 消息内容
+     * @return
+     */
+    public Result addMsg(String content, Integer departmentId) {
+        try {
+            if (departmentId != null) {
+                //先查找当前数据库中该学院的最新一个版本号
+                Criteria criteria = Criteria.where("departmentId").is(departmentId);
+                List<StudentMessage> messages = mongoTemplate.find(
+                        query(criteria)
+                                .with(new Sort(Sort.Direction.DESC, "version"))
+                                .limit(1)
+                        , StudentMessage.class);
+                int lastVersion = 0;
+                if (messages.size() > 0)
+                    lastVersion = messages.get(0).getVersion();
+                logger.info("查找到的版本号为：{}", lastVersion);
+                //插入消息
+                StudentMessage studentMessage = new StudentMessage();
+                studentMessage.setContent(content);
+                studentMessage.setDepartmentId(departmentId);
+                studentMessage.setCreateTime(new Date());
+                studentMessage.setVersion(++lastVersion);
+                mongoTemplate.insert(studentMessage);
+                return new Result(Dictionary.SUCCESS);
+            } else {
+                //面向教师的系统信息插入
+                List<TeacherMessage> messages = mongoTemplate.find(
+                        query(new Criteria())
+                                .with(new Sort(Sort.Direction.DESC, "version"))
+                                .limit(1)
+                        , TeacherMessage.class);
+                int lastVersion = 0;
+                if (messages.size() > 0)
+                    lastVersion = messages.get(0).getVersion();
+                logger.info("查找到的版本号为：{}", lastVersion);
+                TeacherMessage teacherMessage = new TeacherMessage();
+                teacherMessage.setContent(content);
+                teacherMessage.setVersion(++lastVersion);
+                teacherMessage.setCreateTime(new Date());
+                mongoTemplate.insert(teacherMessage);
+                return new Result(Dictionary.SUCCESS);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    public List<StudentMessage> selectStudentMsg(int page) {
+        //查找面向学生的消息
+        return mongoTemplate.find(
+                query(new Criteria())
+                        .with(new Sort(Sort.Direction.DESC, "createTime"))
+                        .limit(10)
+                        .skip((page-1)*10)
+                , StudentMessage.class);
+    }
+
+    public List<TeacherMessage> selectTeacherMsg(int page) {
+        return mongoTemplate.find(
+                query(new Criteria())
+                    .with(new Sort(Sort.Direction.DESC, "createTime"))
+                    .limit(10)
+                    .skip((page-1)*10)
+                , TeacherMessage.class);
     }
 }

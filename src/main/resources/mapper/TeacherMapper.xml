@@ -27,7 +27,7 @@
         WHERE t.id = #{id}
     </select>
     <insert id="insert" parameterType="com.cchl.entity.Teacher" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO teacher VALUE (#{id}, #{name}, #{password}, #{sex}, #{phone}, #{email}, #{departmentId}, #{userId})
+        INSERT INTO teacher(id, name, password, sex, phone, email, department_id, user_id) VALUE (#{id}, #{name}, #{password}, #{sex}, #{phone}, #{email}, #{departmentId}, #{userId})
     </insert>
     <select id="selectAll" resultMap="teacher">
         SELECT
