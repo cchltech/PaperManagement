@@ -19,7 +19,7 @@ public class StudentMessage {
     @Override
     public String toString() {
         return "StudentMessage{" +
-                ", content='" + content + '\'' +
+                "content='" + content + '\'' +
                 ", createTime=" + createTime +
                 ", departmentId=" + departmentId +
                 ", version=" + version +

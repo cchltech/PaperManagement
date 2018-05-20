@@ -30,8 +30,8 @@ public class AdminHandleTest {
 
     @Test
     public void AddMsgTest() throws Exception {
-        for (int i = 0; i < 10; i++) {
-            adminHandle.addMsg("student test" + i, 1001+i/3);
+        for (int i = 10; i < 13; i++) {
+//            adminHandle.addMsg("student test" + i, 1001+i/3);
             adminHandle.addMsg("teacher test" + i, null);
         }
     }
@@ -46,4 +46,23 @@ public class AdminHandleTest {
         for (TeacherMessage message : messages1)
             System.out.println(message.toString());
     }
+
+    /**
+     * 测试删除指定的消息
+     * @throws Exception
+     */
+    @Test
+    public void deleteMsgTest() throws Exception {
+
+        //学生
+        //学生需要指定学院以及版本号
+        //adminHandle.deleteStudentMsg(1003, 3);
+
+        //教师
+        adminHandle.deleteTeacherMsg(10);
+    }
+
+
+
+
 }

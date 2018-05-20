@@ -33,16 +33,18 @@ public class StudentLoginServiceImpl implements LoginService {
 
     /**
      * 登录校验
-     * @param id 账号
+     *
+     * @param id       账号
      * @param password 密码
      * @return 返回结果，0：失败 1：成功
      */
     @Override
-    public int loginCheck(String id, String password) {
-        try{
-            Long id1 = Long.parseLong(id);
-            return studentMapper.loginCheck(id1, password);
-        } catch (Exception e){
+    public Integer loginCheck(String id, String password) {
+        try {
+            Long _id = Long.parseLong(id);
+            Integer userId = studentMapper.loginCheck(_id, password);
+            return userId == null ? 0 : userId;
+        } catch (Exception e) {
             e.getMessage();
             return 0;
         }

@@ -33,15 +33,17 @@ public class TeacherLoginServiceImpl implements LoginService {
 
     /**
      * 登录校验
-     * @param id 账号
+     *
+     * @param id       账号
      * @param password 密码
      * @return 返回结果，0：失败 1：成功
      */
     @Override
-    public int loginCheck(String id, String password) {
-        try{
+    public Integer loginCheck(String id, String password) {
+        try {
             Long id1 = Long.parseLong(id);
-            return teacherMapper.loginCheck(id1, password);
+            Integer userId = teacherMapper.loginCheck(id1, password);
+            return userId == null ? 0 : userId;
         } catch (Exception e) {
             return 0;
         }
@@ -49,6 +51,7 @@ public class TeacherLoginServiceImpl implements LoginService {
 
     /**
      * 判断身份
+     *
      * @param id 账号
      * @return 返回结果
      */

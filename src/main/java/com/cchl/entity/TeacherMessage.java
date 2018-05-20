@@ -17,7 +17,7 @@ public class TeacherMessage {
     @Override
     public String toString() {
         return "TeacherMessage{" +
-                ", content='" + content + '\'' +
+                "content='" + content + '\'' +
                 ", createTime=" + createTime +
                 ", version=" + version +
                 '}';

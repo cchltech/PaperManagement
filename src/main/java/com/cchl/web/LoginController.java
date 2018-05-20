@@ -124,21 +124,29 @@ public class LoginController {
         try {
             /*
              * 判断登录身份
+             * 成功之后将学号/工号，用户id存进session
              */
+            int userId;
             if ("student".equals(type)) {
-                if (studentLoginService.loginCheck(id, password) > 0) {
+                userId = studentLoginService.loginCheck(id, password);
+                if (userId > 0) {
                     model.setViewName("student");
                     session.setAttribute("id", id);
+                    session.setAttribute("user_id", userId);
                 }
             } else if ("teacher".equals(type)) {
-                if (teacherLoginService.loginCheck(id, password) > 0) {
+                userId = teacherLoginService.loginCheck(id, password);
+                if (userId > 0) {
                     model.setViewName("teacher");
                     session.setAttribute("id", id);
+                    session.setAttribute("user_id", userId);
                 }
             } else if ("admin".equals(type)) {
-                if (adminLoginService.loginCheck(id, password) > 0) {
+                userId = adminLoginService.loginCheck(id, password);
+                if (userId > 0) {
                     model.setViewName("admin");
                     session.setAttribute("id", id);
+                    session.setAttribute("user_id", userId);
                 }
             } else {
                 logger.error("未知身份");

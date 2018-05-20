@@ -6,14 +6,22 @@ import com.cchl.dao.StudentMapper;
 import com.cchl.dao.TitleMapper;
 import com.cchl.dto.Result;
 import com.cchl.entity.ChoiceTitle;
+import com.cchl.entity.StudentMessage;
 import com.cchl.entity.Title;
+import com.cchl.entity.UserMsgRecord;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.NumberFullException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +42,8 @@ public class StudentHandle {
     private TitleMapper titleMapper;
     @Autowired
     private PaperPlanMapper paperPlanMapper;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     /**
      * @param studentId 学生学号
@@ -103,5 +113,40 @@ public class StudentHandle {
      */
     private List<Title> getList(int departmentId) {
         return titleMapper.selectByDepartmentId(departmentId);
+    }
+
+    public boolean hasNewMsg(int userId) {
+        UserMsgRecord record = mongoTemplate.findById(userId, UserMsgRecord.class);
+        if (record == null) {
+            //新增一个用户记录
+            record = new UserMsgRecord();
+            record.setId(userId);
+            record.setType(0);
+            //查找用户所属的学院的id
+            record.setDepartmentId(studentMapper.selectByUserId(userId).getDepartmentId());
+            record.setVersion(0);
+            mongoTemplate.insert(record);
+        }
+        Criteria criteria = Criteria.where("version").gt(record.getVersion());
+        List<StudentMessage> list = mongoTemplate.find(query(criteria), StudentMessage.class);
+        return list != null && list.size() > 0;
+    }
+
+    public List<StudentMessage> getMsg(int userId, int page) {
+        UserMsgRecord record = mongoTemplate.findById(userId, UserMsgRecord.class);
+        Criteria criteria = Criteria.where("departmentId").is(record.getDepartmentId());
+        List<StudentMessage> list = mongoTemplate.find(
+                query(criteria)
+                        .with(new Sort(Sort.Direction.DESC, "version"))
+                        .limit(10)
+                        .skip((page - 1) * 10),
+                StudentMessage.class);
+        if (page == 1) {
+            //查找页数为1时，肯定会查找到最新的消息，更新用户的版本号
+            mongoTemplate.updateFirst(query(Criteria.where("id").is(userId)),
+                    new Update().set("version", list.get(0).getVersion()),
+                    UserMsgRecord.class);
+        }
+        return list;
     }
 }

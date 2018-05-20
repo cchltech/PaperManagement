@@ -178,4 +178,13 @@ public class AdminHandle {
                     .skip((page-1)*10)
                 , TeacherMessage.class);
     }
+
+    public void deleteStudentMsg(int departmentId, int version) {
+        Criteria criteria = Criteria.where("departmentId").is(departmentId).and("version").is(version);
+        mongoTemplate.remove(query(criteria), StudentMessage.class);
+    }
+
+    public void deleteTeacherMsg(int version) {
+        mongoTemplate.remove(query(Criteria.where("version").is(version)), TeacherMessage.class);
+    }
 }

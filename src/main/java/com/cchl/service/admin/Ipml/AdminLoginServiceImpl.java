@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Qualifier(value = "admin")
 public class AdminLoginServiceImpl implements LoginService{
     @Override
-    public int loginCheck(String id, String password) {
+    public Integer loginCheck(String id, String password) {
         return 0;
     }
 

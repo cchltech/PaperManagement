@@ -13,7 +13,7 @@ public interface TeacherMapper {
 
     List<Teacher> selectAll();
 
-    int loginCheck(@Param(value = "id") Long id, @Param(value = "password") String password);
+    Integer loginCheck(@Param(value = "id") Long id, @Param(value = "password") String password);
 
     int isTeacher(Long id);
 }

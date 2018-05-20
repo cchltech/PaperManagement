@@ -27,12 +27,12 @@ public class MessageSendController {
     /**
      * 添加系统消息
      * @param content 消息内容
-     * @param type 消息面向的用户类型， 0：学生，1：教师
      * @param departmentId 学院id， 如果面向的用户类型为教师则不需要学院id
      * @return
      */
     @RequestMapping(value = "/add")
-    public Result send(@RequestParam(value = "content", required = false)String content, @RequestParam(value = "type", required = false) Integer type, @RequestParam(value = "departmentId",required = false) Integer departmentId) {
+    public Result send(@RequestParam(value = "content", required = false)String content,
+                       @RequestParam(value = "departmentId",required = false) Integer departmentId) {
         try {
             return adminHandle.addMsg(content, departmentId);
         } catch (Exception e) {
@@ -41,7 +41,8 @@ public class MessageSendController {
     }
 
     @RequestMapping(value = "/select/{type}")
-    public Result select(@PathVariable(value = "type")String type, @RequestParam(value = "page") int page) {
+    public Result select(@PathVariable(value = "type")String type,
+                         @RequestParam(value = "page") int page) {
         try {
             if (type == null)
                 throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
@@ -55,6 +56,26 @@ public class MessageSendController {
             logger.error("非法访问");
             return new Result(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e2) {
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 删除消息
+     * @param departmentId
+     * @param version
+     * @return
+     */
+    @RequestMapping(value = "/deleteMsg")
+    public Result deleteMsg(@RequestParam(value = "departmentId", required = false) Integer departmentId,
+                            @RequestParam(value = "version", required = false) Integer version) {
+        try {
+            if (departmentId == null)
+                adminHandle.deleteTeacherMsg(version);
+            else
+                adminHandle.deleteStudentMsg(departmentId, version);
+            return new Result(Dictionary.SUCCESS);
+        } catch (Exception e) {
             return new Result(Dictionary.SYSTEM_ERROR);
         }
     }

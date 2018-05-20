@@ -41,8 +41,8 @@
             phone
         FROM teacher
     </select>
-    <select id="loginCheck" resultType="com.cchl.entity.Teacher">
-        SELECT count(id)
+    <select id="loginCheck" resultType="java.lang.Integer">
+        SELECT user_id
         FROM teacher
         WHERE id = #{id} AND password = #{password}
     </select>
