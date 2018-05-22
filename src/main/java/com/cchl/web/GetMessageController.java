@@ -2,12 +2,12 @@ package com.cchl.web;
 
 import com.cchl.dto.Result;
 import com.cchl.eumn.Dictionary;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-@Controller
+@RestController
 @RequestMapping(value = "/msg")
 public class GetMessageController {
 

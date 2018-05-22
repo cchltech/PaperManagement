@@ -4,17 +4,12 @@ import com.cchl.dto.Result;
 import com.cchl.entity.Student;
 import com.cchl.entity.Teacher;
 import com.cchl.eumn.Dictionary;
-import com.cchl.execption.UnknownIdentity;
 import com.cchl.service.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +18,7 @@ import javax.servlet.http.HttpSession;
 /**
  * 注册与登录控制
  */
-@Controller
+@RestController
 public class LoginController {
 
     @Autowired

@@ -7,16 +7,12 @@ import com.cchl.service.admin.AdminHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 管理员为未选到体的学生进行题目调配
  */
-@Controller
+@RestController
 @RequestMapping(value = "/allocate")
 public class AllocateController {
 

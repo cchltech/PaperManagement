@@ -5,16 +5,12 @@ import com.cchl.entity.Title;
 import com.cchl.eumn.Dictionary;
 import com.cchl.service.admin.TitleHandle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 论文题目控制类
  */
-@Controller
+@RestController
 public class TitleController {
 
     @Autowired
