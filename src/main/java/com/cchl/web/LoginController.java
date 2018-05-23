@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpSession;
 /**
  * 注册与登录控制
  */
-@RestController
+@Controller
 public class LoginController {
 
     @Autowired
@@ -47,9 +48,9 @@ public class LoginController {
     /**
      * @return 跳转到注册页面
      */
-    @RequestMapping(value = "/register")
+    @RequestMapping(value = "/registry")
     public String register() {
-        return "register";
+        return "registry";
     }
 
     /**
