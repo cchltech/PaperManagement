@@ -17,4 +17,7 @@
     select id, name
     from major
   </select>
+  <select id="selectByDepartmentId" resultType="com.cchl.entity.Major">
+      SELECT id, name, department_id FROM major WHERE department_id = #{departmentId}
+  </select>
 </mapper>

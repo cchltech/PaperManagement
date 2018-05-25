@@ -38,7 +38,7 @@
     </select>
     <insert id="insert">
         INSERT IGNORE INTO student VALUES
-            (#{id}, #{name}, #{password}, #{sex}, #{email}, #{departmentId}, #{grade}, #{majorId}, #{userId}, #{phone})
+            (#{id}, #{name}, #{password}, #{sex}, #{phone}, #{email}, #{departmentId}, #{grade}, #{majorId}, #{userId})
     </insert>
     <select id="loginCheck" resultType="java.lang.Integer">
         SELECT s.user_id

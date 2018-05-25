@@ -1,19 +1,14 @@
 package com.cchl.service.student;
 
-import com.cchl.dao.ChoiceTitleMapper;
-import com.cchl.dao.PaperPlanMapper;
-import com.cchl.dao.StudentMapper;
-import com.cchl.dao.TitleMapper;
+import com.cchl.dao.*;
 import com.cchl.dto.Result;
-import com.cchl.entity.ChoiceTitle;
-import com.cchl.entity.StudentMessage;
-import com.cchl.entity.Title;
-import com.cchl.entity.UserMsgRecord;
+import com.cchl.entity.*;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.NumberFullException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -42,6 +37,8 @@ public class StudentHandle {
     private TitleMapper titleMapper;
     @Autowired
     private PaperPlanMapper paperPlanMapper;
+    @Autowired
+    private MajorMapper majorMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -148,5 +145,15 @@ public class StudentHandle {
                     UserMsgRecord.class);
         }
         return list;
+    }
+
+    /**
+     * 添加缓存项，免得过多的访问数据库
+     * @param departmentId
+     * @return
+     */
+    @Cacheable("departmentId")
+    public List<Major> selectByDepartmentId(Long departmentId) {
+        return majorMapper.selectByDepartmentId(departmentId);
     }
 }

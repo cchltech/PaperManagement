@@ -6,7 +6,7 @@ CREATE TABLE paper_plan(
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   title_id INT COMMENT '所属题目',
   PRIMARY KEY (id)
-)CHARSET=utf8 AUTO_INCREMENT = 1000 COMMENT '论文计划表';
+)CHARACTER SET=utf8 AUTO_INCREMENT = 1000 COMMENT '论文计划表';
 # 账户表
 CREATE TABLE user(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -39,14 +39,14 @@ CREATE TABLE department(
   id INT NOT NULL ,
   name VARCHAR(30) ,
   PRIMARY KEY (id)
-)CHARSET = utf8 COMMENT '学院表';
+)CHARACTER SET = utf8 COMMENT '学院表';
 # 专业表
 CREATE TABLE major(
   id INT NOT NULL ,
   name VARCHAR(30) ,
   department_id INT NOT NULL ,
   PRIMARY KEY (id)
-)CHARSET = utf8 COMMENT '专业表';
+)CHARACTER SET = utf8 COMMENT '专业表';
 ALTER TABLE major ADD CONSTRAINT fk_major_department FOREIGN KEY major(department_id) REFERENCES department(id);
 # 学生表
 CREATE TABLE student(
@@ -61,7 +61,7 @@ CREATE TABLE student(
   major_id INT NOT NULL COMMENT '专业对应的id，关联专业表',
   user_id INT NOT NULL ,
   PRIMARY KEY (id)
-)CHARSET = utf8 COMMENT '学生表';
+)CHARACTER SET = utf8 COMMENT '学生表';
 # 添加外键约束
 ALTER TABLE student ADD CONSTRAINT fk_student_user FOREIGN KEY student(user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 ALTER TABLE student ADD CONSTRAINT fk_student_department FOREIGN KEY student(department_id) REFERENCES department(id)  ON DELETE CASCADE ON UPDATE CASCADE ;
@@ -77,7 +77,7 @@ CREATE TABLE teacher(
   department_id INT NOT NULL COMMENT '所属学院',
   user_id INT NOT NULL COMMENT '账户编号',
   PRIMARY KEY (id)
-)CHARSET = utf8 COMMENT '教师表';
+)CHARACTER SET = utf8 COMMENT '教师表';
 # 添加外键约束
 ALTER TABLE teacher ADD CONSTRAINT fk_teacher_user FOREIGN KEY teacher(user_id) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 ALTER TABLE teacher ADD CONSTRAINT fk_teacher_department FOREIGN KEY teacher(department_id) REFERENCES department(id) ON DELETE CASCADE ON UPDATE CASCADE ;
@@ -149,7 +149,7 @@ CREATE TABLE evaluate(
   target INT NOT NULL COMMENT '被评价人' ,
   paper_plan_id INT NOT NULL COMMENT '管理论文计划的id' ,
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '评价表，用于记录师生之间互评的数据';
+)AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COMMENT '评价表，用于记录师生之间互评的数据';
 # 添加外键约束
 ALTER TABLE evaluate ADD CONSTRAINT fk_evaluator_user FOREIGN KEY evaluate(evaluator) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 ALTER TABLE evaluate ADD CONSTRAINT fk_target_user FOREIGN KEY evaluate(target) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE ;
@@ -163,7 +163,7 @@ CREATE TABLE timer(
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
   target_type TINYINT DEFAULT 0 COMMENT '设置此任务面向的用户类型，默认为0，表示向所有用户开放' ,
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '专业管理院可以设置时段让用户进行某些特定操作，如规定学生在一定时间内完成选题等，此表用于记录';
+)AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COMMENT '专业管理院可以设置时段让用户进行某些特定操作，如规定学生在一定时间内完成选题等，此表用于记录';
 # 选题表
 CREATE TABLE choice_title(
   id INT AUTO_INCREMENT NOT NULL ,
@@ -171,5 +171,6 @@ CREATE TABLE choice_title(
   end_time DATETIME NOT NULL COMMENT '结束时间',
   department_id INT NOT NULL COMMENT '面向的学院',
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '选题表，管理员为各个学院设置选题时间';
+)AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COMMENT '选题表，管理员为各个学院设置选题时间';
 ALTER TABLE choice_title ADD CONSTRAINT fk_choice_department FOREIGN KEY choice_title(id) REFERENCES department(id);
+

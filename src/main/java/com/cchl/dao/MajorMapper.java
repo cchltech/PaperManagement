@@ -10,4 +10,6 @@ public interface MajorMapper {
     int insert(Major record);
 
     List<Major> selectAll();
+
+    List<Major> selectByDepartmentId(Long departmentId);
 }

@@ -4,7 +4,9 @@ import com.cchl.dto.Result;
 import com.cchl.entity.Student;
 import com.cchl.entity.Teacher;
 import com.cchl.eumn.Dictionary;
+import com.cchl.execption.DataInsertException;
 import com.cchl.service.LoginService;
+import com.cchl.service.student.StudentHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.zip.DataFormatException;
 
 /**
  * 注册与登录控制
@@ -33,6 +37,9 @@ public class LoginController {
     @Autowired
     @Qualifier(value = "admin")
     private LoginService adminLoginService;
+
+    @Autowired
+    private StudentHandle studentHandle;
 
     //日志记录
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -55,26 +62,41 @@ public class LoginController {
 
     /**
      * 学生注册
-     *
-     * @param student 学生实体类
      * @return 返回结果
      */
     @RequestMapping(value = "/studentRegister", method = RequestMethod.POST)
-    public Result studentRegister(@RequestBody(required = false) Student student) {
+    @ResponseBody
+    public Result studentRegister(HttpServletRequest request) {
         try {
+            //获取学生实体信息
+            Student student = new Student();
+            Map<String, String[]> map = request.getParameterMap();
+            student.setId(Long.parseLong(map.get("id")[0]));
+            student.setName(map.get("name")[0]);
+            student.setPassword(map.get("password")[0]);
+            student.setSex(Byte.valueOf(map.get("sex")[0]));
+            student.setEmail(map.get("email")[0]);
+            student.setDepartmentId(Integer.valueOf(map.get("department")[0]));
+            student.setGrade(Byte.valueOf(map.get("grade")[0]));
+            student.setMajorId(Integer.valueOf(map.get("major")[0]));
+            student.setPhone(Long.valueOf(map.get("phone")[0]));
+            logger.info("注册的学生信息：{}", student);
+//            return new Result(Dictionary.SUCCESS);
             //验证信息是否有缺失
-            if (student != null
-                    && student.getId() != null && student.getName() != null
+            if (student.getId() != null && student.getName() != null
                     && student.getPassword() != null && student.getSex() != null
                     && student.getDepartmentId() != null && student.getGrade() != null
                     && student.getMajorId() != null && student.getPhone() != null) {
-                logger.info("注册成功");
                 //执行注册操作
                 return studentLoginService.studentRegister(student);
             } else {
                 logger.info("缺少必要信息");
                 return new Result(Dictionary.DATA_LOST);
             }
+        } catch (NumberFormatException e1) {
+            return new Result(Dictionary.ILLEGAL);
+        } catch (DataInsertException e2) {
+            return new Result(Dictionary.DATA_INSERT_FAIL);
         } catch (Exception e) {
             return new Result(Dictionary.SYSTEM_ERROR);
         }
@@ -82,14 +104,24 @@ public class LoginController {
 
     /**
      * 教师注册
-     * @param teacher 教师实体类
+     *
      * @return 返回结果
      */
     @RequestMapping(value = "/teacherRegister", method = RequestMethod.POST)
-    public Result teacherRegister(@RequestBody(required = false) Teacher teacher) {
+    public Result teacherRegister(HttpServletRequest request) {
         try {
-            if (teacher != null
-                    && teacher.getId() != null && teacher.getName() != null
+            //获取教师实体信息
+            Teacher teacher = new Teacher();
+            Map<String, String[]> map = request.getParameterMap();
+            teacher.setId(Long.parseLong(map.get("id")[0]));
+            teacher.setName(map.get("name")[0]);
+            teacher.setPassword(map.get("password")[0]);
+            teacher.setSex(Byte.valueOf(map.get("sex")[0]));
+            teacher.setEmail(map.get("email")[0]);
+            teacher.setDepartmentId(Integer.valueOf(map.get("department")[0]));
+            teacher.setPhone(Long.valueOf(map.get("phone")[0]));
+            logger.info("注册的教师信息：{}", teacher);
+            if (teacher.getId() != null && teacher.getName() != null
                     && teacher.getPassword() != null && teacher.getSex() != null
                     && teacher.getDepartmentId() != null && teacher.getPhone() != null) {
                 logger.info("注册成功");
@@ -99,6 +131,8 @@ public class LoginController {
                 logger.info("缺少必要信息");
                 return new Result(Dictionary.DATA_LOST);
             }
+        } catch (NumberFormatException e1) {
+            return new Result(Dictionary.ILLEGAL);
         } catch (Exception e) {
             return new Result(Dictionary.SYSTEM_ERROR);
         }
@@ -155,5 +189,13 @@ public class LoginController {
             model.setViewName("error");
             return model;
         }
+    }
+
+    @RequestMapping(value = "/majorList")
+    @ResponseBody
+    public Result majorList(@RequestParam(value = "departmentId", required = false)Long departmentId) {
+        if (departmentId == null)
+            return new Result(Dictionary.ILLEGAL);
+        return new Result<>(true, studentHandle.selectByDepartmentId(departmentId));
     }
 }

@@ -7,6 +7,9 @@ import com.cchl.eumn.Dictionary;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
 @Controller
 public class TestController {
 
@@ -15,15 +18,22 @@ public class TestController {
         return "registry";
     }
 
-    @RequestMapping(value = "/test_student")
-    public Result student(@RequestParam(value = "data", required = false)Student student) {
-        System.out.println(student);
+    @PostMapping(value = "/test_student")
+    @ResponseBody
+    public Result student(HttpServletRequest request) {
+        Map<String, String[]> map = request.getParameterMap();
+        for (Map.Entry<String,String[]> entry:map.entrySet()){
+            System.out.print(entry.getKey() + " ");
+        }
         return new Result(Dictionary.SUCCESS);
     }
 
     @RequestMapping(value = "/test_teacher")
-    public Result teacher(@RequestParam(value = "data", required = false)Teacher teacher) {
-        System.out.println(teacher);
+    public Result teacher(HttpServletRequest request) {
+        Map<String, String[]> map = request.getParameterMap();
+        for (Map.Entry<String,String[]> entry:map.entrySet()){
+            System.out.print(entry.getKey() + " ");
+        }
         return new Result(Dictionary.SUCCESS);
     }
 
