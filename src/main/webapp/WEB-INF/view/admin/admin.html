@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <h1 class="layui-icon-fonts" style="color: white; font-size: 30px; margin-left: 30px; float: left">论文管理系统</h1>
+        <ul class="layui-nav" style="float: right">
+            <li class="layui-nav-item">
+                <a href="" id="msg">新消息</a>
+            </li>
+            <!--<li class="layui-nav-item">-->
+                <!--<a href="">个人中心-->
+                    <!--<span class="layui-badge-dot"></span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <li class="layui-nav-item">
+                <a href="">帮助</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <div class="layui-side layui-bg-black">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test" style="height: 100%">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:">系统审核</a>
+                    <dl class="layui-nav-child">
+                        <dd><a>注册审核</a></dd>
+                        <dd><a>文件审核</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:">相关操作</a>
+                    <dl class="layui-nav-child">
+                        <dd><a>消息推送</a></dd>
+                        <dd><a>定时任务</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:">其他</a>
+                    <dl class="layui-nav-child">
+                        <dd><a>文档查看</a></dd>
+                        <dd></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <div class="layui-tab layui-tab-brief">
+            <div class="layui-body layui-tab-content" id="show">
+                <!--<iframe src="https://www.baidu.com" width="100%" height="100%" frameborder="no"></iframe>-->
+            </div>
+        </div>
+    </div>
+    <div class="layui-footer">
+        <div class="layui-main">
+            <p>
+                第七小组提供技术支持
+            </p>
+        </div>
+    </div>
+</div>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+        //一些事件监听
+        element.on('nav(test)', function (data) {
+            var show = $('#show');
+            var val = data.init().context.innerText;
+            if (val === '选题调配') {
+                show.empty();
+                show.append('<iframe src="allocation.html" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+            } else if (val === '注册审核') {
+                show.empty();
+                show.append('<iframe src="examine.html" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+            } else if (val === '定时任务') {
+                show.empty();
+                show.append('<iframe src="timer.html" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+            }
+        });
+        //消息通知
+        $('#msg').append('<span class="layui-badge">8</span>')
+    });
+</script>
+</body>
+</html>
