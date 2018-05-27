@@ -52,4 +52,7 @@
         WHERE t.id = #{id} AND t.password = #{password}
         AND user.id = t.id AND user.status = 1
     </select>
+    <select id="selectDepartmentIdByUserId" resultType="java.lang.Integer">
+        SELECT department_id FROM teacher WHERE user_id = #{userId}
+    </select>
 </mapper>

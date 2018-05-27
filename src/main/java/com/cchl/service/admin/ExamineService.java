@@ -14,9 +14,10 @@ public interface ExamineService {
      * 查找总页数
      * @param type 简化一下代码，通过类型判定查找那张表的总页数
      *             0:user  1:title
+     * @param userId
      * @return 结果集
      */
-    int totalNumber(int type);
+    int totalNumber(int type, int userId);
 
     /**
      * @param page 第几页
@@ -36,7 +37,7 @@ public interface ExamineService {
     /**
      * @return 返回待审核的题目申请表
      */
-    List<Title> title(int page, int limit);
+    List<Title> title(int page, int limit, int userId);
 
     /**
      * 题目审核结果集

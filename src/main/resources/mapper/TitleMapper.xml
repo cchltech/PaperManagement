@@ -31,18 +31,22 @@
             WHERE status = #{status}
         </if>
     </select>
-    <select id="selectUnaudited" resultMap="title">
+    <select id="selectByStatus" resultMap="title">
         SELECT
             t.id,
             content,
             instruction,
             create_time,
             total_number,
+            has_select,
             department_id,
             d.id   department_id,
             d.name department_name
         FROM title t, department d
-        WHERE status = 0 AND t.department_id = d.id
+        WHERE t.department_id = d.id AND department_id = #{departmentId}
+            <if test="!all">
+                AND status = #{status}
+            </if>
         ORDER BY t.id DESC
         LIMIT #{page}, #{limit}
     </select>

@@ -47,10 +47,5 @@ public class TestController {
         return "admin/titleExamine";
     }
 
-    @RequestMapping(value = "/data/test")
-    @ResponseBody
-    public String test() {
-        return "{\"code\":0,\"msg\":\"\",\"count\":1000,\"data\":[{\"id\":1000,\"content\":\"java的未来\",\"instruction\":\"浅谈Java未来的发展方向\",\"status\":null,\"createTime\":1527289373000,\"totalNumber\":0,\"department\":null,\"has_select\":0}]}";
-    }
 
 }

@@ -1,11 +1,14 @@
 package com.cchl.service.admin.Ipml;
 
+import com.cchl.dao.TeacherMapper;
 import com.cchl.dao.TitleMapper;
 import com.cchl.dao.UserMapper;
 import com.cchl.entity.Title;
 import com.cchl.entity.User;
 import com.cchl.eumn.Dictionary;
+import com.cchl.execption.IllegalVisitException;
 import com.cchl.execption.SystemException;
+import com.cchl.service.InfoService;
 import com.cchl.service.admin.ExamineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,16 +26,23 @@ public class ExamineServiceImpl implements ExamineService {
     private UserMapper userMapper;
     @Autowired
     private TitleMapper titleMapper;
+    @Autowired
+    private TeacherMapper teacherMapper;
+    @Autowired
+    private InfoService infoService;
 
     @Override
-    public int totalNumber(int type) {
+    public int totalNumber(int type, int userId) {
         int result = 0;
+        Integer departmentId = infoService.selectDepartmentId(userId);
+        if (departmentId == null)
+            throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
         switch (type) {
             case 0:
                 result = userMapper.totalNumber(false, (byte) 0);
                 break;
             case 1:
-                result = titleMapper.totalNumber(false, (byte) 0);
+                result = titleMapper.totalNumber(false, (byte) 0, departmentId);
                 break;
             default:
                 break;
@@ -64,9 +74,14 @@ public class ExamineServiceImpl implements ExamineService {
     }
 
     @Override
-    public List<Title> title(int page, int limit) {
+    public List<Title> title(int page, int limit, int userId) {
         try {
-            return titleMapper.selectUnaudited(page, limit);
+            //查找用户的所属学院id
+            Integer departmentId = teacherMapper.selectDepartmentIdByUserId(userId);
+            if (departmentId == null) {
+                throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
+            }
+            return titleMapper.selectByStatus(page, limit, 0, false, departmentId);
         } catch (Exception e) {
             throw new SystemException(Dictionary.SYSTEM_ERROR);
         }

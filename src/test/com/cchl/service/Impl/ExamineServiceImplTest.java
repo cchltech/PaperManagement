@@ -21,9 +21,9 @@ public class ExamineServiceImplTest {
     @Test
     public void totalNumber() throws Exception {
         //output 3
-        System.out.println(examineService.totalNumber(0));
+        System.out.println(examineService.totalNumber(0,1));
         //output 1
-        System.out.println(examineService.totalNumber(1));
+        System.out.println(examineService.totalNumber(1,1));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class ExamineServiceImplTest {
 
     @Test
     public void title() throws Exception {
-        List<Title> results = examineService.title(0, 10);
+        List<Title> results = examineService.title(0, 10,1);
         for (Title title:results) {
             System.out.println(title);
         }
