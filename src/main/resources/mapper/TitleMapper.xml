@@ -27,7 +27,7 @@
     </select>
     <select id="totalNumber" resultType="java.lang.Integer">
         SELECT count(id) FROM title
-        <if test="all">
+        <if test="!all">
             WHERE status = #{status}
         </if>
     </select>
@@ -39,10 +39,11 @@
             create_time,
             total_number,
             department_id,
-            d.id department_id,
+            d.id   department_id,
             d.name department_name
         FROM title t, department d
         WHERE status = 0 AND t.department_id = d.id
+        ORDER BY t.id DESC
         LIMIT #{page}, #{limit}
     </select>
     <update id="updateStatus">
@@ -63,11 +64,11 @@
             create_time,
             has_select,
             total_number,
-            d.id department_id,
+            d.id   department_id,
             d.name department_name
         FROM title t, department d
         WHERE t.has_select <![CDATA[ < ]]> t.total_number
-            AND t.status = 1 AND d.id = t.department_id
+              AND t.status = 1 AND d.id = t.department_id
         ORDER BY department_id
     </select>
 </mapper>
