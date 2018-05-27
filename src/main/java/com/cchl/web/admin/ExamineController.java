@@ -1,6 +1,8 @@
 package com.cchl.web.admin;
 
+import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
+import com.cchl.entity.Title;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.SystemException;
 import com.cchl.service.admin.ExamineService;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 审查控制类
  */
@@ -21,18 +25,6 @@ public class ExamineController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * 每页条数
-     */
-    private static final int NUMBER = 10;
-    /**
-     * 待审核用户总页数
-     */
-    private int userTotalPage;
-    /**
-     * 待审核题目总页数
-     */
-    private int titleTotalPage;
 
     /**
      * 注入审核处理的bean
@@ -45,21 +37,12 @@ public class ExamineController {
      *
      * @return 结果集
      */
-    @RequestMapping("/use")
-    public Result User(@RequestParam(value = "page", required = false) Integer page) {
+    @RequestMapping("/user")
+    public DataWithPage User(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
         try {
-            //查找总页数，最小值为1
-            if (userTotalPage == 0)
-                userTotalPage = examineService.totalNumber(0) / NUMBER + 1;
-            //初始化页数
-            if (page == null)
-                page = 1;
-                //判断页数是否大于总页数
-            else if (page > userTotalPage)
-                return new Result(Dictionary.NO_MORE_DATA);
-            return new Result<>(true, examineService.users((page - 1) * NUMBER, NUMBER));
+            return new DataWithPage<>(0, examineService.totalNumber(0), examineService.users((page - 1) * limit, limit));
         } catch (Exception e) {
-            throw new SystemException(Dictionary.SYSTEM_ERROR);
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }
     }
 
@@ -84,20 +67,13 @@ public class ExamineController {
      * @return 返回待审核的题目列
      */
     @RequestMapping(value = "/title")
-    public Result title(@RequestParam(value = "page", required = false) Integer page) {
+    public DataWithPage title(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
+        System.out.println(page+" "+limit);
         try {
-            //查找总页数，最小值为1
-            if (titleTotalPage == 0)
-                titleTotalPage = examineService.totalNumber(1) / NUMBER + 1;
-            //初始化页数
-            if (page == null)
-                page = 1;
-                //判断页数是否大于总页数
-            else if (page > titleTotalPage)
-                return new Result(Dictionary.NO_MORE_DATA);
-            return new Result<>(true, examineService.title((page - 1) * NUMBER, NUMBER));
+            List<Title> list = examineService.title((page-1)*limit, limit);
+            return new DataWithPage<>(0, examineService.totalNumber(1), list);
         } catch (Exception e) {
-            return new Result(Dictionary.SYSTEM_ERROR);
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }
     }
 

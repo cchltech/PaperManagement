@@ -31,6 +31,7 @@
                     <a href="javascript:">系统审核</a>
                     <dl class="layui-nav-child">
                         <dd><a>注册审核</a></dd>
+                        <dd><a>题目审核</a></dd>
                         <dd><a>文件审核</a></dd>
                     </dl>
                 </li>
@@ -74,13 +75,16 @@
             var val = data.init().context.innerText;
             if (val === '选题调配') {
                 show.empty();
-                show.append('<iframe src="allocation.html" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/examine/user" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             } else if (val === '注册审核') {
                 show.empty();
                 show.append('<iframe src="examine.html" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             } else if (val === '定时任务') {
                 show.empty();
                 show.append('<iframe src="timer.html" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+            } else if (val === '题目审核') {
+                show.empty();
+                show.append('<iframe src="/titleExamine" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             }
         });
         //消息通知

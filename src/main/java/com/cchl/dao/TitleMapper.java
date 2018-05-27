@@ -20,7 +20,7 @@ public interface TitleMapper {
     /**
      * 查找未审核的题目集合
      */
-    List<Title> selectUnaudited(int page, int number);
+    List<Title> selectUnaudited(@Param(value = "page") int page, @Param(value = "limit") int limit);
 
     /**
      * @param all 是否需要查找所有条数

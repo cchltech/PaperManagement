@@ -44,7 +44,7 @@ public class ExamineServiceImplTest {
 
     @Test
     public void title() throws Exception {
-        List<Title> results = examineService.title(0,10);
+        List<Title> results = examineService.title(0, 10);
         for (Title title:results) {
             System.out.println(title);
         }

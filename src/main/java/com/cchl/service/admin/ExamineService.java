@@ -34,11 +34,9 @@ public interface ExamineService {
     Integer[] resultUser(Integer[] id, Byte[] status);
 
     /**
-     * @param page 第几页
-     * @param number 每页条数
      * @return 返回待审核的题目申请表
      */
-    List<Title> title(int page, int number);
+    List<Title> title(int page, int limit);
 
     /**
      * 题目审核结果集
