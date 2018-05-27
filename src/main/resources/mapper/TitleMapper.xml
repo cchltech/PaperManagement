@@ -27,8 +27,9 @@
     </select>
     <select id="totalNumber" resultType="java.lang.Integer">
         SELECT count(id) FROM title
+        WHERE department_id = #{departmentId}
         <if test="!all">
-            WHERE status = #{status}
+            AND status = #{status}
         </if>
     </select>
     <select id="selectByStatus" resultMap="title">
