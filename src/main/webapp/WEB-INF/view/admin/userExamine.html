@@ -34,7 +34,7 @@
             var data = obj.data;
             if (obj.event === 'agree') {
                 layer.confirm('确定同意该用户的审核吗', function(index){
-                    $.post('/examine/examineTitle', {ids: data.id, status: 1}, function (data) {
+                    $.post('/examine/examineUser', {ids: data.id, status: 1}, function (data) {
                         if (data.success) {
                             layer.msg('已通过审核');
                             obj.del();
