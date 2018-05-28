@@ -9,17 +9,15 @@ import com.cchl.service.admin.ExamineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
  * 审查控制类
  */
-@RestController
+@Controller
 @RequestMapping(value = "/examine")
 public class ExamineController {
 
@@ -38,6 +36,7 @@ public class ExamineController {
      * @return 结果集
      */
     @RequestMapping("/user")
+    @ResponseBody
     public DataWithPage User(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
         try {
             return new DataWithPage<>(0, examineService.totalNumber(0), examineService.users((page - 1) * limit, limit));
@@ -47,6 +46,7 @@ public class ExamineController {
     }
 
     @RequestMapping(value = "/examineUser", method = RequestMethod.POST)
+    @ResponseBody
     public Result examineUser(@RequestParam(value = "ids", required = false) Integer[] ids, @RequestParam("status") Byte[] status) {
         try {
             if (ids != null && ids.length > 0 && status != null && status.length > 0) {
@@ -67,6 +67,7 @@ public class ExamineController {
      * @return 返回待审核的题目列
      */
     @RequestMapping(value = "/title")
+    @ResponseBody
     public DataWithPage title(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
         System.out.println(page+" "+limit);
         try {
@@ -78,6 +79,7 @@ public class ExamineController {
     }
 
     @RequestMapping(value = "/examineTitle")
+    @ResponseBody
     public Result examineTitle(@RequestParam(value = "ids", required = false) Integer[] ids, @RequestParam("status") Byte[] status) {
         try {
             if (ids != null && ids.length > 0 && status != null && status.length > 0) {
@@ -93,5 +95,11 @@ public class ExamineController {
             return new Result<>(Dictionary.SYSTEM_ERROR);
         }
     }
+
+    /**
+     * 跳转到注册审核界面
+     */
+    @RequestMapping(value = "/examineUser")
+    public String String() {return "admin/userExamine";}
 
 }

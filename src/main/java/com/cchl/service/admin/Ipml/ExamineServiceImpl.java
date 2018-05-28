@@ -43,7 +43,12 @@ public class ExamineServiceImpl implements ExamineService {
     @Override
     public List<User> users(int page, int limit) {
         try {
-            return userMapper.selectUnaudited(page, limit);
+            List<User> users = userMapper.selectUnaudited(page, limit);
+            for (User user : users) {
+                user.happyGive();
+                logger.info(user.toString());
+            }
+            return users;
         } catch (Exception e) {
             logger.error("异常信息：{}", e.getMessage());
             throw new SystemException(Dictionary.SYSTEM_ERROR);

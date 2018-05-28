@@ -19,6 +19,15 @@ public class User {
     //添加教师实体
     private Teacher teacher;
 
+    //名字
+    private String name;
+    //学号/工号
+    private long number;
+    //学院
+    private String departmentName;
+    //身份
+    private String identity;
+
     @Override
     public String toString() {
         return "User{" +
@@ -28,6 +37,10 @@ public class User {
                 ", createTime=" + createTime +
                 ", student=" + student +
                 ", teacher=" + teacher +
+                ", name='" + name + '\'' +
+                ", number=" + number +
+                ", departmentName='" + departmentName + '\'' +
+                ", identity='" + identity + '\'' +
                 '}';
     }
 
@@ -79,4 +92,50 @@ public class User {
         this.createTime = createTime;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getNumber() {
+        return number;
+    }
+
+    public void setNumber(long number) {
+        this.number = number;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
+    }
+
+    public void happyGive () {
+        if(type == 1){
+            this.name = this.teacher.getName();
+            this.number = this.teacher.getId();
+            this.identity = "教师";
+            this.departmentName = this.teacher.getDepartment().getName();
+        }
+        else {
+            this.name = this.student.getName();
+            this.number = this.student.getId();
+            this.identity = "学生";
+            this.departmentName = this.student.getDepartment().getName();
+        }
+    }
 }

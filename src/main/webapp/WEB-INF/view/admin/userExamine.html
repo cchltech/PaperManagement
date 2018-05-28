@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册审核页面</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>注册待审列表</legend>
+</fieldset>
+<table class="layui-table" lay-data="{url:'/examine/user',page:true}" lay-filter="title" style="width: 80%">
+    <thead>
+    <tr>
+        <th lay-data="{field: 'id', align:'center', fixed: true, templet:'<div>{{d.number}}</div>'}">学号/工号</th>
+        <th lay-data="{field: 'type', align:'center', templet:'<div>{{d.identity}}</div>'}">身份</th>
+        <th lay-data="{field: 'status', align:'center', templet:'<div>{{d.name}}</div>'}">姓名</th>
+        <th lay-data="{field: 'createTime', align:'center', templet:'<div>{{d.departmentName}}</div>'}">学院</th>
+        <th lay-data="{field: 'status', align:'center', templet:'<div>{{d.createTime}}</div>'}">注册时间</th>
+        <th lay-data="{fixed: 'right', align:'center', toolbar: '#barDemo'}">操作</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="agree">同意</a>
+</script>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        //监听工具条
+        table.on('tool(title)', function(ob){
+            var data = ob.data;
+            if(ob.event === 'agree'){
+                layer.msg('ID：'+ data.id + ' 的查看操作');
+            }
+        });
+    });
+</script>
+</body>
+</html>
