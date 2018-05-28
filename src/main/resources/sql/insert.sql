@@ -15,3 +15,6 @@ INSERT INTO title(content, instruction, status, department_id, total_number, has
   ('小米保健酒的研制及营养分析','小米保健酒的研制及营养分析,小米保健酒的研制及营养分析,小米保健酒的研制及营养分析',0,1003,10,0),
   ('简单平面三角剖分图','简单平面三角剖分图,简单平面三角剖分图,简单平面三角剖分图',0,1002,10,0),
   ('解析几何中的参数观点','解析几何中的参数观点,解析几何中的参数观点,解析几何中的参数观点',1,1001,10,0);
+INSERT INTO user(status, type) VALUES (1,1);
+INSERT INTO teacher (id, name, password, sex, phone, email, department_id, user_id) VALUES
+  (1001, '管理员', '123456', 1, 10086, '123@qq.com', 1001, 1007);

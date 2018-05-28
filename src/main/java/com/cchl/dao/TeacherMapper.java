@@ -16,4 +16,6 @@ public interface TeacherMapper {
     Integer loginCheck(@Param(value = "id") Long id, @Param(value = "password") String password);
 
     int isTeacher(Long id);
+
+    Integer selectDepartmentIdByUserId(int userId);
 }

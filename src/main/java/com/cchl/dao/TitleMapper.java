@@ -20,13 +20,13 @@ public interface TitleMapper {
     /**
      * 查找未审核的题目集合
      */
-    List<Title> selectUnaudited(@Param(value = "page") int page, @Param(value = "limit") int limit);
+    List<Title> selectByStatus(@Param(value = "page") int page, @Param(value = "limit") int limit, @Param(value = "status") int status, @Param(value = "all")boolean all, @Param(value = "departmentId") int DepartmentId);
 
     /**
      * @param all 是否需要查找所有条数
      * @param status 当all为false时，传如状态值，true时不作要求因为status不参与查询
      */
-    int totalNumber(@Param(value = "all") boolean all, @Param(value = "status") byte status);
+    int totalNumber(@Param(value = "all") boolean all, @Param(value = "status") byte status, @Param(value = "departmentId") int departmentId);
 
     /**
      * 按学院查找所有通过审核的题目

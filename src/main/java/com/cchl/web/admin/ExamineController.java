@@ -4,7 +4,7 @@ import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
 import com.cchl.entity.Title;
 import com.cchl.eumn.Dictionary;
-import com.cchl.execption.SystemException;
+import com.cchl.execption.IllegalVisitException;
 import com.cchl.service.admin.ExamineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +37,25 @@ public class ExamineController {
      */
     @RequestMapping("/user")
     @ResponseBody
-    public DataWithPage User(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
+    public DataWithPage User(@RequestParam(value = "page", required = false) Integer page,
+                             @RequestParam(value = "limit", required = false) Integer limit,
+                             @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
-            return new DataWithPage<>(0, examineService.totalNumber(0), examineService.users((page - 1) * limit, limit));
+            //TODO 测试用的userId
+            userId = 1007;
+            if (userId == null)
+                return new DataWithPage(Dictionary.ILLEGAL_VISIT);
+            return new DataWithPage<>(0, examineService.totalNumber(0, userId), examineService.users((page - 1) * limit, limit));
+        } catch (IllegalVisitException e1) {
+            return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e) {
             return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/titleExamine")
+    public String titleExamine() {
+        return "admin/titleExamine";
     }
 
     @RequestMapping(value = "/examineUser", method = RequestMethod.POST)
@@ -68,11 +81,17 @@ public class ExamineController {
      */
     @RequestMapping(value = "/title")
     @ResponseBody
-    public DataWithPage title(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
-        System.out.println(page+" "+limit);
+    public DataWithPage title(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit, @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
-            List<Title> list = examineService.title((page-1)*limit, limit);
-            return new DataWithPage<>(0, examineService.totalNumber(1), list);
+            //TODO 测试用的userId
+            userId = 1007;
+            if (userId == null) {
+                return new DataWithPage(Dictionary.DATA_LOST);
+            }
+            List<Title> list = examineService.title((page-1)*limit, limit, userId);
+            return new DataWithPage<>(0, examineService.totalNumber(1, userId), list);
+        } catch (IllegalVisitException e1) {
+            return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e) {
             return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }
