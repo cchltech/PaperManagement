@@ -1,5 +1,6 @@
 package com.cchl.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -27,6 +28,8 @@ public class User {
     private String departmentName;
     //身份
     private String identity;
+    //注册时间
+    private String registerDate;
 
     @Override
     public String toString() {
@@ -41,6 +44,7 @@ public class User {
                 ", number=" + number +
                 ", departmentName='" + departmentName + '\'' +
                 ", identity='" + identity + '\'' +
+                ", registerDate='" + registerDate + '\'' +
                 '}';
     }
 
@@ -124,18 +128,35 @@ public class User {
         this.identity = identity;
     }
 
+    public String getRegisterDate() {
+        return registerDate;
+    }
+
+    public void setRegisterDate(String registerDate) {
+        this.registerDate = registerDate;
+    }
+
     public void happyGive () {
         if(type == 1){
             this.name = this.teacher.getName();
             this.number = this.teacher.getId();
             this.identity = "教师";
             this.departmentName = this.teacher.getDepartment().getName();
+            this.registerDate = switchTime(this.createTime);
         }
         else {
             this.name = this.student.getName();
             this.number = this.student.getId();
             this.identity = "学生";
             this.departmentName = this.student.getDepartment().getName();
+            this.registerDate = switchTime(this.createTime);
         }
+    }
+    //时间格式的转换函数，毫秒->yyyy-MM-dd HH:mm:ss
+    public String switchTime(Date createTime) {
+        createTime = this.createTime;
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String switchTime = format.format(createTime);
+        return switchTime;
     }
 }

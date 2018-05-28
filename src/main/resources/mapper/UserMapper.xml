@@ -25,6 +25,7 @@
         FROM user u
         LEFT JOIN student s ON u.id = s.user_id
         LEFT JOIN teacher t ON u.id = t.user_id
+        WHERE status = 0
         LIMIT #{limit},#{number}
     </select>
 

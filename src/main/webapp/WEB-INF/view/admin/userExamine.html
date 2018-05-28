@@ -17,7 +17,7 @@
         <th lay-data="{field: 'type', align:'center', templet:'<div>{{d.identity}}</div>'}">身份</th>
         <th lay-data="{field: 'status', align:'center', templet:'<div>{{d.name}}</div>'}">姓名</th>
         <th lay-data="{field: 'createTime', align:'center', templet:'<div>{{d.departmentName}}</div>'}">学院</th>
-        <th lay-data="{field: 'status', align:'center', templet:'<div>{{d.createTime}}</div>'}">注册时间</th>
+        <th lay-data="{field: 'status', align:'center', templet:'<div>{{d.registerDate}}</div>'}">注册时间</th>
         <th lay-data="{fixed: 'right', align:'center', toolbar: '#barDemo'}">操作</th>
     </tr>
     </thead>
@@ -27,13 +27,21 @@
 </script>
 <script src="../../../static/layui/layui.js"></script>
 <script>
-    layui.use('table', function(){
+    layui.use('table', function () {
         var table = layui.table;
         //监听工具条
-        table.on('tool(title)', function(ob){
-            var data = ob.data;
-            if(ob.event === 'agree'){
-                layer.msg('ID：'+ data.id + ' 的查看操作');
+        table.on('tool(title)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'agree') {
+                layer.confirm('确定同意该用户的审核吗', function(index){
+                    $.post('/examine/examineTitle', {ids: data.id, status: 1}, function (data) {
+                        if (data.success) {
+                            layer.msg('已通过审核');
+                            obj.del();
+                            layer.close(index);
+                        }
+                    });
+                });
             }
         });
     });

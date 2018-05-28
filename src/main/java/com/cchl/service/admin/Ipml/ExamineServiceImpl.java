@@ -60,6 +60,7 @@ public class ExamineServiceImpl implements ExamineService {
             }
             return users;
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("异常信息：{}", e.getMessage());
             throw new SystemException(Dictionary.SYSTEM_ERROR);
         }
