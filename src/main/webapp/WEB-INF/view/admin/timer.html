@@ -3,10 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <title>定时任务</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
-    <div>
-        定时任务页面
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>发布定时任务</legend>
+</fieldset>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">提交题目审批表时间</li>
+        <li>学生选题时间</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <form class="layui-form layui-form-pane" id="teacher">
+                <div class="layui-form-item layui-form-text" style="width: 30%">
+                    <label class="layui-form-label">添加说明内容</label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" type="text" id="begin1" name="begin" placeholder="yyyy-MM-dd">
+                    </div>
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" type="text" id="end1" name="end" placeholder="yyyy-MM-dd">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="teacher">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <form class="layui-form layui-form-pane" id="student">
+                <div class="layui-form-item layui-form-text" style="width: 30%">
+                    <label class="layui-form-label">添加说明内容</label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea" name="content"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" type="text" id="begin2" name="begin" placeholder="yyyy-MM-dd">
+                    </div>
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" type="text" id="end2" name="end" placeholder="yyyy-MM-dd">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="student">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use(['element','form', 'laydate'], function(){
+        var element = layui.element;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        laydate.render({
+            elem:'#begin1'
+        });
+        laydate.render({
+            elem:'#end1'
+        });
+        laydate.render({
+            elem:'#begin2'
+        });
+        laydate.render({
+            elem:'#end2'
+        });
+        form.on('submit(student)', function (data) {
+            console.log(data.field);
+            $.post('/timer', data.field, function (data) {
+                if (data.success) {
+                    layer.open({
+                        title: '设置结果',
+                        content: '设置定时任务成功',
+                        time:2000
+                    });
+                } else {
+                    layer.open({
+                        title: '设置结果',
+                        content: '设置失败，请稍后重试',
+                        time:2000
+                    });
+                }
+            });
+            return false;
+        })
+    });
+</script>
 </body>
 </html>

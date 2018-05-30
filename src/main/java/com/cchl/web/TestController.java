@@ -37,15 +37,13 @@ public class TestController {
         return new Result(Dictionary.SUCCESS);
     }
 
-    @RequestMapping(value = "/admin")
-    public String admin() {
-        return "admin/admin";
+    @RequestMapping(value = "/timer")
+    @ResponseBody
+    public Result timer(@RequestParam(value = "content")String content,
+                        @RequestParam(value = "begin")String begin,
+                        @RequestParam(value = "end")String end) {
+        System.out.println(content + " " + begin + " " + end);
+        return new Result(Dictionary.SUCCESS);
     }
-
-    @RequestMapping(value = "/titleExamine")
-    public String titleExamine() {
-        return "admin/titleExamine";
-    }
-
 
 }

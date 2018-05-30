@@ -142,21 +142,18 @@ public class User {
             this.number = this.teacher.getId();
             this.identity = "教师";
             this.departmentName = this.teacher.getDepartment().getName();
-            this.registerDate = switchTime(this.createTime);
+            this.registerDate = switchTime();
         }
         else {
             this.name = this.student.getName();
             this.number = this.student.getId();
             this.identity = "学生";
             this.departmentName = this.student.getDepartment().getName();
-            this.registerDate = switchTime(this.createTime);
+            this.registerDate = switchTime();
         }
     }
-    //时间格式的转换函数，毫秒->yyyy-MM-dd HH:mm:ss
-    public String switchTime(Date createTime) {
-        createTime = this.createTime;
+    public String switchTime() {
         SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String switchTime = format.format(createTime);
-        return switchTime;
+        return format.format(this.createTime);
     }
 }
