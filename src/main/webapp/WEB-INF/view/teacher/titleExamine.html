@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>题目审核</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>题目审核</legend>
+</fieldset>
+<table class="layui-table" lay-filter="title" style="width: 80%">
+    <thead>
+    <tr>
+        <th lay-data="{field: 'id', align:'center', fixed: true, templet:'<div>{{d.number}}</div>'}">学号</th>
+        <th lay-data="{field: 'status', align:'center', templet:'<div>{{d.name}}</div>'}">姓名</th>
+        <th lay-data="{field: 'major', align:'center', templet:'<div>{{d.departmentName}}</div>'}">专业</th>
+        <th lay-data="{field: 'title', align:'center', templet:'<div>{{d.identity}}</div>'}">题目</th>
+        <th lay-data="{field: 'createtime', align:'center', templet:'<div>{{d.identity}}</div>'}">提交时间</th>
+        <th lay-data="{fixed: 'download', align:'center', toolbar: '#barDemo'}">查看</th>
+    </tr>
+    </thead>
+</table>
+<script src="../../../static/layui/layui.js"></script>
+</body>
+</html>

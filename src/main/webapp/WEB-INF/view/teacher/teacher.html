@@ -2,9 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>教师</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <h1 class="layui-icon-fonts" style="color: white; font-size: 30px; margin-left: 30px; float: left">论文管理系统</h1>
+        <ul class="layui-nav" style="float: right">
+            <li class="layui-nav-item">
+                <a href="" id="msg">新消息</a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">帮助</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <div class="layui-side layui-bg-black">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test" style="height: 100%">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <dl class="layui-nav-child">
+                        <dd><a>任务书</a></dd>
+                        <dd><a>周计划</a></dd>
+                        <dd><a>中期检查</a></dd>
+                        <dd><a>题目审核表</a></dd>
+                        <dd><a>教师评价成绩与评语</a></dd>
+                        <dd><a>过程评价成绩与评语</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <div class="layui-tab layui-tab-brief">
+            <div class="layui-body layui-tab-content" id="show">
+                <!--<iframe src="https://www.baidu.com" width="100%" height="100%" frameborder="no"></iframe>-->
+            </div>
+        </div>
+    </div>
+    <div class="layui-footer">
+        <div class="layui-main">
+            <p>
+                第七小组提供技术支持
+            </p>
+        </div>
+    </div>
+</div>
+<script src="../../../static/layui/layui.js"></script>
 
 </body>
 </html>
