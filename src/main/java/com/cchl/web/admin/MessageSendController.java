@@ -1,16 +1,15 @@
 package com.cchl.web.admin;
 
+import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.IllegalVisitException;
 import com.cchl.service.admin.AdminHandle;
+import com.cchl.service.teacher.TeacherHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 消息发送控制类
@@ -23,40 +22,45 @@ public class MessageSendController {
 
     @Autowired
     private AdminHandle adminHandle;
+    @Autowired
+    private TeacherHandle teacherHandle;
 
     /**
      * 添加系统消息
      * @param content 消息内容
-     * @param departmentId 学院id， 如果面向的用户类型为教师则不需要学院id
      * @return
      */
     @RequestMapping(value = "/add")
-    public Result send(@RequestParam(value = "content", required = false)String content,
-                       @RequestParam(value = "departmentId",required = false) Integer departmentId) {
+    public Result send(@RequestParam(value = "target") Integer target,
+                       @RequestParam(value = "content", required = false)String content,
+                       @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
-            return adminHandle.addMsg(content, departmentId);
+            userId = 1007;
+            int departmentId = teacherHandle.getDepartmentId(userId);
+            return adminHandle.addMsg(target, content, departmentId);
         } catch (Exception e) {
             return new Result(Dictionary.SYSTEM_ERROR);
         }
     }
 
     @RequestMapping(value = "/select/{type}")
-    public Result select(@PathVariable(value = "type")String type,
-                         @RequestParam(value = "page") int page) {
+    public DataWithPage select(@PathVariable(value = "type")String type,
+                               @RequestParam(value = "page") int page,
+                               @RequestParam(value = "limit") int limit) {
         try {
             if (type == null)
                 throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
             else if ("student".equals(type))
-                return new Result<>(true, adminHandle.selectStudentMsg(page));
+                return new DataWithPage<>(0,1, adminHandle.selectStudentMsg((page-1)*limit, limit));
             else if ("teacher".equals(type))
-                return new Result<>(true, adminHandle.selectTeacherMsg(page));
+                return new DataWithPage<>(0,1, adminHandle.selectTeacherMsg((page-1)*limit, limit));
             else
                 throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
         } catch (IllegalVisitException e1) {
             logger.error("非法访问");
-            return new Result(Dictionary.ILLEGAL_VISIT);
+            return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e2) {
-            return new Result(Dictionary.SYSTEM_ERROR);
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }
     }
 

@@ -1,7 +1,5 @@
 package com.cchl.entity.vo;
 
-import java.util.Date;
-
 /**
  * 学生消息内容实体
  */
@@ -10,7 +8,7 @@ public class StudentMessage {
     //消息内容
     private String content;
     //创建时间
-    private Date createTime;
+    private String createTime;
     //学院id
     private Integer departmentId;
     //版本号
@@ -50,11 +48,11 @@ public class StudentMessage {
         this.content = content;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

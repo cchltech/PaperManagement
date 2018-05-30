@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>系统消息管理</legend>
+</fieldset>
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">发送系统消息</li>
+        <li>查看已发布的系统消息</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <form class="layui-form layui-form-pane" id="msg">
+                <div class="layui-form-item layui-form-text" style="width: 30%">
+                    <label class="layui-form-label">添加系统消息内容</label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea" name="content" lay-verify="required"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item" pane="">
+                    <label class="layui-form-label">消息接收方</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="target" value="0" title="学生" checked>
+                        <input type="radio" name="target" value="1" title="教师">
+                        <input type="radio" name="target" value="2" title="教师">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="msg">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+                <input type="hidden" name="type" value="0">
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                <legend>学生消息表</legend>
+            </fieldset>
+            <table class="layui-table" lay-data="{id:'student', url:'/msg/select/student', page:true}" lay-filter="student">
+                <thead>
+                <tr>
+                    <th lay-data="{field:'version',align:'center',sort:true}">编号</th>
+                    <th lay-data="{field:'content',align:'center'}">消息内容</th>
+                    <th lay-data="{field:'createTime', align:'center'}">创建时间</th>
+                    <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#operation'}">操作</th>
+                </tr>
+                </thead>
+            </table>
+            <script type="text/html" id="operation">
+                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use(['form', 'element', 'table'], function () {
+        var element = layui.element;
+        var form = layui.form;
+        var table = layui.table;
+        form.render();
+        form.on('submit(msg)', function (data) {
+            console.log(data.field);
+            $.post('/msg/add', data.field, function (data) {
+                if (data.success) {
+                    layer.open({
+                        title: '设置结果',
+                        content: '发送消息成功',
+                        time:2000
+                    });
+                } else {
+                    layer.open({
+                        title: '设置结果',
+                        content: '发送消息失败，请稍后重试',
+                        time:2000
+                    });
+                }
+            });
+            return false
+        });
+        element.on('tab(even)', function (data) {
+            console.log(data);
+            if (data.index === 2) {
+
+            }
+        });
+    })
+</script>
+</html>

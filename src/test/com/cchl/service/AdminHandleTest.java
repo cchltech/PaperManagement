@@ -32,17 +32,17 @@ public class AdminHandleTest {
     public void AddMsgTest() throws Exception {
         for (int i = 10; i < 13; i++) {
 //            adminHandle.addMsg("student test" + i, 1001+i/3);
-            adminHandle.addMsg("teacher test" + i, null);
+            adminHandle.addMsg(1,"teacher test" + i, null);
         }
     }
 
     @Test
     public void selectMsgTest() throws Exception {
-        List<StudentMessage> messages = adminHandle.selectStudentMsg(1);
+        List<StudentMessage> messages = adminHandle.selectStudentMsg(1, 10);
         for (StudentMessage message : messages)
             System.out.println(message.toString());
 
-        List<TeacherMessage> messages1 = adminHandle.selectTeacherMsg(1);
+        List<TeacherMessage> messages1 = adminHandle.selectTeacherMsg(1, 10);
         for (TeacherMessage message : messages1)
             System.out.println(message.toString());
     }

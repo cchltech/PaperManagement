@@ -6,6 +6,7 @@ import com.cchl.entity.vo.UserMsgRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -64,6 +65,7 @@ public class TeacherHandle {
         return list;
     }
 
+    @Cacheable(value = "userId")
     public Integer getDepartmentId(int userId) {
         return teacherMapper.selectDepartmentIdByUserId(userId);
     }

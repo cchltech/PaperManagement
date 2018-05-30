@@ -1,7 +1,5 @@
 package com.cchl.entity.vo;
 
-import java.util.Date;
-
 /**
  * 教师内容实体
  */
@@ -10,7 +8,9 @@ public class TeacherMessage {
     //消息内容
     private String content;
     //创建时间
-    private Date createTime;
+    private String createTime;
+    //学院id
+    private Integer departmentId;
     //版本号
     private Integer version;
 
@@ -18,9 +18,18 @@ public class TeacherMessage {
     public String toString() {
         return "TeacherMessage{" +
                 "content='" + content + '\'' +
-                ", createTime=" + createTime +
+                ", createTime='" + createTime + '\'' +
+                ", departmentId=" + departmentId +
                 ", version=" + version +
                 '}';
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
     }
 
     public String getContent() {
@@ -31,11 +40,11 @@ public class TeacherMessage {
         this.content = content;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 

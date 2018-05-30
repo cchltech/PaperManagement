@@ -40,4 +40,12 @@ public class AdminURLController {
     public String timer() {
         return "admin/timer";
     }
+
+    /**
+     * 跳转到消息管理页面
+     */
+    @RequestMapping(value = "/msg")
+    public String msg() {
+        return "admin/msg";
+    }
 }
