@@ -1,4 +1,4 @@
-package com.cchl.entity;
+package com.cchl.entity.vo;
 
 /**
  * 不同用户的消息浏览记录实体

@@ -1,8 +1,8 @@
 package com.cchl.service.teacher;
 
-import com.cchl.dto.Result;
-import com.cchl.entity.TeacherMessage;
-import com.cchl.entity.UserMsgRecord;
+import com.cchl.dao.TeacherMapper;
+import com.cchl.entity.vo.TeacherMessage;
+import com.cchl.entity.vo.UserMsgRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,8 @@ public class TeacherHandle {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private TeacherMapper teacherMapper;
 
     public boolean hasNewMsg(int userId) {
         /*
@@ -60,6 +62,10 @@ public class TeacherHandle {
                     UserMsgRecord.class);
         }
         return list;
+    }
+
+    public Integer getDepartmentId(int userId) {
+        return teacherMapper.selectDepartmentIdByUserId(userId);
     }
 
 }

@@ -3,6 +3,8 @@ package com.cchl.service.student;
 import com.cchl.dao.*;
 import com.cchl.dto.Result;
 import com.cchl.entity.*;
+import com.cchl.entity.vo.StudentMessage;
+import com.cchl.entity.vo.UserMsgRecord;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.NumberFullException;
 import org.slf4j.Logger;

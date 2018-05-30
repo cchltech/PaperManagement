@@ -1,7 +1,7 @@
 package com.cchl.service;
 
-import com.cchl.entity.StudentMessage;
-import com.cchl.entity.TeacherMessage;
+import com.cchl.entity.vo.StudentMessage;
+import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.entity.Title;
 import com.cchl.service.admin.AdminHandle;
 import org.junit.Test;

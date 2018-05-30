@@ -1,26 +1,45 @@
-package com.cchl.entity;
+package com.cchl.entity.vo;
 
 import java.util.Date;
 
 /**
- * 教师内容实体
+ * 学生消息内容实体
  */
-public class TeacherMessage {
+public class StudentMessage {
 
     //消息内容
     private String content;
     //创建时间
     private Date createTime;
+    //学院id
+    private Integer departmentId;
     //版本号
     private Integer version;
 
     @Override
     public String toString() {
-        return "TeacherMessage{" +
+        return "StudentMessage{" +
                 "content='" + content + '\'' +
                 ", createTime=" + createTime +
+                ", departmentId=" + departmentId +
                 ", version=" + version +
                 '}';
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public String getContent() {
@@ -37,13 +56,5 @@ public class TeacherMessage {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
     }
 }

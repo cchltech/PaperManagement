@@ -1,7 +1,7 @@
 package com.cchl.web.teacher;
 
 import com.cchl.dto.Result;
-import com.cchl.entity.TeacherMessage;
+import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.eumn.Dictionary;
 import com.cchl.service.teacher.TeacherHandle;
 import org.springframework.beans.factory.annotation.Autowired;

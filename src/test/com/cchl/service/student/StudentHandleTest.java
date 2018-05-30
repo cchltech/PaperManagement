@@ -1,6 +1,6 @@
 package com.cchl.service.student;
 
-import com.cchl.entity.StudentMessage;
+import com.cchl.entity.vo.StudentMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

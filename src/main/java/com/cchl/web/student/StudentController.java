@@ -1,7 +1,7 @@
 package com.cchl.web.student;
 
 import com.cchl.dto.Result;
-import com.cchl.entity.StudentMessage;
+import com.cchl.entity.vo.StudentMessage;
 import com.cchl.eumn.Dictionary;
 import com.cchl.service.student.StudentHandle;
 import org.springframework.beans.factory.annotation.Autowired;

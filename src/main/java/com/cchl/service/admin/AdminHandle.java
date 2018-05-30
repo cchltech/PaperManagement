@@ -6,9 +6,10 @@ import com.cchl.dao.TitleMapper;
 import com.cchl.dao.UserPaperMapper;
 import com.cchl.dto.Result;
 import com.cchl.entity.PaperPlan;
-import com.cchl.entity.StudentMessage;
-import com.cchl.entity.TeacherMessage;
+import com.cchl.entity.vo.StudentMessage;
+import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.entity.UserPaper;
+import com.cchl.entity.vo.VoTimer;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.DataInsertException;
 import com.cchl.execption.SystemException;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -186,5 +188,49 @@ public class AdminHandle {
 
     public void deleteTeacherMsg(int version) {
         mongoTemplate.remove(query(Criteria.where("version").is(version)), TeacherMessage.class);
+    }
+
+    /**
+     * 添加定时任务
+     * @param timer
+     */
+    public void addTimer(VoTimer timer) {
+        int num = (int)mongoTemplate.count(query(new Criteria()), VoTimer.class);
+        timer.setId(num + 1000);
+        mongoTemplate.insert(timer);
+    }
+    /**
+     * 更新定时任务
+     */
+    public void updateTimer(int id, String content, String begin, String end) {
+        Criteria criteria = Criteria.where("id").is(id);
+        Update update = Update.update("content", content).set("begin", begin).set("end", end);
+        mongoTemplate.updateFirst(query(criteria), update, VoTimer.class);
+    }
+
+    /**
+     * 删除定时任务
+     * @param id
+     */
+    public void removeTimer(Integer id) {
+        Criteria criteria = Criteria.where("id").is(id);
+        mongoTemplate.remove(query(criteria), VoTimer.class);
+    }
+
+    /**
+     * 按学院号查找目标记录
+     * @param department
+     * @param page
+     * @param limit
+     * @return
+     */
+    public List<VoTimer> selectByDepartmentId(int department, int page, int limit) {
+        Criteria criteria = Criteria.where("department").is(department);
+        return mongoTemplate.find(query(criteria).skip(page).limit(limit), VoTimer.class);
+    }
+
+    public int TimerCount(int department) {
+        Criteria criteria = Criteria.where("department").is(department);
+        return (int)mongoTemplate.count(query(criteria), VoTimer.class);
     }
 }
