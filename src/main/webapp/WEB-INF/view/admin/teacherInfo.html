@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>教师列表</legend>
+</fieldset>
+<table class="layui-table" lay-data="{url:'/show/getTeacher',page:true}" lay-filter="title" style="width: 80%">
+    <thead>
+    <tr>
+        <th lay-data="{field: 'id', align:'center', fixed: true, width:200, sort:true}">教师编号</th>
+        <th lay-data="{field: 'name', align:'center'}">姓名</th>
+        <th lay-data="{field: 'sex', align:'center', templet:'#sex'}">性别</th>
+        <th lay-data="{field: 'phone', align:'center'}">联系方式</th>
+        <th lay-data="{field: 'email', align:'center'}">邮箱</th>
+        <th lay-data="{field: 'department',  templet:'<div>{{d.department.name}}</div>', align:'center', width:200}">
+            所属学院
+        </th>
+        <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}">操作</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/html" id="sex">
+    {{d.sex==0?'女':'男'}}
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
+</script>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use('table', function () {
+        var table = layui.table;
+        //监听工具条
+        table.on('tool(title)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                layer.open({
+                    title: '题目详细信息'
+                    ,
+                    content: "<div class='layui-text'>工号：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.id + "</div></div><br>"
+                    + "<div class='layui-text'>姓名：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.name + "</div></div><br>"
+                    + "<div class='layui-text'>联系方式：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.phone + "</div></div><br>"
+                    + "<div class='layui-text'>所属学院：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.department.name + "</div></div>"
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

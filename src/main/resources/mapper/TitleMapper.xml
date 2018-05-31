@@ -11,6 +11,8 @@
         <result column="has_select" property="hasSelect"/>
         <association property="department" resultMap="com.cchl.dao.DepartmentMapper.department"
                      columnPrefix="department_"/>
+        <association property="teacher" resultMap="com.cchl.dao.TeacherMapper.teacher"
+                     columnPrefix="teacher_"/>
     </resultMap>
     <insert id="insert" parameterType="com.cchl.entity.Title">
         INSERT INTO title (content, instruction, status, total_number, department_id)
@@ -34,20 +36,26 @@
     </select>
     <select id="selectByStatus" resultMap="title">
         SELECT
-            t.id,
-            content,
-            instruction,
-            create_time,
-            total_number,
-            has_select,
-            department_id,
-            d.id   department_id,
-            d.name department_name
-        FROM title t, department d
-        WHERE t.department_id = d.id AND department_id = #{departmentId}
-            <if test="!all">
-                AND status = #{status}
-            </if>
+        t.id,
+        content,
+        instruction,
+        create_time,
+        total_number,
+        has_select,
+        t.department_id,
+        d.id department_id,
+        d.name    department_name,
+        tea.id    teacher_id,
+        tea.name  teacher_name,
+        tea.phone teacher_phone,
+        tea.sex   teacher_sex,
+        tea.email teacher_email
+        FROM teacher tea, title t
+        LEFT JOIN department d ON t.department_id = d.id
+        WHERE t.department_id = #{departmentId}
+        <if test="!all">
+            AND status = #{status}
+        </if>
         ORDER BY t.id DESC
         LIMIT #{page}, #{limit}
     </select>

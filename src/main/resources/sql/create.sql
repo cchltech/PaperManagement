@@ -91,9 +91,11 @@ CREATE TABLE title(
   total_number INT NOT NULL COMMENT '待选人数',
   has_select INT DEFAULT 0 ,
   department_id INT NOT NULL ,
+  teacher_id BIGINT NOT NULL ,
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 CHARSET = utf8 COMMENT '题目表，用于记录论文题目的内容';
 ALTER TABLE title ADD CONSTRAINT fk_title_department FOREIGN KEY title(department_id) REFERENCES department(id) ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE title ADD CONSTRAINT fk_teacher_id FOREIGN KEY title(teacher_id) REFERENCES teacher(id);
 # 周计划表
 CREATE TABLE weeks_plan(
   id INT AUTO_INCREMENT NOT NULL ,

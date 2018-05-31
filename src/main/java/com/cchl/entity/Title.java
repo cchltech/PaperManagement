@@ -22,6 +22,8 @@ public class Title {
     private int hasSelect;
     //所属学院
     private Department department;
+    //所属教师
+    private Teacher teacher;
 
     @Override
     public String toString() {
@@ -32,8 +34,9 @@ public class Title {
                 ", status=" + status +
                 ", createTime=" + createTime +
                 ", totalNumber=" + totalNumber +
-                ", has_select=" + hasSelect +
+                ", hasSelect=" + hasSelect +
                 ", department=" + department +
+                ", teacher=" + teacher +
                 '}';
     }
 
@@ -99,5 +102,17 @@ public class Title {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public int getHasSelect() {
+        return hasSelect;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 }

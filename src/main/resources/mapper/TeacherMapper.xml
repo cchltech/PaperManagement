@@ -55,4 +55,30 @@
     <select id="selectDepartmentIdByUserId" resultType="java.lang.Integer">
         SELECT department_id FROM teacher WHERE user_id = #{userId}
     </select>
+    <select id="selectByStatus" resultMap="teacher">
+        SELECT
+        t.id,
+        t.name,
+        t.sex,
+        t.phone,
+        t.phone,
+        t.email,
+        d.name department_name
+        FROM teacher t
+        LEFT JOIN department d ON t.department_id = d.id
+        LEFT JOIN user u ON t.user_id = u.id
+        WHERE t.department_id = #{departmentId}
+        <if test="!all">
+            AND u.status = #{status}
+        </if>
+        LIMIT #{page}, #{limit}
+    </select>
+    <select id="totalNumber" resultType="java.lang.Integer">
+        SELECT count(t.id) FROM teacher t
+        LEFT JOIN user u ON t.user_id = u.id
+        WHERE t.department_id = #{departmentId}
+        <if test="!all">
+            AND u.status = #{status}
+        </if>
+    </select>
 </mapper>

@@ -10,7 +10,7 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
     <legend>系统消息管理</legend>
 </fieldset>
-<div class="layui-tab">
+<div class="layui-tab" lay-filter="even">
     <ul class="layui-tab-title">
         <li class="layui-this">发送系统消息</li>
         <li>查看已发布的系统消息</li>
@@ -29,7 +29,7 @@
                     <div class="layui-input-block">
                         <input type="radio" name="target" value="0" title="学生" checked>
                         <input type="radio" name="target" value="1" title="教师">
-                        <input type="radio" name="target" value="2" title="教师">
+                        <input type="radio" name="target" value="2" title="全部">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -42,23 +42,46 @@
             </form>
         </div>
         <div class="layui-tab-item">
-            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-                <legend>学生消息表</legend>
-            </fieldset>
-            <table class="layui-table" lay-data="{id:'student', url:'/msg/select/student', page:true}" lay-filter="student">
-                <thead>
-                <tr>
-                    <th lay-data="{field:'version',align:'center',sort:true}">编号</th>
-                    <th lay-data="{field:'content',align:'center'}">消息内容</th>
-                    <th lay-data="{field:'createTime', align:'center'}">创建时间</th>
-                    <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#operation'}">操作</th>
-                </tr>
-                </thead>
-            </table>
-            <script type="text/html" id="operation">
-                <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
-            </script>
+            <div>
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend>学生消息表</legend>
+                </fieldset>
+                <table class="layui-table" lay-data="{id:'student', url:'/msg/select/student', page:true}"
+                       lay-filter="student_msg" id="student_msg">
+                    <thead>
+                    <tr>
+                        <th lay-data="{field:'version',align:'center',sort:true}">编号</th>
+                        <th lay-data="{field:'content',align:'center'}">消息内容</th>
+                        <th lay-data="{field:'createTime', align:'center'}">创建时间</th>
+                        <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#operation'}">操作</th>
+                    </tr>
+                    </thead>
+                </table>
+                <script type="text/html" id="operation">
+                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+                </script>
+            </div>
+            <div>
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend>教师消息表</legend>
+                </fieldset>
+                <table class="layui-table" lay-data="{id:'teacher', url:'/msg/select/teacher', page:true}"
+                       lay-filter="teacher_msg" id="teacher_msg">
+                    <thead>
+                    <tr>
+                        <th lay-data="{field:'version',align:'center',sort:true}">编号</th>
+                        <th lay-data="{field:'content',align:'center'}">消息内容</th>
+                        <th lay-data="{field:'createTime', align:'center'}">创建时间</th>
+                        <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#operation1'}">操作</th>
+                    </tr>
+                    </thead>
+                </table>
+                <script type="text/html" id="operation1">
+                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+                </script>
+            </div>
         </div>
     </div>
 </div>
@@ -91,10 +114,65 @@
         });
         element.on('tab(even)', function (data) {
             console.log(data);
-            if (data.index === 2) {
-
+            if (data.index === 1) {
+                table.reload('student', {
+                    url: '/msg/select/student'
+                    ,where: {}
+                });
+                table.reload('teacher', {
+                    url: '/msg/select/teacher'
+                    ,where: {}
+                });
             }
         });
+        table.on('tool(student_msg)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                layer.open({
+                    title: '消息详细信息'
+                    ,
+                    content: "<div class='layui-text'>内容：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.content + "</div></div><br>"
+                    + "<div class='layui-text'>开始时间：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.createTime + "</div></div><br>"
+                });
+            } else if (obj.event === 'delete') {
+                layer.confirm('确定删除该消息吗', function(index){
+                    $.post('/msg/deleteMsg/0', {version: data.version}, function (data) {
+                        if (data.success) {
+                            layer.msg('删除成功');
+                            obj.del();
+                            layer.close(index);
+                        } else {
+                            layer.msg('删除失败，请稍后重试');
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+        table.on('tool(teacher_msg)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                layer.open({
+                    title: '消息详细信息'
+                    ,
+                    content: "<div class='layui-text'>内容：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.content + "</div></div><br>"
+                    + "<div class='layui-text'>开始时间：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.createTime + "</div></div><br>"
+                });
+            } else if (obj.event === 'delete') {
+                layer.confirm('确定删除该消息吗', function(index){
+                    $.post('/msg/deleteMsg/1', {version: data.version}, function (data) {
+                        if (data.success) {
+                            layer.msg('删除成功');
+                            obj.del();
+                            layer.close(index);
+                        } else {
+                            layer.msg('删除失败，请稍后重试');
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        })
     })
 </script>
 </html>

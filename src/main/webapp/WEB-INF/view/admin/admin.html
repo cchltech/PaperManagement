@@ -46,7 +46,7 @@
                     <a href="javascript:">查看</a>
                     <dl class="layui-nav-child">
                         <dd><a>选题信息</a></dd>
-                        <dd><a></a></dd>
+                        <dd><a>教师信息</a></dd>
                     </dl>
                 </li>
             </ul>
@@ -91,6 +91,9 @@
             } else if (val === '消息管理') {
                 show.empty();
                 show.append('<iframe src="/admin/msg" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+            } else if (val === '教师信息') {
+                show.empty();
+                show.append('<iframe src="/show/teacher" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             }
         });
         //消息通知

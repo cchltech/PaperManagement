@@ -22,7 +22,7 @@
                 <div class="layui-form-item layui-form-text" style="width: 30%">
                     <label class="layui-form-label">添加说明内容</label>
                     <div class="layui-input-block">
-                        <textarea class="layui-textarea" name="content" lay-verify="required"></textarea>
+                        <textarea class="layui-textarea" name="content" lay-verify="required">题目审批表时间发布</textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -49,7 +49,7 @@
                 <div class="layui-form-item layui-form-text" style="width: 30%">
                     <label class="layui-form-label">添加选题说明内容</label>
                     <div class="layui-input-block">
-                        <textarea class="layui-textarea" name="content" lay-verify="required"></textarea>
+                        <textarea class="layui-textarea" name="content" lay-verify="required">学生选题时间发布</textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -118,7 +118,7 @@
                     + "<div class='layui-text'>结束时间：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.end + "</div></div>"
                 });
             } else if (obj.event === 'delete') {
-                layer.confirm('确定删除该定时任务码', function(index){
+                layer.confirm('确定删除该定时任务吗', function(index){
                     $.post('/timer/remove', {id: data.id}, function (data) {
                         if (data.success) {
                             layer.msg('删除成功');

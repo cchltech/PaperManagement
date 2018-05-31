@@ -66,16 +66,20 @@ public class MessageSendController {
 
     /**
      * 删除消息
-     * @param departmentId
+     * @param type
      * @param version
      * @return
      */
-    @RequestMapping(value = "/deleteMsg")
-    public Result deleteMsg(@RequestParam(value = "departmentId", required = false) Integer departmentId,
-                            @RequestParam(value = "version", required = false) Integer version) {
+    @PostMapping(value = "/deleteMsg/{type}")
+    public Result deleteMsg(@SessionAttribute(value = "user_id", required = false) Integer userId,
+                            @RequestParam(value = "version", required = false) Integer version,
+                            @PathVariable(value = "type") Integer type) {
         try {
-            if (departmentId == null)
-                adminHandle.deleteTeacherMsg(version);
+            System.out.println(version + " " + type);
+            userId = 1007;
+            int departmentId = teacherHandle.getDepartmentId(userId);
+            if (type == 1)
+                adminHandle.deleteTeacherMsg(departmentId, version);
             else
                 adminHandle.deleteStudentMsg(departmentId, version);
             return new Result(Dictionary.SUCCESS);

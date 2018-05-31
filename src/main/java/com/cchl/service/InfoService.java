@@ -2,6 +2,7 @@ package com.cchl.service;
 
 import com.cchl.dao.TeacherMapper;
 import com.cchl.dao.TitleMapper;
+import com.cchl.entity.Teacher;
 import com.cchl.entity.Title;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.IllegalVisitException;
@@ -30,12 +31,32 @@ public class InfoService {
         return titleMapper.selectByStatus((page - 1) * limit, limit, 1, false, departmentId);
     }
 
-    public int totalNumber(int type, int userId) {
+    public List<Teacher> teachers(int page, int limit, int userId) {
+        //查找对应的学院id
+        Integer departmentId = selectDepartmentId(userId);
+        if (departmentId == null)
+            throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
+        return teacherMapper.selectByStatus((page - 1) * limit, limit, 1, false, departmentId);
+    }
+
+    public int totalTitleNumber(int type, int userId) {
         //查找类型，题目为0
         int result = 0;
         switch (type) {
             case 0:
                 result = titleMapper.totalNumber(false, (byte) 1, selectDepartmentId(userId));
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
+
+    public int totalTeacherNumber(int type, int userId) {
+        int result = 0;
+        switch (type) {
+            case 0:
+                result = teacherMapper.totalNumber(false, (byte) 1, selectDepartmentId(userId));
                 break;
             default:
                 break;

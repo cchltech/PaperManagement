@@ -59,7 +59,7 @@ public class AdminHandleTest {
         //adminHandle.deleteStudentMsg(1003, 3);
 
         //教师
-        adminHandle.deleteTeacherMsg(10);
+        adminHandle.deleteTeacherMsg(1001,10);
     }
 
 

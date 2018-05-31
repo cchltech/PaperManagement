@@ -203,8 +203,8 @@ public class AdminHandle {
         mongoTemplate.remove(query(criteria), StudentMessage.class);
     }
 
-    public void deleteTeacherMsg(int version) {
-        mongoTemplate.remove(query(Criteria.where("version").is(version)), TeacherMessage.class);
+    public void deleteTeacherMsg(int departmentId, int version) {
+        mongoTemplate.remove(query(Criteria.where("version").is(version).and("departmentId").is(departmentId)), TeacherMessage.class);
     }
 
     /**

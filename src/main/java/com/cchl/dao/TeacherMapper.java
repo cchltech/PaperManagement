@@ -18,4 +18,8 @@ public interface TeacherMapper {
     int isTeacher(Long id);
 
     Integer selectDepartmentIdByUserId(int userId);
+
+    List<Teacher> selectByStatus(@Param(value = "page") int page, @Param(value = "limit") int limit, @Param(value = "status") int status, @Param(value = "all") boolean all, @Param(value = "departmentId") int departmentId);
+
+    int totalNumber(@Param(value = "all") boolean all, @Param(value = "status") byte status, @Param(value = "departmentId") int departmentId);
 }
