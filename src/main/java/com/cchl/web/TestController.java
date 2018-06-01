@@ -6,11 +6,13 @@ import com.cchl.entity.Teacher;
 import com.cchl.eumn.Dictionary;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
+@RequestMapping(value = "/test")
 public class TestController {
 
     @RequestMapping(value = "/test_registry")
@@ -43,6 +45,12 @@ public class TestController {
                         @RequestParam(value = "begin")String begin,
                         @RequestParam(value = "end")String end) {
         System.out.println(content + " " + begin + " " + end);
+        return new Result(Dictionary.SUCCESS);
+    }
+
+    @PostMapping(value = "/upload")
+    @ResponseBody
+    public Result upload(@RequestParam(value = "file")MultipartFile file) {
         return new Result(Dictionary.SUCCESS);
     }
 

@@ -86,4 +86,10 @@
             LEFT JOIN major m ON s.major_id = m.id
         WHERE s.user_id = #{userId}
     </select>
+    <update id="updateEmail">
+        UPDATE student SET email = #{email} WHERE id = #{id}
+    </update>
+    <update id="updatePhone">
+        UPDATE student SET phone = #{phone} WHERE id = #{id}
+    </update>
 </mapper>

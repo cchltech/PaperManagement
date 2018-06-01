@@ -10,6 +10,7 @@ import com.cchl.execption.NumberFullException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -20,6 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +49,24 @@ public class StudentHandle {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @CacheEvict(cacheNames = "student", key = "#id")
+    public int updateEmail(String value, Long id) {
+        return studentMapper.updateEmail(value, id);
+    }
+
+    @CacheEvict(cacheNames = "student", key = "#id")
+    public int updatePhone(Long value, Long id) {
+        return studentMapper.updatePhone(value, id);
+    }
+    /**
+     * 根据学号查找学生
+     * @param id 学号
+     * @return
+     */
+    @Cacheable(cacheNames = "student", key = "#id")
+    public Student selectById(Long id) {
+        return studentMapper.selectById(id);
+    }
     /**
      * @param studentId 学生学号
      * @return 获取题目列表
@@ -162,5 +185,22 @@ public class StudentHandle {
     @Cacheable(value = "userId")
     public Integer selectDepartmentIdByUserId(int userId) {
         return studentMapper.selectByUserId(userId).getDepartmentId();
+    }
+
+    public boolean saveFile(String filePath, String fileName,  byte[] file) {
+        File target = new File(filePath);
+        if (!target.exists()) {
+            target.mkdirs();
+        }
+        try {
+            FileOutputStream stream = new FileOutputStream(filePath + fileName);
+            stream.write(file);
+            stream.flush();
+            stream.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
