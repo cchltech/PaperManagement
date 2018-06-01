@@ -11,5 +11,5 @@ public interface MajorMapper {
 
     List<Major> selectAll();
 
-    List<Major> selectByDepartmentId(Long departmentId);
+    List<Major> selectByDepartmentId(Integer departmentId);
 }

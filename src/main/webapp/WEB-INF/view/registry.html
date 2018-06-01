@@ -183,11 +183,11 @@
             var url;
             var select = $('#sex').find('input[name="type"]:checked').val();
             if (select === '0') {
-                url = '/test_student';
+                url = '/studentRegister';
             } else {
-                url = '/test_teacher';
+                url = '/teacherRegister';
             }
-            $.post(url, {data:$('#data').serialize()}, function(data){
+            $.post(url, data.field, function(data){
                 if (data.success) {
                     layer.open({
                         title: '注册结果',

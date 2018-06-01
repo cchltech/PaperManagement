@@ -6,14 +6,17 @@ import com.cchl.dto.Result;
 import com.cchl.entity.Student;
 import com.cchl.entity.Teacher;
 import com.cchl.entity.User;
+import com.cchl.entity.vo.AdminMsg;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.DataInsertException;
 import com.cchl.execption.SystemException;
 import com.cchl.service.LoginService;
+import com.cchl.service.MsgHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,8 @@ public class StudentLoginServiceImpl implements LoginService {
     private UserMapper userMapper;
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private MsgHandle msgHandle;
 
     /**
      * 登录校验
@@ -64,6 +69,8 @@ public class StudentLoginServiceImpl implements LoginService {
             student.setUserId(user.getId());
             if (studentMapper.insert(student) > 0) {
                 logger.info("学生注册成功，学生实体为：{}", student.toString());
+                //添加消息
+                msgHandle.addAdminMsg(AdminMsg.TYPE.USER, student.getDepartmentId());
                 return new Result(Dictionary.SUCCESS);
             } else {
                 logger.error("学生信息插入失败，学生实体为：{}", student.toString());

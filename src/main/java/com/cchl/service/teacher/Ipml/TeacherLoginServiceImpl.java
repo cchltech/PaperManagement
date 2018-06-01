@@ -6,10 +6,12 @@ import com.cchl.dto.Result;
 import com.cchl.entity.Student;
 import com.cchl.entity.Teacher;
 import com.cchl.entity.User;
+import com.cchl.entity.vo.AdminMsg;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.DataInsertException;
 import com.cchl.execption.SystemException;
 import com.cchl.service.LoginService;
+import com.cchl.service.MsgHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class TeacherLoginServiceImpl implements LoginService {
     private UserMapper userMapper;
     @Autowired
     private TeacherMapper teacherMapper;
+    @Autowired
+    private MsgHandle msgHandle;
 
     /**
      * 登录校验
@@ -71,6 +75,8 @@ public class TeacherLoginServiceImpl implements LoginService {
                 teacher.setUserId(user.getId());
                 if (teacherMapper.insert(teacher) > 0) {
                     logger.info("教师注册成功，教师实体为：{}", teacher.toString());
+                    //添加消息
+                    msgHandle.addAdminMsg(AdminMsg.TYPE.USER, teacher.getDepartmentId());
                     return new Result(Dictionary.SUCCESS);
                 } else {
                     //如果数据插入失败，抛出异常，事务回滚

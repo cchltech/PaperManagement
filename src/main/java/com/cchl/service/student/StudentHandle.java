@@ -155,7 +155,12 @@ public class StudentHandle {
      * @return
      */
     @Cacheable("departmentId")
-    public List<Major> selectByDepartmentId(Long departmentId) {
+    public List<Major> selectByDepartmentId(Integer departmentId) {
         return majorMapper.selectByDepartmentId(departmentId);
+    }
+
+    @Cacheable(value = "userId")
+    public Integer selectDepartmentIdByUserId(int userId) {
+        return studentMapper.selectByUserId(userId).getDepartmentId();
     }
 }
