@@ -175,4 +175,30 @@ CREATE TABLE choice_title(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COMMENT '选题表，管理员为各个学院设置选题时间';
 ALTER TABLE choice_title ADD CONSTRAINT fk_choice_department FOREIGN KEY choice_title(id) REFERENCES department(id);
-
+# 分组表
+CREATE TABLE grouping(
+  id INT AUTO_INCREMENT NOT NULL COMMENT '组号',
+  student_id1 BIGINT NOT NULL ,
+  student_id2 BIGINT NOT NULL ,
+  student_id3 BIGINT NOT NULL ,
+  student_id4 BIGINT NOT NULL ,
+  department_id INT NOT NULL COMMENT '学院对应的id，关联学院表' ,
+  grade TINYINT NOT NULL COMMENT '年级' ,
+  major_id INT NOT NULL COMMENT '专业对应的id，关联专业表',
+  teacher_id1 BIGINT NOT NULL ,
+  teacher_id2 BIGINT NOT NULL ,
+  teacher_id3 BIGINT NOT NULL ,
+  teacher_id4 BIGINT NOT NULL ,
+  PRIMARY KEY (id)
+)AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COMMENT '分组表，用于记录小组与教师之间的分配关系';
+# 添加外键约束
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student_id1) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student_id2) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student_id3) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student_id4) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher_id1) REFERENCES teacher(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher_id2) REFERENCES teacher(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher_id3) REFERENCES teacher(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher_id4) REFERENCES teacher(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_department FOREIGN KEY grouping(department_id) REFERENCES department(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_major FOREIGN KEY grouping(major_id) REFERENCES major(id);
