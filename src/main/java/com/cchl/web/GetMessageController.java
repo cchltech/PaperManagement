@@ -13,7 +13,7 @@ public class GetMessageController {
 
     @RequestMapping(value = "/{type}")
     public Result studentMsg(@PathVariable(value = "type", required = false) String type,
-                             @SessionAttribute(value = "user_id") Integer userId) {
+                             @SessionAttribute(value = "user_id", required = false) Integer userId) {
         try {
             if (type == null || !"student".equals(type) || !"teacher".equals(type))
                 return new Result(Dictionary.ILLEGAL_VISIT);

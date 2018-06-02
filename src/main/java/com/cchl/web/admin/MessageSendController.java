@@ -20,6 +20,9 @@ public class MessageSendController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    //TODO 测试id
+    int test_id = 1000;
+
     @Autowired
     private AdminHandle adminHandle;
     @Autowired
@@ -35,7 +38,7 @@ public class MessageSendController {
                        @RequestParam(value = "content", required = false)String content,
                        @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
-            userId = 1007;
+            userId = test_id;
             int departmentId = teacherHandle.getDepartmentId(userId);
             return adminHandle.addMsg(target, content, departmentId);
         } catch (Exception e) {
@@ -76,7 +79,7 @@ public class MessageSendController {
                             @PathVariable(value = "type") Integer type) {
         try {
             System.out.println(version + " " + type);
-            userId = 1007;
+            userId = test_id;
             int departmentId = teacherHandle.getDepartmentId(userId);
             if (type == 1)
                 adminHandle.deleteTeacherMsg(departmentId, version);

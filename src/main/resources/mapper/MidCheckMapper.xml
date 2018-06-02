@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cchl.dao.MidCheckMapper">
-  <resultMap id="mid_check" type="com.cchl.entity.MidCheck">
-    <result column="id" jdbcType="INTEGER" property="id" />
-    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
-    <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId" />
-  </resultMap>
-  <insert id="insert" parameterType="com.cchl.entity.MidCheck">
-    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into mid_check (id, file_path, paper_plan_id
-      )
-    values (#{id,jdbcType=INTEGER}, #{filePath,jdbcType=VARCHAR}, #{paperPlanId,jdbcType=INTEGER}
-      )
-  </insert>
-  <select id="selectAll" resultMap="mid_check">
-    select id, file_path, paper_plan_id
-    from mid_check
-  </select>
+    <resultMap id="mid_check" type="com.cchl.entity.MidCheck">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="file_path" jdbcType="VARCHAR" property="filePath"/>
+        <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.cchl.entity.MidCheck">
+        insert into mid_check (file_path, paper_plan_id)
+        values (#{filePath,jdbcType=VARCHAR}, #{paperPlanId,jdbcType=INTEGER})
+    </insert>
+    <select id="selectAll" resultMap="mid_check">
+        SELECT
+            id,
+            file_path,
+            paper_plan_id
+        FROM mid_check
+    </select>
+    <select id="isExist" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM mid_check
+        WHERE paper_plan_id = #{paperId}
+    </select>
+    <update id="updateFilePath">
+        UPDATE mid_check
+        SET file_path = #{filePath}
+        WHERE paper_plan_id = #{paperId}
+    </update>
 </mapper>

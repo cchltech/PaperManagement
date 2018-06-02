@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cchl.dao.PaperMapper">
-  <resultMap id="paper" type="com.cchl.entity.Paper">
-    <result column="id" jdbcType="INTEGER" property="id" />
-    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
-    <result column="score" jdbcType="INTEGER" property="score" />
-    <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId" />
-  </resultMap>
-  <insert id="insert" parameterType="com.cchl.entity.Paper">
-    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into paper (id, file_path, score, 
-      paper_plan_id)
-    values (#{id,jdbcType=INTEGER}, #{filePath,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER}, 
-      #{paperPlanId,jdbcType=INTEGER})
-  </insert>
-  <select id="selectAll" resultMap="paper">
-    select id, file_path, score, paper_plan_id
-    from paper
-  </select>
+    <resultMap id="paper" type="com.cchl.entity.Paper">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="file_path" jdbcType="VARCHAR" property="filePath"/>
+        <result column="score" jdbcType="INTEGER" property="score"/>
+        <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.cchl.entity.Paper">
+        insert into paper (file_path, score,paper_plan_id)
+        values (#{filePath,jdbcType=VARCHAR}, #{score,jdbcType=INTEGER},
+        #{paperPlanId,jdbcType=INTEGER})
+    </insert>
+    <select id="selectAll" resultMap="paper">
+        SELECT
+            id,
+            file_path,
+            score,
+            paper_plan_id
+        FROM paper
+    </select>
+    <select id="isExist" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM paper
+        WHERE paper_plan_id = #{paperId}
+    </select>
+    <update id="updateFilePath">
+        UPDATE paper SET file_path = #{filePath} WHERE paper_plan_id = #{paperId}
+    </update>
 </mapper>

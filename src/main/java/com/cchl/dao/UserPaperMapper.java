@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Param;
 public interface UserPaperMapper {
 
     int insert(UserPaper userPaper);
+
+    Integer selectByUserId(int userId);
 }

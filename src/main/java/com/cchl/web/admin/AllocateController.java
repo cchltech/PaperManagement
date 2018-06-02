@@ -47,7 +47,8 @@ public class AllocateController {
      * @return
      */
     @RequestMapping(value = "/operate", method = RequestMethod.POST)
-    public Result operate(@RequestParam(value = "studentId", required = false) String studentId, @RequestParam(value = "titleId", required = false) String titleId) {
+    public Result operate(@RequestParam(value = "studentId", required = false) String studentId,
+                          @RequestParam(value = "titleId", required = false) String titleId) {
         try {
             if (studentId == null || titleId == null)
                 return new Result(Dictionary.DATA_LOST);

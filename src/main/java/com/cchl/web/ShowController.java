@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RequestMapping(value = "/show")
 public class ShowController {
 
+    //TODO 测试id
+    int test_id = 1000;
+
     @Autowired
     private InfoService infoService;
 
@@ -36,7 +39,7 @@ public class ShowController {
                               @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
             //TODO 测试用的userId
-            userId = 1007;
+            userId = test_id;
             if (userId == null) {
                 return new DataWithPage(Dictionary.ILLEGAL_VISIT);
             }
@@ -53,7 +56,7 @@ public class ShowController {
                                  @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
             //TODO 测试用的userId
-            userId = 1007;
+            userId = test_id;
             if (userId == null) {
                 return new DataWithPage(Dictionary.ILLEGAL_VISIT);
             }

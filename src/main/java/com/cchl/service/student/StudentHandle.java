@@ -19,14 +19,13 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.data.mongodb.core.query.Query.query;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * 处理学生端的所有操作
@@ -35,6 +34,8 @@ import java.util.List;
 public class StudentHandle {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static final String FilePath = "/home/beiyi/file/";
 
     @Autowired
     private ChoiceTitleMapper choiceTitleMapper;
@@ -48,6 +49,18 @@ public class StudentHandle {
     private MajorMapper majorMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private WeeksPlanMapper weeksPlanMapper;
+    @Autowired
+    private TaskMapper taskMapper;
+    @Autowired
+    private OpenReportMapper openReportMapper;
+    @Autowired
+    private MidCheckMapper midCheckMapper;
+    @Autowired
+    private PaperMapper paperMapper;
+    @Autowired
+    private UserPaperMapper userPaperMapper;
 
     @CacheEvict(cacheNames = "student", key = "#id")
     public int updateEmail(String value, Long id) {
@@ -187,7 +200,16 @@ public class StudentHandle {
         return studentMapper.selectByUserId(userId).getDepartmentId();
     }
 
-    public boolean saveFile(String filePath, String fileName,  byte[] file) {
+    /**
+     * 保存文件
+     * @param userId 账号
+     * @param fileName 文件名
+     * @param file 文件的二进制流
+     * @param type 类型，比如中期检查等
+     * @return
+     */
+    public boolean saveFile(Integer userId, String fileName,  byte[] file, String type) {
+        String filePath = FilePath + userId + '/';
         File target = new File(filePath);
         if (!target.exists()) {
             target.mkdirs();
@@ -197,10 +219,92 @@ public class StudentHandle {
             stream.write(file);
             stream.flush();
             stream.close();
-            return true;
+            //保存文件路径
+            return saveFilePath(type, userId, fileName);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private boolean saveFilePath(String type, Integer id, String filePath) {
+        boolean success;
+        Integer paperId = userPaperMapper.selectByUserId(id);
+        System.out.println("论文计划ID为："+paperId + " 类型为：" + type);
+        if (paperId == null)
+            return false;
+        switch (type) {
+            case "WeeksPlan":
+                success = saveWeekPlan(paperId, filePath) > 0;
+                break;
+            case "Task":
+                success = saveTask(paperId, filePath) > 0;
+                break;
+            case "MidCheck":
+                success = saveMidCheck(paperId, filePath) > 0;
+                break;
+            case "OpenReport":
+                success = saveOpenReport(paperId, filePath) > 0;
+                break;
+            case "Paper":
+                success = savePaper(paperId, filePath) > 0;
+                break;
+            default:
+                success = false;
+                break;
+        }
+        return success;
+    }
+
+    private int saveWeekPlan(Integer paperId, String filePath) {
+        if (weeksPlanMapper.isExist(paperId) > 0) {
+            return weeksPlanMapper.updateFilePath(paperId, filePath);
+        } else {
+            WeeksPlan weeksPlan = new WeeksPlan();
+            weeksPlan.setFilePath(filePath);
+            weeksPlan.setPaperPlanId(paperId);
+            return weeksPlanMapper.insert(weeksPlan);
+        }
+    }
+    private int saveTask(Integer paperId, String filePath) {
+        if (taskMapper.isExist(paperId) > 0) {
+            return taskMapper.updateFilePath(paperId, filePath);
+        } else {
+            Task task = new Task();
+            task.setFilePath(filePath);
+            task.setPaperPlanId(paperId);
+            return taskMapper.insert(task);
+        }
+    }
+    private int saveMidCheck(Integer paperId, String filePath) {
+        if (midCheckMapper.isExist(paperId) > 0) {
+            return midCheckMapper.updateFilePath(paperId,filePath);
+        } else {
+            MidCheck midCheck = new MidCheck();
+            midCheck.setFilePath(filePath);
+            midCheck.setPaperPlanId(paperId);
+            return midCheckMapper.insert(midCheck);
+        }
+    }
+    private int saveOpenReport(Integer paperId, String filePath) {
+        if (openReportMapper.isExist(paperId) > 0) {
+            return openReportMapper.updateFilePath(paperId, filePath);
+        } else {
+            OpenReport openReport = new OpenReport();
+            openReport.setFilePath(filePath);
+            openReport.setPaperPlanId(paperId);
+            return openReportMapper.insert(openReport);
+        }
+    }
+    private int savePaper(Integer paperId, String filePath) {
+        if (paperMapper.isExist(paperId) > 0) {
+            return paperMapper.updateFilePath(paperId, filePath);
+        } else {
+            Paper paper = new Paper();
+            paper.setFilePath(filePath);
+            paper.setScore(0);
+            paper.setPaperPlanId(paperId);
+            return paperMapper.insert(paper);
         }
     }
 }

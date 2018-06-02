@@ -15,7 +15,10 @@ import java.util.List;
 @RequestMapping(value = "/student")
 public class StudentController {
 
-    private static final String FilePath = "/home/beiyi/file/";
+    //TODO 测试id
+    private Long testId = 100111L;
+    //TODO 测试id
+    private Integer testUser = 1001;
 
     @Autowired
     private StudentHandle studentHandle;
@@ -24,7 +27,7 @@ public class StudentController {
     public Result update(@PathVariable(value = "type")String type,
                          @RequestParam(value = "text")String text,
                          @SessionAttribute(value = "id", required = false)Long id) {
-        id = 100131L;
+        id = testId;
         if ("phone".equals(type)) {
             try {
                 Long phone = Long.valueOf(text);
@@ -45,15 +48,15 @@ public class StudentController {
         }
     }
 
-    @PostMapping(value = "/upload")
-    public Result upload(@RequestParam(value = "file")MultipartFile file,
-                         @SessionAttribute(value = "id", required = false)Long id) {
+    @PostMapping(value = "/upload/{type}")
+    public Result upload(@PathVariable(value = "type") String type,
+                         @RequestParam(value = "file")MultipartFile file,
+                         @SessionAttribute(value = "userId", required = false)Integer userId) {
         try {
-            id = 100131L;
-            String filePath = FilePath + id + "/";
+            userId = testUser;
             String fileName = file.getOriginalFilename();
             byte[] files = file.getBytes();
-            if (studentHandle.saveFile(filePath, fileName, files)) {
+            if (studentHandle.saveFile(userId, fileName, files, type)) {
                 return new Result(Dictionary.SUCCESS);
             } else {
                 return new Result(Dictionary.SUBMIT_FAIL);
@@ -77,7 +80,8 @@ public class StudentController {
     }
 
     @PostMapping(value = "/getMsg")
-    public Result getMsg(@SessionAttribute(value = "user_id") Integer userId, @RequestParam(value = "page", required = false) Integer page) {
+    public Result getMsg(@SessionAttribute(value = "user_id") Integer userId,
+                         @RequestParam(value = "page", required = false) Integer page) {
         if (page == null)
             page = 1;
         try {
