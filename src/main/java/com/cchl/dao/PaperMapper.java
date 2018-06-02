@@ -15,4 +15,6 @@ public interface PaperMapper {
     int isExist(Integer paperId);
 
     int updateFilePath(@Param(value = "paperId") Integer paperId, @Param(value = "filePath") String filePath);
+
+    Paper selectByPaperId(Integer paperId);
 }

@@ -3,6 +3,7 @@ package com.cchl.service.student;
 import com.cchl.dao.*;
 import com.cchl.dto.Result;
 import com.cchl.entity.*;
+import com.cchl.entity.vo.FileRecord;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.entity.vo.UserMsgRecord;
 import com.cchl.eumn.Dictionary;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public class StudentHandle {
     private MajorMapper majorMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+
     @Autowired
     private WeeksPlanMapper weeksPlanMapper;
     @Autowired
@@ -198,6 +201,43 @@ public class StudentHandle {
     @Cacheable(value = "userId")
     public Integer selectDepartmentIdByUserId(int userId) {
         return studentMapper.selectByUserId(userId).getDepartmentId();
+    }
+
+    public List<FileRecord> selectFileRecord(Integer userId) {
+        //获取paper plan id
+        Integer paperId = userPaperMapper.selectByUserId(userId);
+        List<FileRecord> records = new ArrayList<>(5);
+        //查找是否有周计划
+        WeeksPlan weeksPlan = weeksPlanMapper.selectByPaperId(paperId);
+        if (weeksPlan != null) {
+            FileRecord record = new FileRecord("周计划", weeksPlan.getFilePath(), weeksPlan.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有任务书
+        Task task = taskMapper.selectByPaperId(paperId);
+        if (task != null) {
+            FileRecord record = new FileRecord("任务书", task.getFilePath(), task.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有开题报告
+        OpenReport openReport = openReportMapper.selectByPaperId(paperId);
+        if (openReport != null) {
+            FileRecord record = new FileRecord("开题报告", openReport.getFilePath(), openReport.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有中期检查
+        MidCheck midCheck = midCheckMapper.selectByPaperId(paperId);
+        if (midCheck != null) {
+            FileRecord record = new FileRecord("中期检查", midCheck.getFilePath(), midCheck.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有论文
+        Paper paper = paperMapper.selectByPaperId(paperId);
+        if (paper != null) {
+            FileRecord record = new FileRecord("论文", paper.getFilePath(), paper.getCreateTime());
+            records.add(record);
+        }
+        return records;
     }
 
     /**

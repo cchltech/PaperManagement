@@ -202,3 +202,10 @@ ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher3 FOREIGN KEY grouping(te
 ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher4 FOREIGN KEY grouping(teacher_id4) REFERENCES teacher(id);
 ALTER TABLE grouping ADD CONSTRAINT fk_grouping_department FOREIGN KEY grouping(department_id) REFERENCES department(id);
 ALTER TABLE grouping ADD CONSTRAINT fk_grouping_major FOREIGN KEY grouping(major_id) REFERENCES major(id);
+
+# 给各个文件添加时间戳
+ALTER TABLE weeks_plan ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE task ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE open_report ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE mid_check ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE paper ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;

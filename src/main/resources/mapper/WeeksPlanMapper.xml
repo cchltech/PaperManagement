@@ -5,6 +5,7 @@
         <result column="id" jdbcType="INTEGER" property="id"/>
         <result column="file_path" jdbcType="VARCHAR" property="filePath"/>
         <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId"/>
+        <result column="create_time" property="createTime"/>
     </resultMap>
     <insert id="insert" parameterType="com.cchl.entity.WeeksPlan">
         insert into weeks_plan (file_path, paper_plan_id)
@@ -14,11 +15,17 @@
         SELECT
             id,
             file_path,
-            paper_plan_id
+            paper_plan_id,
+            create_time
         FROM weeks_plan
     </select>
     <select id="isExist" resultType="java.lang.Integer">
         SELECT count(id)
+        FROM weeks_plan
+        WHERE paper_plan_id = #{paperId}
+    </select>
+    <select id="selectByPaperId" resultMap="weeks_plan">
+        SELECT id, file_path, paper_plan_id, create_time
         FROM weeks_plan
         WHERE paper_plan_id = #{paperId}
     </select>

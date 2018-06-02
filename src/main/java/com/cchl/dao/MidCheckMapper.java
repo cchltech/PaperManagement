@@ -15,4 +15,6 @@ public interface MidCheckMapper {
     int isExist(Integer paperId);
 
     int updateFilePath(@Param(value = "paperId") Integer paperId, @Param(value = "filePath") String filePath);
+
+    MidCheck selectByPaperId(Integer paperId);
 }

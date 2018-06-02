@@ -19,8 +19,11 @@ public class StudentURLController {
     private StudentHandle studentHandle;
 
     @RequestMapping
-    public String index() {
-        return "student/student";
+    public ModelAndView index() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("student/student");
+        modelAndView.addObject("student",studentHandle.selectById(100111L));
+        return modelAndView;
     }
 
     /**
@@ -30,7 +33,7 @@ public class StudentURLController {
      */
     @GetMapping(value = "/myInfo")
     public ModelAndView myInfo(@SessionAttribute(value = "id", required = false)Long id) {
-        id = 100131L;
+        id = 100111L;
         ModelAndView model = new ModelAndView();
         model.setViewName("student/myInfo");
         model.addObject("student", studentHandle.selectById(id));

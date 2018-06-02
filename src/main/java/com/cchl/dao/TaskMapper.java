@@ -15,4 +15,6 @@ public interface TaskMapper {
     int isExist(Integer paperId);
 
     int updateFilePath(@Param(value = "paperId") Integer paperId, @Param(value = "filePath") String filePath);
+
+    Task selectByPaperId(Integer paperId);
 }

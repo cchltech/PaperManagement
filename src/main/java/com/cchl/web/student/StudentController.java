@@ -1,5 +1,6 @@
 package com.cchl.web.student;
 
+import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.eumn.Dictionary;
@@ -67,8 +68,14 @@ public class StudentController {
         }
     }
 
+    @GetMapping(value = "/fileRecord")
+    public DataWithPage fileRecord(@SessionAttribute(value = "user_id", required = false)Integer userId) {
+        userId = testUser;
+        return new DataWithPage<>(0,10,studentHandle.selectFileRecord(userId));
+    }
+
     @RequestMapping(value = "/hasNewMsg")
-    public Result hasNewMsg(@SessionAttribute(value = "user_id") Integer userId) {
+    public Result hasNewMsg(@SessionAttribute(value = "user_id", required = false) Integer userId) {
         try {
             if (studentHandle.hasNewMsg(userId))
                 return new Result(Dictionary.SUCCESS);
@@ -80,7 +87,7 @@ public class StudentController {
     }
 
     @PostMapping(value = "/getMsg")
-    public Result getMsg(@SessionAttribute(value = "user_id") Integer userId,
+    public Result getMsg(@SessionAttribute(value = "user_id", required = false) Integer userId,
                          @RequestParam(value = "page", required = false) Integer page) {
         if (page == null)
             page = 1;
