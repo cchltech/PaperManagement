@@ -10,47 +10,49 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
     <legend>教师评价成绩和评语</legend>
 </fieldset>
-<table class="layui-table" lay-filter="title" style="width: 80%">
-    <thead>
-    <tr>
-        <th lay-data="{field: 'id', align:'center', fixed: true, width:200, sort:true}">题目编号</th>
-        <th lay-data="{field: 'content', align:'center', width:300}">题目</th>
-        <th lay-data="{field: 'instruction', align:'center'}">简介</th>
-        <th lay-data="{field: 'totalNumber', align:'center', width:200}">总人数</th>
-        <th lay-data="{field: 'department',  templet:'<div>{{d.department.name}}</div>', align:'center', width:200}">所属学院</th>
-        <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}">操作</th>
-    </tr>
-    </thead>
-</table>
+<div class="layui-collapse" lay-filter="test">
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title" >第一个论文题目</h2>
+        <div class="layui-colla-content">
+            <p>姓名 - XXX</p> <!-- 动态添加学生名字 -->
+            <p>简介 - XXX......</p> <!-- 动态添加论文简介 -->
+            <form id="form1" method="post">
+                <p>成绩评分</p>
+                <div id="test8"></div>
+                <p>评语</p>
+                <textarea type="t" id="text1" rows="10" style="width:600px;" ></textarea><!-- 评语文本框 -->
+                <br>
+                <input type="submit" value="确定" class="layui-btn">
+                &nbsp;&nbsp;
+                <input type="reset" value="清除评语" class="layui-btn">
+            </form>
+        </div>
+    </div>
+</div>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="">填写成绩与评价</a>
 </script>
 <script src="../../../static/layui/layui.js"></script>
 <script>
-    layui.use('table', function () {
-        var table = layui.table;
-        //监听工具条
-        table.on('tool(title)', function (obj) {
-            var data = obj.data;
-            if (obj.event === 'detail') {
-                layer.open({
-                    title: '题目详细信息'
-                    ,
-                    content: "<div class='layui-text'>题目：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.content + "</div></div><br>"
-                    + "<div class='layui-text'>题目介绍：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.instruction + "</div></div><br>"
-                    + "<div class='layui-text'>限制选题人数：&nbsp;&nbsp;&nbsp;&nbsp;" + data.totalNumber + "</div>"
-                });
-            } else if (obj.event === 'agree') {
-                layer.confirm('确定同意该题目的审核吗', function(index){
-                    $.post('/examine/examineTitle', {ids: data.id, status: 1}, function (data) {
-                        if (data.success) {
-                            layer.msg('已通过审核');
-                            obj.del();
-                            layer.close(index);
-                        }
-                    });
-                });
-            }
+    //折叠触发功能js，不能删
+    layui.use(['element', 'layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+    });
+    layui.use('layer', function(){
+        layui.use(['rate'], function(){
+            var rate = layui.rate;
+            rate.render({
+                elem: '#test8'
+                ,length: 10 //自定义长度
+                ,value: 8 //初始值
+                ,theme: '#009688'//定义颜色
+                ,half: true //定义半星
+                ,text: true //文本提示
+                ,setText: function(value){
+                    this.span.text(value*10+'分'); //分数值
+                }
+            });
         });
     });
 </script>
