@@ -6,7 +6,9 @@ import com.cchl.entity.*;
 import com.cchl.entity.vo.FileRecord;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.entity.vo.UserMsgRecord;
+import com.cchl.entity.vo.VoTimer;
 import com.cchl.eumn.Dictionary;
+import com.cchl.eumn.TimerType;
 import com.cchl.execption.NumberFullException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,33 +88,45 @@ public class StudentHandle {
     public Student selectById(Long id) {
         return studentMapper.selectById(id);
     }
+
+
     /**
      * @param studentId 学生学号
      * @return 获取题目列表
      */
-    public Result getTitleList(Long studentId) {
+    public Result getTitleList(Long studentId) throws ParseException {
         /*
          * 先获取学生的学院id
          * 再判断是否到了选课时间
          */
         int departmentId = getDepartmentId(studentId);
-        ChoiceTitle choiceTitle = choiceTitleMapper.selectByDepartmentId(departmentId);
-        long times = new Date().getTime();
-        long begin = choiceTitle.getBeginTime().getTime();
-        //如果当前时间小于开始选题的时间
-        if (times < begin) {
-            logger.info("选题为开始，剩余时间：{}", (begin - times));
-            //返回剩余时间
-            return new Result<>(false, (begin - times));
-        } else {
-            long end = choiceTitle.getEndTime().getTime();
-            //如果当前时间大于开始时间但小于结束时间
-            if (times < end) {
-                return new Result<>(true, getList(departmentId));
+        Criteria criteria = Criteria.where("department").is(departmentId).and("type").is(TimerType.CHOICE_TITLE.getType());
+        List<VoTimer> timers = mongoTemplate.find(query(criteria), VoTimer.class);
+        VoTimer timer = null;
+        if (timers !=null && timers.size() > 0) {
+            timer = timers.get(0);
+        }
+        if (timer != null) {
+            long times = new Date().getTime();
+            long begin = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getBegin()).getTime();
+            //如果当前时间小于开始选题的时间
+            if (times < begin) {
+                logger.info("选题为开始，剩余时间：{}", (begin - times));
+                //返回剩余时间
+                return new Result<>(true, timer.getBegin(), getList(departmentId));
             } else {
-                //返回-1代表已经超时
-                return new Result<>(false, -1);
+                long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
+                //如果当前时间大于开始时间但小于结束时间
+                if (times < end) {
+                    return new Result<>(true, getList(departmentId));
+                } else {
+                    //返回-1代表已经超时
+                    return new Result<>(false, -1);
+                }
             }
+        } else {
+            //返回-2代表未开始
+            return new Result<>(false, -2);
         }
     }
 
@@ -141,7 +158,8 @@ public class StudentHandle {
      * @param studentId 学号
      * @return 学院号
      */
-    private int getDepartmentId(Long studentId) {
+    @Cacheable(cacheNames = "studentId")
+    public int getDepartmentId(Long studentId) {
         return studentMapper.selectById(studentId).getDepartmentId();
     }
 
@@ -203,6 +221,21 @@ public class StudentHandle {
         return studentMapper.selectByUserId(userId).getDepartmentId();
     }
 
+    /**
+     * 文件下载功能
+     * @param userId
+     * @return
+     */
+    public File getFile(Integer userId, String fileName) {
+        Integer paperId = userPaperMapper.selectByUserId(userId);
+        return new File(FilePath + paperId + '/' + fileName);
+    }
+
+    /**
+     * 查找文件记录
+     * @param userId
+     * @return
+     */
     public List<FileRecord> selectFileRecord(Integer userId) {
         //获取paper plan id
         Integer paperId = userPaperMapper.selectByUserId(userId);
@@ -249,7 +282,8 @@ public class StudentHandle {
      * @return
      */
     public boolean saveFile(Integer userId, String fileName,  byte[] file, String type) {
-        String filePath = FilePath + userId + '/';
+        Integer paperId = userPaperMapper.selectByUserId(userId);
+        String filePath = FilePath + paperId + '/';
         File target = new File(filePath);
         if (!target.exists()) {
             target.mkdirs();

@@ -70,6 +70,11 @@
     layui.use(['upload','element','layer'], function () {
         var upload = layui.upload;
         var element = layui.element;
+        var layer = layui.layer;
+        layer.open({
+           title:'温馨提示',
+           content:'每次提交文件都会覆盖你上一次提交的同类型的文件哦，系统只会保留你的最新的一份文件'
+        });
         upload.render({
             elem: '#weekPlan'
             ,url: '/student/upload/WeeksPlan'

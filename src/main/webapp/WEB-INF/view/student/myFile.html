@@ -10,7 +10,7 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
     <legend>文件上传记录</legend>
 </fieldset>
-<table class="layui-table" lay-data="{id:'table', url:'/student/fileRecord'}" lay-filter="timer">
+<table class="layui-table" lay-data="{id:'table', url:'/student/fileRecord'}" lay-filter="file">
     <thead>
     <tr>
         <th lay-data="{field:'type',align:'center', width:300}">文件类型</th>
@@ -21,7 +21,9 @@
     </thead>
 </table>
 <script type="text/html" id="operation">
-    <a class="layui-btn layui-btn-xs" lay-event="download">下载文件</a>
+    <a class="layui-btn layui-btn-xs" lay-event="download">
+        <i class="layui-icon layui-icon-download-circle"></i>下载文件
+    </a>
 </script>
 </body>
 <script src="../../../static/layui/layui.js"></script>
@@ -29,17 +31,23 @@
     layui.use('table', function () {
         var table = layui.table;
         table.render();
-        table.on('tool(title)', function (obj) {
+        table.on('tool(file)', function (obj) {
             var data = obj.data;
-            if (obj.event === 'agree') {
-                layer.confirm('确定同意该用户的审核吗', function(index){
-                    $.post('/examine/examineUser', {ids: data.id, status: 1}, function (data) {
-                        if (data.success) {
-                            layer.msg('已通过审核');
-                            obj.del();
-                            layer.close(index);
-                        }
-                    });
+            if (obj.event === 'download') {
+                layer.confirm('确定要下载该文件吗', function(index){
+                    var form=$("<form>");//定义一个form表单
+                    form.attr("style","display:none");
+                    form.attr("target","");
+                    form.attr("method","get");
+                    form.attr("action","/student/download");
+                    var input1=$("<input>");
+                    input1.attr("type","hidden");
+                    input1.attr("name","fileName");
+                    input1.attr("value",data.name);
+                    $("body").append(form);
+                    form.append(input1);
+                    form.submit();
+                    layer.close(index)
                 });
             }
         });

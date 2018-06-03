@@ -3,8 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend id="msg">我的信息</legend>
+</fieldset>
+<div id="CountDown">
 
+</div>
+<div id="showTitle">
+
+</div>
 </body>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use(['element','util'], function () {
+        var util = layui.util;
+        $.ajax({
+            url:'/student/title',
+            type:'get',
+            success:function (data) {
+                if (data.success) {
+                    if (data.message!==null) {
+                        var endTime = Date.parse(new Date(data.message));
+                        var serverTime = new Date().getTime();
+                        util.countdown(endTime, serverTime, function(date, serverTime, timer){
+                            var str = date[0] + '天' + date[1] + '时' +  date[2] + '分' + date[3] + '秒';
+                            layui.$('#CountDown').html('距离开始选题还有：'+ str);
+                        });
+                    }
+                } else {
+                    if (data.message === -1) {
+                        $('#msg').text('选题时间已结束，请到“我的论文”模块查看您选择的题目信息')
+                    } else if (data.message === -2) {
+                        $('#msg').text('暂无选题信息')
+                    }
+
+                }
+            }
+        })
+    });
+</script>
 </html>
