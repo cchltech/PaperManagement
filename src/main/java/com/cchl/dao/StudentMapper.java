@@ -20,4 +20,7 @@ public interface StudentMapper {
 
     Student selectByUserId(Integer userId);
 
+    int totalNumber(Integer departmentId);
+
+    List<Student> selectByDepartmentId(Integer departmentId);
 }

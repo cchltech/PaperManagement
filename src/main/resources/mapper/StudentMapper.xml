@@ -86,4 +86,29 @@
             LEFT JOIN major m ON s.major_id = m.id
         WHERE s.user_id = #{userId}
     </select>
+    <select id="totalNumber" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM student
+        WHERE department_id = #{departmentId}
+    </select>
+    <select id="selectByDepartmentId" resultMap="student">
+        s.id,
+            s.id,
+            s.name,
+            s.sex,
+            s.email,
+            s.department_id,
+            s.grade,
+            s.major_id,
+            s.phone,
+            d.id   department_id,
+            d.name department_name,
+            m.id   major_id,
+            m.name major_name
+        FROM user u, student s
+            LEFT JOIN department d ON s.department_id = d.id
+            LEFT JOIN major m ON s.major_id = m.id
+        WHERE s.department_id = #{departmentId}
+        ORDER BY s.id
+    </select>
 </mapper>

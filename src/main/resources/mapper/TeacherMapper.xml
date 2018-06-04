@@ -81,4 +81,18 @@
             AND u.status = #{status}
         </if>
     </select>
+    <select id="selectByDepartmentId" resultMap="teacher">
+        SELECT
+        t.id,
+        t.name,
+        t.sex,
+        t.email,
+        t.phone,
+        d.id   department_id,
+        d.name department_name
+        FROM teacher t
+        LEFT JOIN department d ON t.department_id = d.id
+        WHERE t.department_id = #{departmentId}
+        ORDER BY t.id
+    </select>
 </mapper>
