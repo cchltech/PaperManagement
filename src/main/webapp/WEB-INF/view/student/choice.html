@@ -10,17 +10,35 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
     <legend id="msg">我的信息</legend>
 </fieldset>
-<div id="CountDown">
-
-</div>
-<div id="showTitle">
-
+<div style="width: 80%; margin-left: 10%">
+    <table class="layui-table" id="data">
+        <colgroup>
+            <col width="100" align="center">
+            <col width="300" align="center">
+            <col align="center">
+            <col width="150" align="center">
+            <col width="100" align="center">
+            <col width="100" align="center">
+        </colgroup>
+        <thead>
+            <tr>
+                <td>题目编号</td>
+                <td>题目内容</td>
+                <td>题目说明</td>
+                <td>所属教师</td>
+                <td>限选人数</td>
+                <td>选题</td>
+            </tr>
+        </thead>
+    </table>
 </div>
 </body>
 <script src="../../../static/layui/layui.js"></script>
 <script>
-    layui.use(['element','util'], function () {
+    layui.use(['element','util','layer'], function () {
         var util = layui.util;
+        var table = layui.table;
+        var layer = layui.layer;
         $.ajax({
             url:'/student/title',
             type:'get',
@@ -29,21 +47,56 @@
                     if (data.message!==null) {
                         var endTime = Date.parse(new Date(data.message));
                         var serverTime = new Date().getTime();
+                        for (var i in data.data) {
+                            var d = data.data[i];
+                            var msg = '<tr>' +
+                                            '<td id="'+d.id+'">' + d.id + '</td>' +
+                                            '<td><span style="line-height: 30px">' + d.content + '</span></td>' +
+                                            '<td><span style="line-height: 30px">' + d.instruction + '</span></td>' +
+                                            '<td><span style="line-height: 30px">' + d.teacher.name + '</span></td>' +
+                                            '<td><span style="line-height: 30px">' + d.totalNumber +  '</span></td>' +
+                                            '<td><button class="layui-btn layui-btn-fluid" onclick="choice('+d.id+')">选题</button></td>' +
+                                      '</tr>';
+                            $('#data').append(msg)
+                        }
                         util.countdown(endTime, serverTime, function(date, serverTime, timer){
                             var str = date[0] + '天' + date[1] + '时' +  date[2] + '分' + date[3] + '秒';
-                            layui.$('#CountDown').html('距离开始选题还有：'+ str);
+                            layui.$('#msg').html('距离开始选题还有：'+ str);
                         });
                     }
                 } else {
-                    if (data.message === -1) {
+                    if (data.data === -1) {
                         $('#msg').text('选题时间已结束，请到“我的论文”模块查看您选择的题目信息')
-                    } else if (data.message === -2) {
+                    } else if (data.data === -2) {
                         $('#msg').text('暂无选题信息')
+                    } else {
+                        $('#msg').text(data.message)
                     }
 
                 }
             }
-        })
+        });
     });
+    function choice(id) {
+        $.ajax({
+            url:'',
+            type:'POST',
+            dataType:'json',
+            data:{
+                titleId:id
+            },
+            success:function (data) {
+                layer.open({
+                    title:'选题结果',
+                    content:data.message
+                })
+            },
+            error:function () {
+                layer.msg('操作失败',{
+                    time:800
+                })
+            }
+        })
+    }
 </script>
 </html>

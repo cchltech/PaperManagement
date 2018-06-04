@@ -45,7 +45,7 @@ public class ExamineController {
             userId = test_id;
             if (userId == null)
                 return new DataWithPage(Dictionary.ILLEGAL_VISIT);
-            return new DataWithPage<>(0, examineService.totalNumber(0, userId), examineService.users((page - 1) * limit, limit));
+            return new DataWithPage<>(0, examineService.totalNumber(0, userId), examineService.users(userId, (page - 1) * limit, limit));
         } catch (IllegalVisitException e1) {
             return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e) {

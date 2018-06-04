@@ -43,7 +43,7 @@ public class ExamineServiceImpl implements ExamineService {
             throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
         switch (type) {
             case 0:
-                result = userMapper.totalNumber(false, (byte) 0);
+                result = userMapper.totalNumber(false, (byte) 0, departmentId);
                 break;
             case 1:
                 result = titleMapper.totalNumber(false, (byte) 0, departmentId);
@@ -55,9 +55,10 @@ public class ExamineServiceImpl implements ExamineService {
     }
 
     @Override
-    public List<User> users(int page, int limit) {
+    public List<User> users(int userId, int page, int limit) {
         try {
-            List<User> users = userMapper.selectUnaudited(page, limit);
+            int departmentId = teacherMapper.selectDepartmentIdByUserId(userId);
+            List<User> users = userMapper.selectUnaudited(departmentId, page, limit);
             for (User user : users) {
                 user.happyGive();
                 logger.info(user.toString());

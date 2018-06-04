@@ -24,7 +24,7 @@ public interface ExamineService {
      * @param number 每页条数
      * @return 返回待审核的用户数据
      */
-    List<User> users(int page, int number);
+    List<User> users(int userId, int page, int number);
 
     /**
      * 用户审核结果集

@@ -112,6 +112,7 @@ public class LoginController {
      * @return 返回结果
      */
     @RequestMapping(value = "/teacherRegister", method = RequestMethod.POST)
+    @ResponseBody
     public Result teacherRegister(HttpServletRequest request) {
         try {
             //获取教师实体信息
@@ -128,7 +129,6 @@ public class LoginController {
             if (teacher.getId() != null && teacher.getName() != null
                     && teacher.getPassword() != null && teacher.getSex() != null
                     && teacher.getDepartmentId() != null && teacher.getPhone() != null) {
-                logger.info("注册成功");
                 //执行注册操作
                 return teacherLoginService.teacherRegister(teacher);
             } else {
