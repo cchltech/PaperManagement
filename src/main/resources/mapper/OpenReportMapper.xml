@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cchl.dao.OpenReportMapper">
-  <resultMap id="open_report" type="com.cchl.entity.OpenReport">
-    <result column="id" jdbcType="INTEGER" property="id" />
-    <result column="file_path" jdbcType="VARCHAR" property="filePath" />
-    <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId" />
-  </resultMap>
-  <insert id="insert" parameterType="com.cchl.entity.OpenReport">
-    <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into open_report (id, file_path, paper_plan_id
-      )
-    values (#{id,jdbcType=INTEGER}, #{filePath,jdbcType=VARCHAR}, #{paperPlanId,jdbcType=INTEGER}
-      )
-  </insert>
-  <select id="selectAll" resultMap="open_report">
-    select id, file_path, paper_plan_id
-    from open_report
-  </select>
+    <resultMap id="open_report" type="com.cchl.entity.OpenReport">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="file_path" jdbcType="VARCHAR" property="filePath"/>
+        <result column="paper_plan_id" jdbcType="INTEGER" property="paperPlanId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.cchl.entity.OpenReport">
+        insert into open_report (file_path, paper_plan_id)
+        values (#{filePath,jdbcType=VARCHAR}, #{paperPlanId,jdbcType=INTEGER})
+    </insert>
+    <select id="selectAll" resultMap="open_report">
+        SELECT
+            id,
+            file_path,
+            paper_plan_id,
+            create_time
+        FROM open_report
+    </select>
+    <select id="isExist" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM open_report
+        WHERE paper_plan_id = #{paperId}
+    </select>
+    <select id="selectByPaperId" resultMap="open_report">
+        SELECT id, file_path, paper_plan_id, create_time
+        FROM open_report
+        WHERE paper_plan_id = #{paperId}
+    </select>
+    <update id="updateFilePath">
+        UPDATE open_report
+        SET file_path = #{filePath}
+        WHERE paper_plan_id = #{paperId}
+    </update>
 </mapper>

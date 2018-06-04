@@ -12,6 +12,8 @@ public class WeeksPlan {
     private Integer paperPlanId;
     //论文计划实体
     private PaperPlan paperPlan;
+    //创建时间
+    private String createTime;
 
     @Override
     public String toString() {
@@ -52,5 +54,13 @@ public class WeeksPlan {
 
     public void setPaperPlanId(Integer paperPlanId) {
         this.paperPlanId = paperPlanId;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }

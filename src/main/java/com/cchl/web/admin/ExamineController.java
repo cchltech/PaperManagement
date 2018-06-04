@@ -22,6 +22,9 @@ public class ExamineController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    //TODO 测试id
+    int test_id = 1000;
+
     /**
      * 注入审核处理的bean
      */
@@ -39,10 +42,10 @@ public class ExamineController {
                              @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
             //TODO 测试用的userId
-            userId = 1007;
+            userId = test_id;
             if (userId == null)
                 return new DataWithPage(Dictionary.ILLEGAL_VISIT);
-            return new DataWithPage<>(0, examineService.totalNumber(0, userId), examineService.users((page - 1) * limit, limit));
+            return new DataWithPage<>(0, examineService.totalNumber(0, userId), examineService.users(userId, (page - 1) * limit, limit));
         } catch (IllegalVisitException e1) {
             return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e) {
@@ -71,10 +74,12 @@ public class ExamineController {
      * @return 返回待审核的题目列
      */
     @GetMapping(value = "/title")
-    public DataWithPage title(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit, @SessionAttribute(value = "user_id", required = false)Integer userId) {
+    public DataWithPage title(@RequestParam(value = "page", required = false) Integer page,
+                              @RequestParam(value = "limit", required = false) Integer limit,
+                              @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
             //TODO 测试用的userId
-            userId = 1007;
+            userId = test_id;
             if (userId == null) {
                 return new DataWithPage(Dictionary.DATA_LOST);
             }

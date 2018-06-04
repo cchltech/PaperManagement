@@ -99,7 +99,6 @@
         var laydate = layui.laydate;
         var table = layui.table;
         element.on('tab(even)', function (data) {
-            console.log(data);
             if (data.index === 2) {
                 table.reload('table', {
                     url: '/timer/show'
@@ -130,7 +129,6 @@
             }
         });
         form.on('submit(student)', function (data) {
-            console.log(data.field);
             $.post('/timer/add/0', data.field, function (data) {
                 if (data.success) {
                     layer.open({
@@ -149,7 +147,6 @@
             return false;
         });
         form.on('submit(teacher)', function (data) {
-            console.log(data.field);
             $.post('/timer/add/1', data.field, function (data) {
                 if (data.success) {
                     layer.open({

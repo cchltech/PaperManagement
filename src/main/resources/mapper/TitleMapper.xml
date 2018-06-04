@@ -43,15 +43,16 @@
         total_number,
         has_select,
         t.department_id,
-        d.id department_id,
+        d.id      department_id,
         d.name    department_name,
         tea.id    teacher_id,
         tea.name  teacher_name,
         tea.phone teacher_phone,
         tea.sex   teacher_sex,
         tea.email teacher_email
-        FROM teacher tea, title t
+        FROM title t
         LEFT JOIN department d ON t.department_id = d.id
+        LEFT JOIN teacher tea ON t.teacher_id = tea.id
         WHERE t.department_id = #{departmentId}
         <if test="!all">
             AND status = #{status}
@@ -83,5 +84,19 @@
         WHERE t.has_select <![CDATA[ < ]]> t.total_number
               AND t.status = 1 AND d.id = t.department_id
         ORDER BY department_id
+    </select>
+    <select id="selectByDepartmentId" resultMap="title">
+        SELECT
+            t.id,
+            t.content,
+            t.instruction,
+            t.total_number,
+            t.has_select,
+            tea.name teacher_name,
+            tea.phone teacher_phone,
+            tea.sex teacher_sex
+        FROM title t
+            LEFT JOIN teacher tea ON t.teacher_id = tea.id
+        WHERE t.department_id = #{departmentId} AND status = 1
     </select>
 </mapper>

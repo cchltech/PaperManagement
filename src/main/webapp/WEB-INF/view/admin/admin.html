@@ -12,15 +12,7 @@
         <h1 class="layui-icon-fonts" style="color: white; font-size: 30px; margin-left: 30px; float: left">论文管理系统</h1>
         <ul class="layui-nav" style="float: right">
             <li class="layui-nav-item">
-                <a href="" id="msg">新消息</a>
-            </li>
-            <!--<li class="layui-nav-item">-->
-                <!--<a href="">个人中心-->
-                    <!--<span class="layui-badge-dot"></span>-->
-                <!--</a>-->
-            <!--</li>-->
-            <li class="layui-nav-item">
-                <a href="">帮助</a>
+                <a href="" style="font-size: 18px;"><i class="layui-icon layui-icon-survey" style="font-size: 18px;"></i>&nbsp;查看帮助</a>
             </li>
         </ul>
     </div>
@@ -30,9 +22,9 @@
                 <li class="layui-nav-item layui-nav-itemed">
                     <a href="javascript:">系统审核</a>
                     <dl class="layui-nav-child">
-                        <dd><a>注册审核</a></dd>
-                        <dd><a>题目审核</a></dd>
-                        <dd><a>文件审核</a></dd>
+                        <dd><a id="user">注册审核</a></dd>
+                        <dd><a id="title">题目审核</a></dd>
+                        <dd><a id="file">文件审核</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -52,8 +44,18 @@
             </ul>
         </div>
         <div class="layui-tab layui-tab-brief">
-            <div class="layui-body layui-tab-content" id="show">
-                <!--<iframe src="https://www.baidu.com" width="100%" height="100%" frameborder="no"></iframe>-->
+            <div class="layui-body layui-tab-content" id="show" style="overflow-y: hidden;">
+                <div style="font-size: 30px">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>让论文管理更加简单</legend>
+                    </fieldset>
+                    <blockquote class="layui-elem-quote layui-quote-nm">
+                        厚德 明智 博学 力行！
+                        <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;——肇院
+                    </blockquote>
+
+                </div>
             </div>
         </div>
     </div>
@@ -72,17 +74,23 @@
         //一些事件监听
         element.on('nav(test)', function (data) {
             var show = $('#show');
-            var val = data.init().context.innerText;
+            var val = data.init().context.innerText.substr(0,4);
             if (val === '选题调配') {
                 show.empty();
                 show.append('<iframe src="/admin/examineUser" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             } else if (val === '注册审核') {
+                reset($('#user'), 'user');
                 show.empty();
                 show.append('<iframe src="/admin/examineUser" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             } else if (val === '定时任务') {
                 show.empty();
                 show.append('<iframe src="/admin/timer" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+            } else if (val === '文件审核') {
+                reset($('#file'), 'file');
+                show.empty();
+                show.append('<iframe src="/admin/timer" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             } else if (val === '题目审核') {
+                reset($('#title'), 'title');
                 show.empty();
                 show.append('<iframe src="/admin/titleExamine" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             } else if (val === '选题信息') {
@@ -96,9 +104,32 @@
                 show.append('<iframe src="/show/teacher" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
             }
         });
-        //消息通知
-        $('#msg').append('<span class="layui-badge">8</span>')
     });
+    var getMsg = function() {
+        var url = '/msg/get/admin';
+        $.post(url,{},function (data) {
+            for (var i in data.data) {
+                var node = $('#'+data.data[i].type+'');
+                if (data.data[i].number > 0) {
+                    if (node.find('> span').length > 0){
+                        node.find('> span').remove();
+                    }
+                    node.append('<span class="layui-badge">' + data.data[i].number + '</span>')
+                }
+            }
+        })
+    };
+    //定时请求
+    setInterval(getMsg, 5000);
+    //重置信息
+    function reset(node, type) {
+        if (node.find('> span').length > 0) {
+            node.find('> span').remove();
+            $.post('/msg/reset/' + type, {}, function (data) {
+                console.log(data);
+            })
+        }
+    }
 </script>
 </body>
 </html>

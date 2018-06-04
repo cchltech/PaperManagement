@@ -1,10 +1,10 @@
 package com.cchl.service.admin.Ipml;
 
-import com.cchl.dao.TeacherMapper;
-import com.cchl.dao.TitleMapper;
-import com.cchl.dao.UserMapper;
+import com.cchl.dao.*;
+import com.cchl.entity.PaperPlan;
 import com.cchl.entity.Title;
 import com.cchl.entity.User;
+import com.cchl.entity.UserPaper;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.IllegalVisitException;
 import com.cchl.execption.SystemException;
@@ -30,6 +30,10 @@ public class ExamineServiceImpl implements ExamineService {
     private TeacherMapper teacherMapper;
     @Autowired
     private InfoService infoService;
+    @Autowired
+    private PaperPlanMapper paperPlanMapper;
+    @Autowired
+    private UserPaperMapper userPaperMapper;
 
     @Override
     public int totalNumber(int type, int userId) {
@@ -39,7 +43,7 @@ public class ExamineServiceImpl implements ExamineService {
             throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
         switch (type) {
             case 0:
-                result = userMapper.totalNumber(false, (byte) 0);
+                result = userMapper.totalNumber(false, (byte) 0, departmentId);
                 break;
             case 1:
                 result = titleMapper.totalNumber(false, (byte) 0, departmentId);
@@ -51,9 +55,10 @@ public class ExamineServiceImpl implements ExamineService {
     }
 
     @Override
-    public List<User> users(int page, int limit) {
+    public List<User> users(int userId, int page, int limit) {
         try {
-            List<User> users = userMapper.selectUnaudited(page, limit);
+            int departmentId = teacherMapper.selectDepartmentIdByUserId(userId);
+            List<User> users = userMapper.selectUnaudited(departmentId, page, limit);
             for (User user : users) {
                 user.happyGive();
                 logger.info(user.toString());
@@ -71,7 +76,10 @@ public class ExamineServiceImpl implements ExamineService {
         try {
             Integer[] result = new Integer[status.length];
             for (int i = 0; i < status.length; i++) {
-                result[i] = userMapper.updateStatus(id[i], status[i]);
+                /*
+                 * 生成论文计划，同时关联use_paper
+                 */
+                result[i] = insertPlan(id[i], status[i]);
             }
             return result;
         } catch (Exception e) {
@@ -102,8 +110,26 @@ public class ExamineServiceImpl implements ExamineService {
             }
             return result;
         } catch (Exception e) {
-
             throw new SystemException(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    private int insertPlan(int id, int status) {
+        if (status == 1) {
+            //生成论文计划
+            PaperPlan paperPlan = new PaperPlan();
+            //题目id为0，默认没有选择的题目
+            paperPlan.setTitleId(0);
+            paperPlanMapper.insert(paperPlan);
+            //关联用户与论文计划
+            UserPaper userPaper = new UserPaper();
+            userPaper.setPaperPlanId(paperPlan.getId());
+            userPaper.setUserId(id);
+            userPaperMapper.insert(userPaper);
+            //更新状态
+            return userMapper.updateStatus(id, (byte) status);
+        } else {
+            return userMapper.updateStatus(id, (byte) status);
         }
     }
 }

@@ -9,5 +9,17 @@
         <association property="paperPlan" columnPrefix="paper_plan_"
                      resultMap="mapper.PaperPlanMapper.paper_plan"/>
     </resultMap>
-
+    <insert id="insert" parameterType="com.cchl.entity.UserPaper">
+        INSERT INTO user_paper(user_id, paper_plan_id)
+            VALUE (#{userId}, #{paperPlanId})
+        <selectKey keyColumn="id" keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    <select id="selectByUserId" resultType="java.lang.Integer">
+        SELECT paper_plan_id
+        FROM user_paper
+        WHERE user_id = #{userId}
+        LIMIT 0, 1
+    </select>
 </mapper>

@@ -13,10 +13,23 @@
         INSERT INTO user (status, type) VALUE (#{status}, #{type})
     </insert>
     <select id="totalNumber" resultType="java.lang.Integer">
-        SELECT count(id) FROM user
-        <if test="all">
-            WHERE status = #{status}
+        SELECT ((SELECT count(u.id)
+        FROM teacher t, user u
+        WHERE t.department_id = #{departmentId}
+        AND u.id = t.user_id
+        <if test="!all">
+            AND u.status = #{status}
         </if>
+        )
+        + (SELECT count(u.id)
+        FROM student s, user u
+        WHERE s.department_id = #{departmentId}
+        AND u.id = s.user_id
+        <if test="!all">
+            AND u.status = #{status}
+        </if>
+        ))
+        AS id;
     </select>
     <select id="selectUnaudited" resultMap="user">
         SELECT u.id, u.status, u.type, u.create_time,
@@ -25,7 +38,7 @@
         FROM user u
         LEFT JOIN student s ON u.id = s.user_id
         LEFT JOIN teacher t ON u.id = t.user_id
-        WHERE status = 0
+        WHERE status = 0 AND (t.department_id = #{departmentId} OR s.department_id = #{departmentId})
         LIMIT #{limit},#{number}
     </select>
 

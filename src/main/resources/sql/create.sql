@@ -102,7 +102,7 @@ CREATE TABLE weeks_plan(
   file_path VARCHAR(50) COMMENT '该文件的存储路径' ,
   paper_plan_id INT NOT NULL COMMENT '管理论文计划的id' ,
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 COMMENT '周计划表';
+)CHARACTER SET = utf8 AUTO_INCREMENT = 1000 COMMENT '周计划表';
 # 添加外键约束
 ALTER TABLE weeks_plan ADD CONSTRAINT fk_weeks_paper_plan FOREIGN KEY weeks_plan(paper_plan_id) REFERENCES paper_plan(id) ON UPDATE CASCADE ON DELETE CASCADE ;
 # 任务书
@@ -111,7 +111,7 @@ CREATE TABLE task(
   file_path VARCHAR(50) COMMENT '该文件的存储路径' ,
   paper_plan_id INT NOT NULL COMMENT '管理论文计划的id' ,
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 COMMENT '任务书表';
+)CHARACTER SET = utf8 AUTO_INCREMENT = 1000 COMMENT '任务书表';
 # 添加外键约束
 ALTER TABLE task ADD CONSTRAINT fk_task_paper_plan FOREIGN KEY task(paper_plan_id) REFERENCES paper_plan(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 开题报告
@@ -120,7 +120,7 @@ CREATE TABLE open_report(
   file_path VARCHAR(50) COMMENT '该文件的存储路径' ,
   paper_plan_id INT NOT NULL COMMENT '管理论文计划的id' ,
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 COMMENT '开题报告表';
+)CHARACTER SET = utf8 AUTO_INCREMENT = 1000 COMMENT '开题报告表';
 # 添加外键约束
 ALTER TABLE open_report ADD CONSTRAINT fk_open_paper_plan FOREIGN KEY open_report(paper_plan_id) REFERENCES paper_plan(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 中期检查
@@ -129,7 +129,7 @@ CREATE TABLE mid_check(
   file_path VARCHAR(50) COMMENT '该文件的存储路径' ,
   paper_plan_id INT NOT NULL COMMENT '管理论文计划的id' ,
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 COMMENT '中期检查表';
+)CHARACTER SET = utf8 AUTO_INCREMENT = 1000 COMMENT '中期检查表';
 # 添加外键约束
 ALTER TABLE mid_check ADD CONSTRAINT fk_mid_paper_plan FOREIGN KEY mid_check(paper_plan_id) REFERENCES paper_plan(id) ON UPDATE CASCADE ON DELETE CASCADE ;
 # 论文
@@ -139,7 +139,7 @@ CREATE TABLE paper(
   score INT DEFAULT 0 COMMENT '论文成绩，默认为0' ,
   paper_plan_id INT NOT NULL COMMENT '管理论文计划的id' ,
   PRIMARY KEY (id)
-)AUTO_INCREMENT = 1000 COMMENT '用于记录论文信息';
+)CHARACTER SET = utf8 AUTO_INCREMENT = 1000 COMMENT '用于记录论文信息';
 # 添加外键约束
 ALTER TABLE paper ADD CONSTRAINT fk_paper_paper_plan FOREIGN KEY paper(paper_plan_id) REFERENCES paper_plan(id) ON DELETE CASCADE ON UPDATE CASCADE ;
 # 评价表
@@ -196,13 +196,20 @@ CREATE TABLE group(
   PRIMARY KEY (id)
 )AUTO_INCREMENT = 1000 CHARACTER SET = utf8 COMMENT '分组表，用于记录小组与教师之间的分配关系';
 # 添加外键约束
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student1 FOREIGN KEY grouping(student_id1) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student2 FOREIGN KEY grouping(student_id2) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student3 FOREIGN KEY grouping(student_id3) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student4 FOREIGN KEY grouping(student_id4) REFERENCES student(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher1 FOREIGN KEY grouping(teacher_id1) REFERENCES teacher(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher2 FOREIGN KEY grouping(teacher_id2) REFERENCES teacher(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher3 FOREIGN KEY grouping(teacher_id3) REFERENCES teacher(id);
+ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher4 FOREIGN KEY grouping(teacher_id4) REFERENCES teacher(id);
 ALTER TABLE grouping ADD CONSTRAINT fk_grouping_department FOREIGN KEY grouping(department_id) REFERENCES department(id);
 ALTER TABLE grouping ADD CONSTRAINT fk_grouping_major FOREIGN KEY grouping(major_id) REFERENCES major(id);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student1_id) REFERENCES student(id);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student2_id) REFERENCES student(id);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student3_id) REFERENCES student(id);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_student FOREIGN KEY grouping(student4_id) REFERENCES student(id);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher1_name) REFERENCES teacher(name);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher2_name) REFERENCES teacher(name);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher3_name) REFERENCES teacher(name);
-ALTER TABLE grouping ADD CONSTRAINT fk_grouping_teacher FOREIGN KEY grouping(teacher4_name) REFERENCES teacher(name);
+
+# 给各个文件添加时间戳
+ALTER TABLE weeks_plan ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE task ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE open_report ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE mid_check ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE paper ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DEFAULT CURRENT_TIMESTAMP

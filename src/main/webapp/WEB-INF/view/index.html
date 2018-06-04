@@ -6,6 +6,7 @@
     <link href="../../static/layui/css/layui.css" rel="stylesheet">
     <link href="../../static/css/login.css" rel="stylesheet"/>
     <script src="../../static/js/login.js" type="text/javascript"></script>
+    <script src="../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
 <div class="cont">
@@ -17,19 +18,39 @@
                     <svg class="login__icon name svg-icon" viewBox="0 0 20 20">
                         <path d="M0,20 a10,8 0 0,1 20,0z M10,0 a4,4 0 0,1 0,8 a4,4 0 0,1 0,-8"/>
                     </svg>
-                    <input type="text" name="userName" class="login__input name" placeholder="请输入你的学号或者工号"/>
+                    <input type="text" name="id" class="login__input name" placeholder="请输入你的学号或者工号"/>
                 </div>
                 <div class="login__row">
                     <svg class="login__icon pass svg-icon" viewBox="0 0 20 20">
                         <path d="M0,20 20,20 20,8 0,8z M10,13 10,16z M4,8 a6,8 0 0,1 12,0"/>
                     </svg>
-                    <input type="password" class="login__input pass" placeholder="密码"/>
+                    <input type="password" name="pwd" class="login__input pass" placeholder="密码"/>
                 </div>
-                <button type="button" class="login__submit">登 录</button>
+                <button type="button" class="login__submit" onclick="login()">登 录</button>
                 <p class="login__signup">还没有账户？ &nbsp;<a href="/registry">注册</a></p>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function login() {
+        $.ajax({
+            url:'/login',
+            data:{
+                id:$('#id'),
+                password:$('#pwd')
+            },
+            dataType:'json',
+            type:'post',
+            success:function (data) {
+                alert(data.message);
+            },
+            error:function () {
+                alert('接口异常，请稍后重试')
+            }
+        })
+    }
+
+</script>
 </body>
 </html>

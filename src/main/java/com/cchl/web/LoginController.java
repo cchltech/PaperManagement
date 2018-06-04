@@ -94,10 +94,14 @@ public class LoginController {
                 return new Result(Dictionary.DATA_LOST);
             }
         } catch (NumberFormatException e1) {
+            logger.error("非法数据：{}", e1.getMessage());
             return new Result(Dictionary.ILLEGAL);
         } catch (DataInsertException e2) {
+            logger.error("数据插入失败：{}", e2.getMessage());
             return new Result(Dictionary.DATA_INSERT_FAIL);
         } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("系统异常：{}", e.getMessage());
             return new Result(Dictionary.SYSTEM_ERROR);
         }
     }
@@ -108,6 +112,7 @@ public class LoginController {
      * @return 返回结果
      */
     @RequestMapping(value = "/teacherRegister", method = RequestMethod.POST)
+    @ResponseBody
     public Result teacherRegister(HttpServletRequest request) {
         try {
             //获取教师实体信息
@@ -124,7 +129,6 @@ public class LoginController {
             if (teacher.getId() != null && teacher.getName() != null
                     && teacher.getPassword() != null && teacher.getSex() != null
                     && teacher.getDepartmentId() != null && teacher.getPhone() != null) {
-                logger.info("注册成功");
                 //执行注册操作
                 return teacherLoginService.teacherRegister(teacher);
             } else {
@@ -193,7 +197,7 @@ public class LoginController {
 
     @RequestMapping(value = "/majorList")
     @ResponseBody
-    public Result majorList(@RequestParam(value = "departmentId", required = false)Long departmentId) {
+    public Result majorList(@RequestParam(value = "departmentId", required = false)Integer departmentId) {
         if (departmentId == null)
             return new Result(Dictionary.ILLEGAL);
         return new Result<>(true, studentHandle.selectByDepartmentId(departmentId));

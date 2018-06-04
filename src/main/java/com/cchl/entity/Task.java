@@ -12,6 +12,8 @@ public class Task {
     private Integer paperPlanId;
     //关联论文计划表
     private PaperPlan paperPlan;
+    //创建时间
+    private String createTime;
 
     @Override
     public String toString() {
@@ -52,5 +54,13 @@ public class Task {
 
     public void setPaperPlanId(Integer paperPlanId) {
         this.paperPlanId = paperPlanId;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }

@@ -3,13 +3,17 @@ package com.cchl.service.student;
 import com.cchl.dao.*;
 import com.cchl.dto.Result;
 import com.cchl.entity.*;
+import com.cchl.entity.vo.FileRecord;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.entity.vo.UserMsgRecord;
+import com.cchl.entity.vo.VoTimer;
 import com.cchl.eumn.Dictionary;
+import com.cchl.eumn.TimerType;
 import com.cchl.execption.NumberFullException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,10 +22,17 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.data.mongodb.core.query.Query.query;
-
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * 处理学生端的所有操作
@@ -30,6 +41,8 @@ import java.util.List;
 public class StudentHandle {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static final String FilePath = "/home/beiyi/file/";
 
     @Autowired
     private ChoiceTitleMapper choiceTitleMapper;
@@ -44,33 +57,76 @@ public class StudentHandle {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private WeeksPlanMapper weeksPlanMapper;
+    @Autowired
+    private TaskMapper taskMapper;
+    @Autowired
+    private OpenReportMapper openReportMapper;
+    @Autowired
+    private MidCheckMapper midCheckMapper;
+    @Autowired
+    private PaperMapper paperMapper;
+    @Autowired
+    private UserPaperMapper userPaperMapper;
+
+    @CacheEvict(cacheNames = "student", key = "#id")
+    public int updateEmail(String value, Long id) {
+        return studentMapper.updateEmail(value, id);
+    }
+
+    @CacheEvict(cacheNames = "student", key = "#id")
+    public int updatePhone(Long value, Long id) {
+        return studentMapper.updatePhone(value, id);
+    }
+    /**
+     * 根据学号查找学生
+     * @param id 学号
+     * @return
+     */
+    @Cacheable(cacheNames = "student", key = "#id")
+    public Student selectById(Long id) {
+        return studentMapper.selectById(id);
+    }
+
+
     /**
      * @param studentId 学生学号
      * @return 获取题目列表
      */
-    public Result getTitleList(Long studentId) {
+    public Result getTitleList(Long studentId) throws ParseException {
         /*
          * 先获取学生的学院id
          * 再判断是否到了选课时间
          */
         int departmentId = getDepartmentId(studentId);
-        ChoiceTitle choiceTitle = choiceTitleMapper.selectByDepartmentId(departmentId);
-        long times = new Date().getTime();
-        long begin = choiceTitle.getBeginTime().getTime();
-        //如果当前时间小于开始选题的时间
-        if (times < begin) {
-            logger.info("选题为开始，剩余时间：{}", (begin - times));
-            //返回剩余时间
-            return new Result<>(false, (begin - times));
-        } else {
-            long end = choiceTitle.getEndTime().getTime();
-            //如果当前时间大于开始时间但小于结束时间
-            if (times < end) {
-                return new Result<>(true, getList(departmentId));
+        Criteria criteria = Criteria.where("department").is(departmentId).and("type").is(TimerType.CHOICE_TITLE.getType());
+        List<VoTimer> timers = mongoTemplate.find(query(criteria), VoTimer.class);
+        VoTimer timer = null;
+        if (timers !=null && timers.size() > 0) {
+            timer = timers.get(0);
+        }
+        if (timer != null) {
+            long times = new Date().getTime();
+            long begin = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getBegin()).getTime();
+            //如果当前时间小于开始选题的时间
+            if (times < begin) {
+                logger.info("选题为开始，剩余时间：{}", (begin - times));
+                //返回剩余时间
+                return new Result<>(true, timer.getBegin(), getList(departmentId));
             } else {
-                //返回-1代表已经超时
-                return new Result<>(false, -1);
+                long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
+                //如果当前时间大于开始时间但小于结束时间
+                if (times < end) {
+                    return new Result<>(true, getList(departmentId));
+                } else {
+                    //返回-1代表已经超时
+                    return new Result<>(false, -1);
+                }
             }
+        } else {
+            //返回-2代表未开始
+            return new Result<>(false, -2);
         }
     }
 
@@ -102,7 +158,8 @@ public class StudentHandle {
      * @param studentId 学号
      * @return 学院号
      */
-    private int getDepartmentId(Long studentId) {
+    @Cacheable(cacheNames = "studentId")
+    public int getDepartmentId(Long studentId) {
         return studentMapper.selectById(studentId).getDepartmentId();
     }
 
@@ -155,7 +212,173 @@ public class StudentHandle {
      * @return
      */
     @Cacheable("departmentId")
-    public List<Major> selectByDepartmentId(Long departmentId) {
+    public List<Major> selectByDepartmentId(Integer departmentId) {
         return majorMapper.selectByDepartmentId(departmentId);
+    }
+
+    @Cacheable(value = "userId")
+    public Integer selectDepartmentIdByUserId(int userId) {
+        return studentMapper.selectByUserId(userId).getDepartmentId();
+    }
+
+    /**
+     * 文件下载功能
+     * @param userId
+     * @return
+     */
+    public File getFile(Integer userId, String fileName) {
+        Integer paperId = userPaperMapper.selectByUserId(userId);
+        return new File(FilePath + paperId + '/' + fileName);
+    }
+
+    /**
+     * 查找文件记录
+     * @param userId
+     * @return
+     */
+    public List<FileRecord> selectFileRecord(Integer userId) {
+        //获取paper plan id
+        Integer paperId = userPaperMapper.selectByUserId(userId);
+        List<FileRecord> records = new ArrayList<>(5);
+        //查找是否有周计划
+        WeeksPlan weeksPlan = weeksPlanMapper.selectByPaperId(paperId);
+        if (weeksPlan != null) {
+            FileRecord record = new FileRecord("周计划", weeksPlan.getFilePath(), weeksPlan.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有任务书
+        Task task = taskMapper.selectByPaperId(paperId);
+        if (task != null) {
+            FileRecord record = new FileRecord("任务书", task.getFilePath(), task.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有开题报告
+        OpenReport openReport = openReportMapper.selectByPaperId(paperId);
+        if (openReport != null) {
+            FileRecord record = new FileRecord("开题报告", openReport.getFilePath(), openReport.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有中期检查
+        MidCheck midCheck = midCheckMapper.selectByPaperId(paperId);
+        if (midCheck != null) {
+            FileRecord record = new FileRecord("中期检查", midCheck.getFilePath(), midCheck.getCreateTime());
+            records.add(record);
+        }
+        //查找是否有论文
+        Paper paper = paperMapper.selectByPaperId(paperId);
+        if (paper != null) {
+            FileRecord record = new FileRecord("论文", paper.getFilePath(), paper.getCreateTime());
+            records.add(record);
+        }
+        return records;
+    }
+
+    /**
+     * 保存文件
+     * @param userId 账号
+     * @param fileName 文件名
+     * @param file 文件的二进制流
+     * @param type 类型，比如中期检查等
+     * @return
+     */
+    public boolean saveFile(Integer userId, String fileName,  byte[] file, String type) {
+        Integer paperId = userPaperMapper.selectByUserId(userId);
+        String filePath = FilePath + paperId + '/';
+        File target = new File(filePath);
+        if (!target.exists()) {
+            target.mkdirs();
+        }
+        try {
+            FileOutputStream stream = new FileOutputStream(filePath + fileName);
+            stream.write(file);
+            stream.flush();
+            stream.close();
+            //保存文件路径
+            return saveFilePath(type, userId, fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean saveFilePath(String type, Integer id, String filePath) {
+        boolean success;
+        Integer paperId = userPaperMapper.selectByUserId(id);
+        System.out.println("论文计划ID为："+paperId + " 类型为：" + type);
+        if (paperId == null)
+            return false;
+        switch (type) {
+            case "WeeksPlan":
+                success = saveWeekPlan(paperId, filePath) > 0;
+                break;
+            case "Task":
+                success = saveTask(paperId, filePath) > 0;
+                break;
+            case "MidCheck":
+                success = saveMidCheck(paperId, filePath) > 0;
+                break;
+            case "OpenReport":
+                success = saveOpenReport(paperId, filePath) > 0;
+                break;
+            case "Paper":
+                success = savePaper(paperId, filePath) > 0;
+                break;
+            default:
+                success = false;
+                break;
+        }
+        return success;
+    }
+
+    private int saveWeekPlan(Integer paperId, String filePath) {
+        if (weeksPlanMapper.isExist(paperId) > 0) {
+            return weeksPlanMapper.updateFilePath(paperId, filePath);
+        } else {
+            WeeksPlan weeksPlan = new WeeksPlan();
+            weeksPlan.setFilePath(filePath);
+            weeksPlan.setPaperPlanId(paperId);
+            return weeksPlanMapper.insert(weeksPlan);
+        }
+    }
+    private int saveTask(Integer paperId, String filePath) {
+        if (taskMapper.isExist(paperId) > 0) {
+            return taskMapper.updateFilePath(paperId, filePath);
+        } else {
+            Task task = new Task();
+            task.setFilePath(filePath);
+            task.setPaperPlanId(paperId);
+            return taskMapper.insert(task);
+        }
+    }
+    private int saveMidCheck(Integer paperId, String filePath) {
+        if (midCheckMapper.isExist(paperId) > 0) {
+            return midCheckMapper.updateFilePath(paperId,filePath);
+        } else {
+            MidCheck midCheck = new MidCheck();
+            midCheck.setFilePath(filePath);
+            midCheck.setPaperPlanId(paperId);
+            return midCheckMapper.insert(midCheck);
+        }
+    }
+    private int saveOpenReport(Integer paperId, String filePath) {
+        if (openReportMapper.isExist(paperId) > 0) {
+            return openReportMapper.updateFilePath(paperId, filePath);
+        } else {
+            OpenReport openReport = new OpenReport();
+            openReport.setFilePath(filePath);
+            openReport.setPaperPlanId(paperId);
+            return openReportMapper.insert(openReport);
+        }
+    }
+    private int savePaper(Integer paperId, String filePath) {
+        if (paperMapper.isExist(paperId) > 0) {
+            return paperMapper.updateFilePath(paperId, filePath);
+        } else {
+            Paper paper = new Paper();
+            paper.setFilePath(filePath);
+            paper.setScore(0);
+            paper.setPaperPlanId(paperId);
+            return paperMapper.insert(paper);
+        }
     }
 }

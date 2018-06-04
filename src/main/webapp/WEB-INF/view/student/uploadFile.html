@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>选择文件上传</legend>
+</fieldset>
+<div class="layui-collapse" lay-accordion="" style="margin-left: 10%; width: 70%">
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title">周计划</h2>
+        <div class="layui-colla-content layui-show">
+            <div class="layui-upload-drag" id="weekPlan" style="margin-left: 30px;">
+                <i class="layui-icon">&#xe67c;</i>
+                <p>点击上传，或将文件拖拽到此处</p>
+            </div>
+        </div>
+    </div>
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title">任务书</h2>
+        <div class="layui-colla-content">
+            <div class="layui-colla-content layui-show">
+                <div class="layui-upload-drag" id="task" style="margin-left: 30px;">
+                    <i class="layui-icon">&#xe67c;</i>
+                    <p>点击上传，或将文件拖拽到此处</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title">开题报告</h2>
+        <div class="layui-colla-content">
+            <div class="layui-colla-content layui-show">
+                <div class="layui-upload-drag" id="openReport" style="margin-left: 30px;">
+                    <i class="layui-icon">&#xe67c;</i>
+                    <p>点击上传，或将文件拖拽到此处</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title">中期检查</h2>
+        <div class="layui-colla-content">
+            <div class="layui-colla-content layui-show">
+                <div class="layui-upload-drag" id="midCheck" style="margin-left: 30px;">
+                    <i class="layui-icon">&#xe67c;</i>
+                    <p>点击上传，或将文件拖拽到此处</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title">论文提交</h2>
+        <div class="layui-colla-content">
+            <div class="layui-colla-content layui-show">
+                <div class="layui-upload-drag" id="paper" style="margin-left: 30px;">
+                    <i class="layui-icon">&#xe67c;</i>
+                    <p>点击上传，或将文件拖拽到此处</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use(['upload','element','layer'], function () {
+        var upload = layui.upload;
+        var element = layui.element;
+        var layer = layui.layer;
+        layer.open({
+           title:'温馨提示',
+           content:'每次提交文件都会覆盖你上一次提交的同类型的文件哦，系统只会保留你的最新的一份文件'
+        });
+        upload.render({
+            elem: '#weekPlan'
+            ,url: '/student/upload/WeeksPlan'
+            ,accept: 'file'
+            ,done: function(res){
+                layer.msg(res.message)
+            }
+        });
+        upload.render({
+            elem: '#task'
+            ,url: '/student/upload/Task'
+            ,accept: 'file'
+            ,done: function(res){
+                layer.msg(res.message)
+            }
+        });
+        upload.render({
+            elem: '#openReport'
+            ,url: '/student/upload/OpenReport'
+            ,accept: 'file'
+            ,done: function(res){
+                layer.msg(res.message)
+            }
+        });
+        upload.render({
+            elem: '#midCheck'
+            ,url: '/student/upload/MidCheck'
+            ,accept: 'file'
+            ,done: function(res){
+                layer.msg(res.message)
+            }
+        });
+        upload.render({
+            elem: '#paper'
+            ,url: '/student/upload/Paper'
+            ,accept: 'file'
+            ,done: function(res){
+                layer.msg(res.message)
+            }
+        });
+    })
+</script>
+</body>
+</html>

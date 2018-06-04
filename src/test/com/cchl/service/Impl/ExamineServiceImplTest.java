@@ -28,7 +28,7 @@ public class ExamineServiceImplTest {
 
     @Test
     public void users() throws Exception {
-        List<User> results = examineService.users(0,10);
+        List<User> results = examineService.users(1000,0,10);
         for (User user:results) {
             System.out.println(user);
         }
