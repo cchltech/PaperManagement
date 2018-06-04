@@ -2,8 +2,10 @@ package com.cchl.web.student;
 
 import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
+import com.cchl.entity.Teacher;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.eumn.Dictionary;
+import com.cchl.execption.NumberFullException;
 import com.cchl.service.student.StudentHandle;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +37,9 @@ public class StudentController {
     private StudentHandle studentHandle;
 
     @PostMapping(value = "/update/{type}")
-    public Result update(@PathVariable(value = "type")String type,
-                         @RequestParam(value = "text")String text,
-                         @SessionAttribute(value = "id", required = false)Long id) {
+    public Result update(@PathVariable(value = "type") String type,
+                         @RequestParam(value = "text") String text,
+                         @SessionAttribute(value = "id", required = false) Long id) {
         id = testId;
         if ("phone".equals(type)) {
             try {
@@ -61,8 +63,8 @@ public class StudentController {
 
     @PostMapping(value = "/upload/{type}")
     public Result upload(@PathVariable(value = "type") String type,
-                         @RequestParam(value = "file")MultipartFile file,
-                         @SessionAttribute(value = "user_id", required = false)Integer userId) {
+                         @RequestParam(value = "file") MultipartFile file,
+                         @SessionAttribute(value = "user_id", required = false) Integer userId) {
         try {
             userId = testUser;
             String fileName = file.getOriginalFilename();
@@ -79,18 +81,19 @@ public class StudentController {
     }
 
     @GetMapping(value = "/fileRecord")
-    public DataWithPage fileRecord(@SessionAttribute(value = "user_id", required = false)Integer userId) {
+    public DataWithPage fileRecord(@SessionAttribute(value = "user_id", required = false) Integer userId) {
         userId = testUser;
-        return new DataWithPage<>(0,10,studentHandle.selectFileRecord(userId));
+        return new DataWithPage<>(0, 10, studentHandle.selectFileRecord(userId));
     }
 
     /**
      * 文件下载功能
+     *
      * @param userId
      * @return
      */
     @GetMapping(value = "/download")
-    public ResponseEntity<byte[]> download(@SessionAttribute(value = "user_id", required = false)Integer userId,
+    public ResponseEntity<byte[]> download(@SessionAttribute(value = "user_id", required = false) Integer userId,
                                            @RequestParam(value = "fileName") String fileName) {
         userId = testUser;
         File file = studentHandle.getFile(userId, fileName);
@@ -129,7 +132,7 @@ public class StudentController {
         if (page == null)
             page = 1;
         try {
-            List<StudentMessage> list =  studentHandle.getMsg(userId, page);
+            List<StudentMessage> list = studentHandle.getMsg(userId, page);
             return new Result<>(true, list);
         } catch (Exception e) {
             return new Result(Dictionary.SYSTEM_ERROR);
@@ -137,27 +140,16 @@ public class StudentController {
     }
 
     /**
-     * 跳转到选题页面，查找出所有已经通过审核的题目，题目以列表方式展示
-     * 学生只能选择本学院教师出的题目
-     * 需要加上时间判断是否到了管理员指定的选题时间
-     * 如果返回成功则加上授权提供选题操作
-     * @param studentId 从session中获取学号
-     * @return 题目实体集
+     * 获取选题的剩余时间
      */
-    @GetMapping("/title")
-    public Result getTitles(@SessionAttribute(value = "id", required = false) Long studentId, HttpServletRequest request){
+    @GetMapping(value = "/time")
+    public Result getTime(@SessionAttribute(value = "id", required = false) Long studentId, HttpServletRequest request) {
         try {
             /*
              * 先判断是否到了学生选题的时间,如果到了返回题目列表，否则返回剩余时间
              */
             studentId = testId;
-            Result result = studentHandle.getTitleList(studentId);
-            if (result.isSuccess()) {
-                //TODO 添加权限
-                HttpSession session = request.getSession();
-                session.setAttribute("token", "key");
-            }
-            return result;
+            return studentHandle.getTime(studentId);
         } catch (ParseException e1) {
             e1.printStackTrace();
             System.out.println("时间格式转换异常");
@@ -166,5 +158,86 @@ public class StudentController {
             e.printStackTrace();
             return new Result(Dictionary.SYSTEM_ERROR);
         }
+    }
+
+    /**
+     * 获取题目列表
+     *
+     * @param studentId 从session中获取学号
+     * @return 题目实体集
+     */
+    @GetMapping("/title")
+    public DataWithPage getTitles(@SessionAttribute(value = "id", required = false) Long studentId,
+                                  @RequestParam(value = "content", required = false) String content,
+                                  @RequestParam(value = "teacherId", required = false) String teacherId,
+                                  @RequestParam(value = "page", required = false) Integer page,
+                                  @RequestParam(value = "limit", required = false) Integer limit) {
+        try {
+            /*
+             * 先判断是否到了学生选题的时间,如果到了返回题目列表，否则返回剩余时间
+             */
+            studentId = testId;
+            if (teacherId == null || "".equals(teacherId.trim()))
+                teacherId = "0";
+            long id = Long.parseLong(teacherId);
+            int count = studentHandle.totalOfTitle(studentId, content, id);
+            return new DataWithPage<>(0, count, studentHandle.getTitleList(studentId, content, id, (page - 1) * limit, limit));
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+            System.out.println("时间格式转换异常");
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 选题前先获取token
+     *
+     * @return
+     */
+    @GetMapping(value = "/getToken")
+    public Result getToken(@SessionAttribute(value = "user_id", required = false) Integer userId) {
+        try {
+            userId = testUser;
+            String token = studentHandle.getToken(userId);
+            if (token == null)
+                return new Result<>(false, "选题未开始", -1);
+            return new Result<>(true, token);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 选题操作
+     *
+     * @param userId  用户编号
+     * @param titleId 题目id
+     * @return
+     */
+    @PostMapping(value = "/select/{token}")
+    public Result select(@SessionAttribute(value = "user_id", required = false) Integer userId,
+                         @RequestParam(value = "titleId") int titleId,
+                         @PathVariable(value = "token") String token) {
+        try {
+            userId = testUser;
+            return studentHandle.selectTitles(userId, token, titleId);
+        } catch (NumberFullException e) {
+            return new Result(Dictionary.NUMBER_IS_FULL);
+        } catch (Exception e) {
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 获取教师列表
+     */
+    @GetMapping(value = "/teacherList")
+    public List<Teacher> teachers(@SessionAttribute(value = "user_id", required = false) Integer userId) {
+        userId = testUser;
+        return studentHandle.getTeacherList(userId);
     }
 }

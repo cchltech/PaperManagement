@@ -23,19 +23,6 @@ public class ChoiceTitleController {
     @Autowired
     private StudentHandle studentHandle;
 
-    @RequestMapping(value = "/select")
-    public Result select(@SessionAttribute(value = "user_id")int userId, @SessionAttribute(value = "token") String token, @RequestParam(value = "titleId")int titleId) {
-        try {
-            if (token == null) {
-                return null;
-            }
-            return studentHandle.selectTitles(userId, titleId);
-        } catch (NumberFullException e) {
-            return new Result(Dictionary.NUMBER_IS_FULL);
-        } catch (Exception e) {
-            return new Result(Dictionary.SYSTEM_ERROR);
-        }
 
-    }
 
 }

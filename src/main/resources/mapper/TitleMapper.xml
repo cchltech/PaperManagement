@@ -85,18 +85,38 @@
               AND t.status = 1 AND d.id = t.department_id
         ORDER BY department_id
     </select>
-    <select id="selectByDepartmentId" resultMap="title">
+    <select id="selectWithParam" resultMap="title">
         SELECT
             t.id,
             t.content,
             t.instruction,
             t.total_number,
             t.has_select,
+            t.teacher_id,
+            tea.id teacher_id,
             tea.name teacher_name,
             tea.phone teacher_phone,
             tea.sex teacher_sex
         FROM title t
             LEFT JOIN teacher tea ON t.teacher_id = tea.id
         WHERE t.department_id = #{departmentId} AND status = 1
+              <if test="content!=null and content != ''">
+                  AND t.content LIKE concat('%', #{content}, '%')
+              </if>
+              <if test="teacherId > 0">
+                  AND t.teacher_id = #{teacherId}
+              </if>
+        LIMIT #{page},#{limit}
+    </select>
+    <select id="totalOfTitle" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM title
+        WHERE department_id = #{departmentId} AND status = 1
+        <if test="content!=null and content != ''">
+            AND content LIKE concat('%', #{content}, '%')
+        </if>
+        <if test="teacherId > 0">
+            AND teacher_id = #{teacherId}
+        </if>
     </select>
 </mapper>

@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,10 +45,14 @@ public class StudentHandle {
 
     private static final String FilePath = "/home/beiyi/file/";
 
+    private static final String salt = "GoodGoodStudyDayDayUp";
+
     @Autowired
     private ChoiceTitleMapper choiceTitleMapper;
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private TeacherMapper teacherMapper;
     @Autowired
     private TitleMapper titleMapper;
     @Autowired
@@ -79,6 +84,7 @@ public class StudentHandle {
     public int updatePhone(Long value, Long id) {
         return studentMapper.updatePhone(value, id);
     }
+
     /**
      * 根据学号查找学生
      * @param id 学号
@@ -89,12 +95,7 @@ public class StudentHandle {
         return studentMapper.selectById(id);
     }
 
-
-    /**
-     * @param studentId 学生学号
-     * @return 获取题目列表
-     */
-    public Result getTitleList(Long studentId) throws ParseException {
+    public Result getTime(Long studentId) throws ParseException {
         /*
          * 先获取学生的学院id
          * 再判断是否到了选课时间
@@ -111,14 +112,14 @@ public class StudentHandle {
             long begin = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getBegin()).getTime();
             //如果当前时间小于开始选题的时间
             if (times < begin) {
-                logger.info("选题为开始，剩余时间：{}", (begin - times));
+                logger.info("选题未开始，剩余时间：{}", (begin - times));
                 //返回剩余时间
-                return new Result<>(true, timer.getBegin(), getList(departmentId));
+                return new Result<>(true, timer.getBegin());
             } else {
                 long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
                 //如果当前时间大于开始时间但小于结束时间
                 if (times < end) {
-                    return new Result<>(true, getList(departmentId));
+                    return new Result<>(true, 0);
                 } else {
                     //返回-1代表已经超时
                     return new Result<>(false, -1);
@@ -130,6 +131,19 @@ public class StudentHandle {
         }
     }
 
+    public List<Teacher> getTeacherList(Integer userId) {
+        int departmentId = selectDepartmentIdByUserId(userId);
+        return teacherMapper.selectHasTitleByDepartmentId(departmentId);
+    }
+
+    /**
+     * @param studentId 学生学号
+     * @return 获取题目列表
+     */
+    public List<Title> getTitleList(Long studentId, String content, Long teacherId, int page, int limit) throws ParseException {
+        return getList(getDepartmentId(studentId), content, teacherId, page, limit);
+    }
+
     /**
      * 选题操作
      *
@@ -138,7 +152,7 @@ public class StudentHandle {
      * @return 选题结果
      */
     @Transactional
-    public Result selectTitles(int userId, int titleId) {
+    public Result selectTitles(int userId, String token, int titleId) {
         //先在论文计划表中添加titleId,再将题目中的已选人数+1
         if (paperPlanMapper.insertTitle(userId, titleId) > 0) {
             if (titleMapper.updateTotal(titleId) > 0) {
@@ -164,11 +178,15 @@ public class StudentHandle {
     }
 
     /**
-     * @param departmentId 学院号
      * @return 获取题目列表
      */
-    private List<Title> getList(int departmentId) {
-        return titleMapper.selectByDepartmentId(departmentId);
+    private List<Title> getList(int departmentId, String content, Long teacherId, int page, int limit) {
+        return titleMapper.selectWithParam(departmentId, content, teacherId, page, limit);
+    }
+
+    public int totalOfTitle(Long studentId, String content, Long teacherId) {
+        int departmentId = getDepartmentId(studentId);
+        return titleMapper.totalOfTitle(departmentId, content, teacherId);
     }
 
     public boolean hasNewMsg(int userId) {
@@ -204,6 +222,31 @@ public class StudentHandle {
                     UserMsgRecord.class);
         }
         return list;
+    }
+
+    /**
+     * 获取token
+     * @return
+     */
+    public String getToken(Integer id) throws ParseException {
+        int departmentId = selectDepartmentIdByUserId(id);
+        Criteria criteria = Criteria.where("department").is(departmentId).and("type").is(TimerType.CHOICE_TITLE.getType());
+        VoTimer timer = mongoTemplate.find(query(criteria), VoTimer.class).get(0);
+        long begin = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getBegin()).getTime();
+        long now = new Date().getTime();
+        if (now >= begin) {
+            //获取token
+            return token(id);
+        } else {
+            return null;
+        }
+    }
+
+    @Cacheable(value = "token")
+    public String token(Integer id) {
+        String token = DigestUtils.md5DigestAsHex((salt+id).getBytes());
+        logger.info("生成的token值：{}", token);
+        return token;
     }
 
     /**

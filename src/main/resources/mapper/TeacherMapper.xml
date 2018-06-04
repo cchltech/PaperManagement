@@ -95,4 +95,13 @@
         WHERE t.department_id = #{departmentId}
         ORDER BY t.id
     </select>
+    <select id="selectHasTitleByDepartmentId" resultMap="teacher">
+        SELECT
+            tea.id,
+            tea.name,
+            t.id
+        FROM teacher tea
+            LEFT JOIN title t ON tea.id = t.teacher_id
+        WHERE tea.department_id = #{departmentId} AND t.status = 1
+    </select>
 </mapper>

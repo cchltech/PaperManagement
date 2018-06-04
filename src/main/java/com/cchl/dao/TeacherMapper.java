@@ -24,4 +24,6 @@ public interface TeacherMapper {
     int totalNumber(@Param(value = "all") boolean all, @Param(value = "status") byte status, @Param(value = "departmentId") int departmentId);
 
     List<Teacher> selectByDepartmentId(Integer departmentId);
+
+    List<Teacher> selectHasTitleByDepartmentId(Integer departmentId);
 }

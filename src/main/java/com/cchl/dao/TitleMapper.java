@@ -31,7 +31,21 @@ public interface TitleMapper {
     /**
      * 按学院查找所有通过审核的题目
      */
-    List<Title> selectByDepartmentId(int departmentId);
+    List<Title> selectWithParam(@Param(value = "departmentId") int departmentId,
+                                @Param(value = "content") String content,
+                                @Param(value = "teacherId") Long teacherId,
+                                @Param(value = "page") int page, @Param(value = "limit") int limit);
+
+    /**
+     * 查找总条数
+     * @param departmentId
+     * @param content
+     * @param teacherId
+     * @return
+     */
+    int totalOfTitle(@Param(value = "departmentId") int departmentId,
+                     @Param(value = "content") String content,
+                     @Param(value = "teacherId") Long teacherId);
 
     /**
      * 按主键查找
