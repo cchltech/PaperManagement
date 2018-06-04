@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>注册</title>
+    <title>教师论文题目审核表</title>
     <link rel="stylesheet" href="../../../static/layui/css/layui.css">
     <link rel="stylesheet" href="../../../static/css/login.css">
     <script src="../../../static/js/jquery-1.10.2.min.js"></script>
@@ -11,94 +11,20 @@
 <div class="layui-row">
     <div class="layui-col-xs12 layui-col-md7" style="font-size: 15px;">
         <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-            <legend>欢迎注册</legend>
+            <legend>教师论文题目审核表</legend>
         </fieldset>
         <div>
-            <form class="layui-form" action="#" id="data" name="data">
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">请选择身份</label>
-                    <div id="sex" class="layui-input-inline">
-                        <input type="radio" name="type" value="0" title="学生" lay-filter="type" checked>
-                        <input type="radio" name="type" value="1" title="教师" lay-filter="type">
-                    </div>
+            <form class="layui-form" action="#" id="titledata" name="titledata">
+                <div class="layui-form-item" id="name">
+                    <label class="layui-form-label" style="width: 20%">教师姓名-XXX</label><!-- 教师姓名自动获取，并添加在此处 -->
+                </div>
+                <div class="layui-form-item" id="department">
+                    <label class="layui-form-label" style="width: 20%">论文题目适用学院-XXX学院</label><!-- 学院名称自动获取，并添加在此处 -->
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">学号/工号</label>
+                    <label class="layui-form-label" style="width: 20%">论文指导题目</label>
                     <div class="layui-input-inline" style="width: 30%">
-                        <input type="text" name="id" autocomplete="off" class="layui-input" value="123"
-                               lay-verify="required">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">姓名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="name" autocomplete="off" class="layui-input" value="123"
-                               lay-verify="required|name">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">密码</label>
-                    <div class="layui-input-inline">
-                        <input type="password" id="pwd1" name="password" lay-verify="required|pwd1" placeholder="请输入密码"
-                               autocomplete="off" class="layui-input" value="123456">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">确认密码</label>
-                    <div class="layui-input-inline">
-                        <input type="password" id="pwd2" name="password2" placeholder="确认密码"
-                               autocomplete="off" class="layui-input" value="123456">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">性别</label>
-                    <div class="layui-input-block">
-                        <input type="radio" name="sex" value="1" title="男" checked>
-                        <input type="radio" name="sex" value="0" title="女">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">所属学院</label>
-                    <div class="layui-input-inline">
-                        <select name="department" lay-verify="required" lay-filter="department">
-                            <option value="">请选择您的学院</option>
-                            <option value="1001">软件学院</option>
-                            <option value="1002">数学学院</option>
-                            <option value="1003">生物与科学学院</option>
-                            <option value="1004">外国语学院</option>
-                            <option value="1005">文学院</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item" id="major">
-                    <label class="layui-form-label" style="width: 20%">专业</label>
-                    <div class="layui-input-inline">
-                        <select name="major" id="major_list" lay-filter="major">
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item" id="grade">
-                    <label class="layui-form-label"  style="width: 20%">年级</label>
-                    <div class="layui-input-inline">
-                        <select name="grade">
-                            <option value="15">15</option>
-                            <option value="16">16</option>
-                            <option value="17">17</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">手机号</label>
-                    <div class="layui-input-inline" style="width: 30%">
-                        <input type="text" name="phone" autocomplete="off" class="layui-input"
-                               lay-verify="required|phone" value="12345678910">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">邮箱</label>
-                    <div class="layui-input-inline" style="width: 30%">
-                        <input type="text" name="email" autocomplete="off" class="layui-input" value="123@qq.com"
-                               lay-verify="email">
+                        <textarea name="title" rows="10" style="width: 600px" ></textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -110,89 +36,28 @@
             </form>
         </div>
     </div>
-    <div class="layui-col-xs12 layui-col-md2">
-        <div class="grid-demo grid-demo-bg1" style="margin-top: 30px; margin-left: 30px;">
-            <a href="index.html" class="layui-table-link" style="font-size: 20px;">返回登录</a>
-        </div>
-    </div>
 </div>
-<script src="../../static/layer/layer.js"></script>
-<script src="../../static/layui/layui.js"></script>
+<script src="../../../static/layer/layer.js"></script>
+<script src="../../../static/layui/layui.js"></script>
 <script>
     layui.use(['form','layer'], function () {
         var form = layui.form;
         form.render();
-        form.verify({
-            phone: function (value) {
-                if (value.length < 11)
-                    return '手机格式不正确';
-            },
-            pwd1: function (value) {
-                if (value.length < 3) {
-                    return '密码不合法';
-                }
-                var pwd2 = $('#pwd2').val();
-                if (value !== pwd2) {
-                    return '两次密码不一致';
-                }
-            }
-        });
-        form.on('radio(type)', function (data) {
-            if ('1' === data.value) {
-                $('#major').hide();
-                $('#grade').hide();
-            } else {
-                $('#major').show();
-                $('#grade').show();
-            }
-        });
-//      发送请求动态添加选择框的值
-        form.on('select(department)', function (data) {
-            $.ajax({
-                type: 'POST',
-                data: {
-                    departmentId:data.value
-                },
-                dataType:'json',
-                url:'/majorList',
-                success:function (data) {
-                    if (data.success) {
-                        var major = $('#major_list');
-                        major.empty();
-                        for (var m in data.data) {
-                            major.append("<option value='"+ data.data[m].id + "'>" + data.data[m].name + "</option>");
-                        }
-                        form.render('select')
-                    } else {
-                        console.log(data.msg)
-                    }
-                },
-                error:function () {
-                    layer.msg('出现未知错误');
-                }
-            });
-        });
         //表单提交
         form.on('submit(*)', function (data) {
             console.log(data.field);
             var url;
-            var select = $('#sex').find('input[name="type"]:checked').val();
-            if (select === '0') {
-                url = '/studentRegister';
-            } else {
-                url = '/teacherRegister';
-            }
             $.post(url, data.field, function(data){
                 if (data.success) {
                     layer.open({
-                        title: '注册结果',
-                        content: '注册成功',
+                        title: '提交结果',
+                        content: '题目提交成功',
                         time:2000
                     });
                 } else {
                     layer.open({
-                        title: '注册结果',
-                        content: '注册失败，请检查您的学号或工号是否正确',
+                        title: '提交结果',
+                        content: '题目提交失败，请检查您的论文指导题目',
                         time:2000
                     });
                 }
