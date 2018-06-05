@@ -3,8 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>系统消息</legend>
+    </fieldset>
+    <div style="margin-left: 10%; width: 80%; background-color: #F2F2F2;">
+        <table class="layui-table" lay-data="{id:'student', url:'/student/getMsg', page:true, limit:5, limits:[]}"
+               lay-filter="student_msg" id="student_msg">
+            <thead>
+            <tr>
+                <th lay-data="{field:'version',align:'center',sort:true}">编号</th>
+                <th lay-data="{field:'content',align:'center'}">消息内容</th>
+                <th lay-data="{field:'createTime', align:'center'}">发布时间</th>
+                <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#operation'}">操作</th>
+            </tr>
+            </thead>
+        </table>
+        <script type="text/html" id="operation">
+            <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
+        </script>
+    </div>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use(['table','layer'], function(){
+        var layer = layui.layer;
+        var table = layui.table;
 
+        table.on('tool(student_msg)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                layer.open({
+                    title: '消息详细信息'
+                    ,
+                    content: "<div class='layui-text'>内容：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.content + "</div></div><br>"
+                    + "<div class='layui-text'>发布时间：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.createTime + "</div></div><br>"
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

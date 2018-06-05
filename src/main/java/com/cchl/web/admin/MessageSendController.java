@@ -78,7 +78,6 @@ public class MessageSendController {
                             @RequestParam(value = "version", required = false) Integer version,
                             @PathVariable(value = "type") Integer type) {
         try {
-            System.out.println(version + " " + type);
             userId = test_id;
             int departmentId = teacherHandle.getDepartmentId(userId);
             if (type == 1)

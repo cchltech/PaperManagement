@@ -14,14 +14,27 @@ public class OpenReport {
     private PaperPlan paperPlan;
     //创建时间
     private String createTime;
+    //状态信息 0：未通过  1：通过
+    private byte status;
 
     @Override
     public String toString() {
         return "OpenReport{" +
                 "id=" + id +
                 ", filePath='" + filePath + '\'' +
+                ", paperPlanId=" + paperPlanId +
                 ", paperPlan=" + paperPlan +
+                ", createTime='" + createTime + '\'' +
+                ", status=" + status +
                 '}';
+    }
+
+    public byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(byte status) {
+        this.status = status;
     }
 
     public PaperPlan getPaperPlan() {

@@ -3,13 +3,12 @@ package com.cchl.service.student;
 import com.cchl.dao.*;
 import com.cchl.dto.Result;
 import com.cchl.entity.*;
-import com.cchl.entity.vo.FileRecord;
-import com.cchl.entity.vo.StudentMessage;
-import com.cchl.entity.vo.UserMsgRecord;
-import com.cchl.entity.vo.VoTimer;
+import com.cchl.entity.vo.*;
 import com.cchl.eumn.Dictionary;
 import com.cchl.eumn.TimerType;
+import com.cchl.execption.IllegalVisitException;
 import com.cchl.execption.NumberFullException;
+import com.cchl.service.MsgHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +73,9 @@ public class StudentHandle {
     private PaperMapper paperMapper;
     @Autowired
     private UserPaperMapper userPaperMapper;
+
+    @Autowired
+    private MsgHandle msgHandle;
 
     @CacheEvict(cacheNames = "student", key = "#id")
     public int updateEmail(String value, Long id) {
@@ -153,6 +155,8 @@ public class StudentHandle {
      */
     @Transactional
     public Result selectTitles(int userId, String token, int titleId) {
+        if (!token.equals(token(userId)))
+            throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
         //先在论文计划表中添加titleId,再将题目中的已选人数+1
         if (paperPlanMapper.insertTitle(userId, titleId) > 0) {
             if (titleMapper.updateTotal(titleId) > 0) {
@@ -189,7 +193,7 @@ public class StudentHandle {
         return titleMapper.totalOfTitle(departmentId, content, teacherId);
     }
 
-    public boolean hasNewMsg(int userId) {
+    public int hasNewMsg(int userId) {
         UserMsgRecord record = mongoTemplate.findById(userId, UserMsgRecord.class);
         if (record == null) {
             //新增一个用户记录
@@ -203,7 +207,10 @@ public class StudentHandle {
         }
         Criteria criteria = Criteria.where("version").gt(record.getVersion());
         List<StudentMessage> list = mongoTemplate.find(query(criteria), StudentMessage.class);
-        return list != null && list.size() > 0;
+        if (list == null || list.size() == 0)
+            return 0;
+        else
+        return list.size();
     }
 
     public List<StudentMessage> getMsg(int userId, int page) {
@@ -212,16 +219,22 @@ public class StudentHandle {
         List<StudentMessage> list = mongoTemplate.find(
                 query(criteria)
                         .with(new Sort(Sort.Direction.DESC, "version"))
-                        .limit(10)
-                        .skip((page - 1) * 10),
+                        .limit(5)
+                        .skip((page - 1) * 5),
                 StudentMessage.class);
-        if (page == 1) {
+        if (page == 1 && list != null && list.size() > 0) {
             //查找页数为1时，肯定会查找到最新的消息，更新用户的版本号
             mongoTemplate.updateFirst(query(Criteria.where("id").is(userId)),
                     new Update().set("version", list.get(0).getVersion()),
                     UserMsgRecord.class);
         }
         return list;
+    }
+
+    public int getMsgCount(int userId) {
+        UserMsgRecord record = mongoTemplate.findById(userId, UserMsgRecord.class);
+        Criteria criteria = Criteria.where("departmentId").is(record.getDepartmentId());
+        return (int)mongoTemplate.count(query(criteria), StudentMessage.class);
     }
 
     /**
@@ -231,7 +244,9 @@ public class StudentHandle {
     public String getToken(Integer id) throws ParseException {
         int departmentId = selectDepartmentIdByUserId(id);
         Criteria criteria = Criteria.where("department").is(departmentId).and("type").is(TimerType.CHOICE_TITLE.getType());
-        VoTimer timer = mongoTemplate.find(query(criteria), VoTimer.class).get(0);
+        VoTimer timer = mongoTemplate.findOne(query(criteria), VoTimer.class);
+        if (timer == null)
+            return null;
         long begin = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getBegin()).getTime();
         long now = new Date().getTime();
         if (now >= begin) {
@@ -359,9 +374,11 @@ public class StudentHandle {
                 break;
             case "MidCheck":
                 success = saveMidCheck(paperId, filePath) > 0;
+                msgHandle.addAdminMsg(AdminMsg.TYPE.FILE, selectDepartmentIdByUserId(id));
                 break;
             case "OpenReport":
                 success = saveOpenReport(paperId, filePath) > 0;
+                msgHandle.addAdminMsg(AdminMsg.TYPE.FILE, selectDepartmentIdByUserId(id));
                 break;
             case "Paper":
                 success = savePaper(paperId, filePath) > 0;
@@ -380,6 +397,7 @@ public class StudentHandle {
             WeeksPlan weeksPlan = new WeeksPlan();
             weeksPlan.setFilePath(filePath);
             weeksPlan.setPaperPlanId(paperId);
+
             return weeksPlanMapper.insert(weeksPlan);
         }
     }

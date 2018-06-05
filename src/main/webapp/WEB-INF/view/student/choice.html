@@ -11,7 +11,7 @@
     <legend id="msg">我的信息</legend>
 </fieldset>
 <div >
-    <div>
+    <div id="search_form">
         <form id="select" class="layui-form">
             <div class="layui-form-item">
                 <div class="layui-inline">
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <a class="layui-btn layui-btn-radius layui-btn-primary" lay-submit lay-filter="find">查找</a>
+                    <a class="layui-btn layui-btn-radius layui-btn-primary" lay-submit lay-filter="find" id="find">查找</a>
                 </div>
             </div>
         </form>
@@ -51,8 +51,8 @@
             type:'get',
             success: function (data) {
                 if (data.success) {
-                    if (data.data === 0) {
-                        var begin = Date.parse(new Date(data.message));
+                    if (data.data !== '0') {
+                        var begin = Date.parse(new Date(data.data))+1000;
                         var serverTime = new Date().getTime();
                         showList('', 0);
                         util.countdown(begin, serverTime, function (date, serverTime, timer) {
@@ -70,11 +70,10 @@
                     if (data.data === -1) {
                         $('#msg').text('选题时间已结束，请到“我的论文”模块查看您选择的题目信息')
                     } else if (data.data === -2) {
-                        $('#msg').text('暂无选题信息')
+                        $('#msg').text('暂无选题信息');
                     } else {
                         $('#msg').text(data.message)
                     }
-
                 }
             }
         });
@@ -111,7 +110,7 @@
         form.on('submit(find)', function () {
             var content = $('#content').val();
             var teacherId = $('#teacher_list').val();
-            showList(content, teacherId)
+            showList(content, teacherId);
         })
     });
     function choice(id) {

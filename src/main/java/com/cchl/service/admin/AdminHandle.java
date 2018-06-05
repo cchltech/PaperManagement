@@ -9,6 +9,7 @@ import com.cchl.entity.PaperPlan;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.entity.UserPaper;
+import com.cchl.entity.vo.VersionRecord;
 import com.cchl.entity.vo.VoTimer;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.DataInsertException;
@@ -140,15 +141,14 @@ public class AdminHandle {
 
     private void sendMsgToStudent(String content, Integer departmentId, String date) {
         //先查找当前数据库中该学院的最新一个版本号
-        Criteria criteria = Criteria.where("departmentId").is(departmentId);
-        List<StudentMessage> messages = mongoTemplate.find(
-                query(criteria)
-                        .with(new Sort(Sort.Direction.DESC, "version"))
-                        .limit(1)
-                , StudentMessage.class);
+        Criteria criteria = Criteria.where("departmentId").is(departmentId).and("type").is(0);
+        VersionRecord record = mongoTemplate.findOne(query(criteria), VersionRecord.class);
         int lastVersion = 0;
-        if (messages.size() > 0)
-            lastVersion = messages.get(0).getVersion();
+        if (record != null) {
+            lastVersion = record.getVersion();
+        } else {
+            mongoTemplate.insert(new VersionRecord(0, departmentId, 0));
+        }
         logger.info("查找到的版本号为：{}", lastVersion);
         //插入消息
         StudentMessage studentMessage = new StudentMessage();
@@ -157,19 +157,19 @@ public class AdminHandle {
         studentMessage.setCreateTime(date);
         studentMessage.setVersion(++lastVersion);
         mongoTemplate.insert(studentMessage);
+        mongoTemplate.updateFirst(query(criteria), Update.update("version", lastVersion), VersionRecord.class);
     }
 
     private void sendMsgToTeacher(String content, Integer departmentId, String date) {
-        Criteria criteria = Criteria.where("departmentId").is(departmentId);
+        Criteria criteria = Criteria.where("departmentId").is(departmentId).and("type").is(1);
         //面向教师的系统信息插入
-        List<TeacherMessage> messages = mongoTemplate.find(
-                query(criteria)
-                        .with(new Sort(Sort.Direction.DESC, "version"))
-                        .limit(1)
-                , TeacherMessage.class);
+        VersionRecord record = mongoTemplate.findOne(query(criteria), VersionRecord.class);
         int lastVersion = 0;
-        if (messages.size() > 0)
-            lastVersion = messages.get(0).getVersion();
+        if (record != null) {
+            lastVersion = record.getVersion();
+        } else {
+            mongoTemplate.insert(new VersionRecord(0, departmentId, 1));
+        }
         logger.info("查找到的版本号为：{}", lastVersion);
         TeacherMessage teacherMessage = new TeacherMessage();
         teacherMessage.setContent(content);
@@ -177,6 +177,7 @@ public class AdminHandle {
         teacherMessage.setCreateTime(date);
         teacherMessage.setDepartmentId(departmentId);
         mongoTemplate.insert(teacherMessage);
+        mongoTemplate.updateFirst(query(criteria), Update.update("version", ++lastVersion), VersionRecord.class);
     }
 
     public List<StudentMessage> selectStudentMsg(int page, int limit) {
@@ -215,6 +216,8 @@ public class AdminHandle {
         int num = (int)mongoTemplate.count(query(new Criteria()), VoTimer.class);
         timer.setId(num + 1000);
         mongoTemplate.insert(timer);
+        String content = timer.getContent() + "，开始时间为：" + timer.getBegin() + ", 结束时间为：" + timer.getEnd() + "。请同学们做好准备";
+        addMsg(0 ,content, timer.getDepartment());
     }
     /**
      * 更新定时任务

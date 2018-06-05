@@ -5,6 +5,7 @@ import com.cchl.dto.Result;
 import com.cchl.entity.Teacher;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.eumn.Dictionary;
+import com.cchl.execption.IllegalVisitException;
 import com.cchl.execption.NumberFullException;
 import com.cchl.service.student.StudentHandle;
 import org.apache.commons.io.FileUtils;
@@ -36,6 +37,13 @@ public class StudentController {
     @Autowired
     private StudentHandle studentHandle;
 
+    /**
+     * 更新个人信息
+     * @param type
+     * @param text
+     * @param id
+     * @return
+     */
     @PostMapping(value = "/update/{type}")
     public Result update(@PathVariable(value = "type") String type,
                          @RequestParam(value = "text") String text,
@@ -61,6 +69,13 @@ public class StudentController {
         }
     }
 
+    /**
+     * 上传文件
+     * @param type
+     * @param file
+     * @param userId
+     * @return
+     */
     @PostMapping(value = "/upload/{type}")
     public Result upload(@PathVariable(value = "type") String type,
                          @RequestParam(value = "file") MultipartFile file,
@@ -80,6 +95,11 @@ public class StudentController {
         }
     }
 
+    /**
+     * 返回文件记录
+     * @param userId
+     * @return
+     */
     @GetMapping(value = "/fileRecord")
     public DataWithPage fileRecord(@SessionAttribute(value = "user_id", required = false) Integer userId) {
         userId = testUser;
@@ -114,11 +134,18 @@ public class StudentController {
         }
     }
 
+    /**
+     * 判断是否有新消息
+     * @param userId
+     * @return
+     */
     @RequestMapping(value = "/hasNewMsg")
     public Result hasNewMsg(@SessionAttribute(value = "user_id", required = false) Integer userId) {
         try {
-            if (studentHandle.hasNewMsg(userId))
-                return new Result(Dictionary.SUCCESS);
+            userId = testUser;
+            int num = studentHandle.hasNewMsg(userId);
+            if (num > 0)
+                return new Result<>(true, num);
             else
                 return new Result(Dictionary.NO_MORE_DATA);
         } catch (Exception e) {
@@ -126,16 +153,23 @@ public class StudentController {
         }
     }
 
-    @PostMapping(value = "/getMsg")
-    public Result getMsg(@SessionAttribute(value = "user_id", required = false) Integer userId,
+    /**
+     * 获取新消息
+     * @param userId
+     * @param page
+     * @return
+     */
+    @GetMapping(value = "/getMsg")
+    public DataWithPage getMsg(@SessionAttribute(value = "user_id", required = false) Integer userId,
                          @RequestParam(value = "page", required = false) Integer page) {
         if (page == null)
             page = 1;
         try {
+            userId = testUser;
             List<StudentMessage> list = studentHandle.getMsg(userId, page);
-            return new Result<>(true, list);
+            return new DataWithPage<>(0, studentHandle.getMsgCount(userId), list);
         } catch (Exception e) {
-            return new Result(Dictionary.SYSTEM_ERROR);
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }
     }
 
@@ -177,6 +211,9 @@ public class StudentController {
              * 先判断是否到了学生选题的时间,如果到了返回题目列表，否则返回剩余时间
              */
             studentId = testId;
+            if (!studentHandle.getTime(studentId).isSuccess()) {
+                return new DataWithPage(Dictionary.NOT_BEGINNING);
+            }
             if (teacherId == null || "".equals(teacherId.trim()))
                 teacherId = "0";
             long id = Long.parseLong(teacherId);
@@ -227,6 +264,8 @@ public class StudentController {
             return studentHandle.selectTitles(userId, token, titleId);
         } catch (NumberFullException e) {
             return new Result(Dictionary.NUMBER_IS_FULL);
+        } catch (IllegalVisitException e1) {
+            return new Result(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e) {
             return new Result(Dictionary.SYSTEM_ERROR);
         }
