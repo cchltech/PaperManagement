@@ -3,10 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <title>调配</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
-    <div>
-        调配页面
-    </div>
+<div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>可选题目表</legend>
+    </fieldset>
+    <table class="layui-table" lay-data="{id:'title', url:'/allocate/index/title'}"
+           lay-filter="title" id="title">
+    </table>
+    <script type="text/html" id="operation1">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
+    </script>
+</div>
+<div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>未选题的学生</legend>
+    </fieldset>
+    <table class="layui-table" lay-data="{id:'student', url:'/allocate/index/student'}"
+           lay-filter="student" id="student">
+
+    </table>
+    <script type="text/html" id="sex">
+        {{d.sex==0?'女':'男'}}
+    </script>
+    <script type="text/html" id="select">
+        <select class="layui-select" lay-ignore name="selectTitle">
+            <option value=""></option>
+            <option value="1">test2</option>
+            <option value="2">test3</option>
+            <option value="3">test4</option>
+        </select>
+        <a class="layui-btn layui-btn-xs" lay-event="agree" onclick="test(this)">确定</a>
+    </script>
+</div>
 </body>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    var studentId;
+    var titleId;
+    layui.use(['table','layer'], function () {
+        var table = layui.table;
+        table.render({
+            elem: '#student',
+            id:'student',
+            url:'/allocate/index/student',
+            cols:[[
+                {field:'id',align:'center',sort:true, title:'学号'},
+                {field:'name',align:'center', title:'姓名'},
+                {field: 'sex', align:'center', templet:'#sex', title:'性别'},
+                {field:'phone',align:'center', title:'联系方式'},
+                {field:'email',align:'center', title:'邮箱'},
+                {field:'major', align:'center',templet:'<div>{{d.major.name}}</div>', title:'专业'},
+                {fixed: 'right', width:250, align:'center', templet:'#select', title:'选择题目'}
+            ]]
+        });
+        table.render({
+            elem: '#title',
+            id:'title',
+            url:'/allocate/index/title',
+            cols: [[
+                {field: 'id', align: 'center', sort: true, title: '题目编号'},
+                {field: 'content', align: 'center', title: '题目内容'},
+                {field: 'instruction', align: 'center', title: '简介'},
+                {field: 'teacherName', align: 'center', templet:'<div>{{d.teacher.name}}</div>', title: '教师'},
+                {field: 'hasSelect', align: 'center', title: '已选人数'},
+                {field: 'totalNumber', align: 'center', title: '总人数'},
+                {fixed: 'right', width:178, align:'center', templet:'#operation1', title:'操作'}
+            ]],
+            done: function(res, curr, count){
+                var data = res.data;
+                var select = $('select[name="selectTitle"]');
+                select.empty();
+                select.append('<option value=""></option>');
+                for (var i in data) {
+                    select.append('<option value="' + data[i].id + '">' + data[i].id + '</option>')
+                }
+            }
+        });
+        table.on('tool(student)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'agree') {
+                studentId = data.id;
+                console.log(studentId);
+                console.log(titleId);
+                layer.confirm('确定同意该用户的审核吗', function(index) {
+                    $.post('/allocate/operate', {studentId: studentId, titleId: titleId}, function (data) {
+                        if (data.success) {
+                            layer.msg('添加成功');
+                            obj.del();
+                            layer.close(index);
+                            table.reload('title', {})
+                        }
+                    });
+                })
+            }
+        });
+    });
+    function test(obj) {
+        titleId = $(obj).prev().val();
+    }
+</script>
 </html>

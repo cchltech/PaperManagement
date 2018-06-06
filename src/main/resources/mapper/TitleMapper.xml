@@ -79,10 +79,14 @@
             has_select,
             total_number,
             d.id   department_id,
-            d.name department_name
-        FROM title t, department d
+            d.name department_name,
+            tea.id teacher_id,
+            tea.name teacher_name
+        FROM title t
+            LEFT JOIN department d ON t.department_id = d.id
+            LEFT JOIN teacher tea ON d.id = tea.department_id
         WHERE t.has_select <![CDATA[ < ]]> t.total_number
-              AND t.status = 1 AND d.id = t.department_id
+              AND t.status = 1 AND d.id = #{departmentId}
         ORDER BY department_id
     </select>
     <select id="selectWithParam" resultMap="title">

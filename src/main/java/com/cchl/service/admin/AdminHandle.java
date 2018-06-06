@@ -1,6 +1,7 @@
 package com.cchl.service.admin;
 
 import com.cchl.dao.*;
+import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
 import com.cchl.entity.*;
 import com.cchl.entity.vo.*;
@@ -61,14 +62,14 @@ public class AdminHandle {
      * @param data 代表查找学生还是题目
      * @return
      */
-    public Result allocate(String data) {
-
+    public DataWithPage allocate(String data, int userId) {
+        int departmentId = getDepartmentIdByUserId(userId);
         if (data != null && "student".equals(data)) {
-            return new Result<>(true, studentMapper.selectUnTitle());
+            return new DataWithPage<>(0, 0, studentMapper.selectUnTitle(departmentId));
         } else if (data != null && "title".equals(data)) {
-            return new Result<>(true, titleMapper.selectUnFull());
+            return new DataWithPage<>(0, 0, titleMapper.selectUnFull(departmentId));
         } else {
-            return new Result(Dictionary.ILLEGAL_VISIT);
+            return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         }
     }
 

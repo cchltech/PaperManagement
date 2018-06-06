@@ -104,11 +104,13 @@
 <script>
     $('#phone').on('click', function () {
         var phone = $('#phone1');
-        var text = phone.text();
-        phone.empty();
-        phone.append("<input class='layui-input-inline' type='text' id='phone2' name='phone2' value='"+text+"'>" +
-            "&nbsp;&nbsp;<button class='layui-btn' onclick=p_submit()>确认</button>" +
-            "<button class='layui-btn' onclick=p_exit('"+text+"')>取消</button>");
+        if (phone.find('> input').length < 1) {
+            var text = phone.text();
+            phone.empty();
+            phone.append("<input class='layui-input-inline' type='text' id='phone2' name='phone2' value='"+text+"'>" +
+                "&nbsp;&nbsp;<button class='layui-btn' onclick=p_submit()>确认</button>" +
+                "<button class='layui-btn' onclick=p_exit('"+text+"')>取消</button>");
+        }
     });
     function p_exit(text) {
         var node = $('#phone1');
@@ -130,11 +132,13 @@
     }
     $('#email').on('click', function () {
         var email = $('#email1');
-        var text = email.text();
-        email.empty();
-        email.append("<input class='layui-input-inline' type='text' id='email2' name='text' value='"+text+"'>" +
-            "&nbsp;&nbsp;<button class='layui-btn' id='submit' onclick=e_submit()>确认</button>" +
-            "<button class='layui-btn' onclick=e_exit('"+text+"')>取消</button>");
+        if (email.find('> input').length < 1) {
+            var text = email.text();
+            email.empty();
+            email.append("<input class='layui-input-inline' type='text' id='email2' name='text' value='"+text+"'>" +
+                "&nbsp;&nbsp;<button class='layui-btn' id='submit' onclick=e_submit()>确认</button>" +
+                "<button class='layui-btn' onclick=e_exit('"+text+"')>取消</button>");
+        }
     });
     function e_exit(text) {
         var node = $('#email1');

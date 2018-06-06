@@ -20,6 +20,12 @@ public class AdminURLController {
     }
 
     /**
+     * 跳转到调配页面
+     */
+    @RequestMapping(value = "/allocate")
+    public String allocate() { return "admin/allocation"; }
+
+    /**
      * 跳转到注册审核界面
      */
     @RequestMapping(value = "/examineUser")
