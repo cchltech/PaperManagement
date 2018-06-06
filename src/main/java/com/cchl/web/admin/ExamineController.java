@@ -5,12 +5,21 @@ import com.cchl.dto.Result;
 import com.cchl.entity.Title;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.IllegalVisitException;
+import com.cchl.service.admin.AdminHandle;
 import com.cchl.service.admin.ExamineService;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -30,6 +39,8 @@ public class ExamineController {
      */
     @Autowired
     private ExamineService examineService;
+    @Autowired
+    private AdminHandle adminHandle;
 
     /**
      * 返回到审核账号的数据
@@ -107,6 +118,62 @@ public class ExamineController {
         } catch (Exception e) {
             return new Result<>(Dictionary.SYSTEM_ERROR);
         }
+    }
+
+    @GetMapping(value = "/midFile")
+    public DataWithPage midFile(@RequestParam(value = "page", required = false) Integer page,
+                             @RequestParam(value = "limit", required = false) Integer limit,
+                             @SessionAttribute(value = "user_id", required = false)Integer userId) {
+        userId = test_id;
+        return new DataWithPage<>(0, adminHandle.midCount(userId), adminHandle.midFileInfoList(userId, (page-1)*limit, limit));
+    }
+
+    @GetMapping(value = "/openFile")
+    public DataWithPage openFile(@RequestParam(value = "page", required = false) Integer page,
+                             @RequestParam(value = "limit", required = false) Integer limit,
+                             @SessionAttribute(value = "user_id", required = false)Integer userId) {
+        userId = test_id;
+        return new DataWithPage<>(0, adminHandle.openCount(userId), adminHandle.openFileInfoList(userId, (page-1)*limit, limit));
+    }
+
+    /**
+     * 审核时下载页面
+     * @param id 学号
+     * @param fileName 文件名
+     * @return
+     */
+    @GetMapping(value = "/download")
+    public ResponseEntity<byte[]> download(@RequestParam(value = "id") String id,
+                                           @RequestParam(value = "fileName") String fileName,
+                                           @RequestParam(value = "type")String type) {
+        File file = adminHandle.getFile(Long.parseLong(id), fileName, type);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        try {
+            String downloadFileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");
+            httpHeaders.setContentDispositionFormData("attachment", downloadFileName);
+            httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        try {
+            System.out.println("文件输出成功");
+            return new ResponseEntity<>(FileUtils.readFileToByteArray(file),
+                    httpHeaders, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    /**
+     * 审核文件
+     */
+    @PostMapping(value = "/examineFile/{type}")
+    public Result examineFile(@RequestParam(value = "fileId")Integer id,
+                              @PathVariable(value = "type")String type) {
+        if (adminHandle.examineFile(id, type, 1) > 0)
+            return new Result(Dictionary.SUCCESS);
+        else
+            return new Result(Dictionary.SUBMIT_FAIL);
     }
 
 }

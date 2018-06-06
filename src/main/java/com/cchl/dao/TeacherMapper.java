@@ -26,4 +26,9 @@ public interface TeacherMapper {
     List<Teacher> selectByDepartmentId(Integer departmentId);
 
     List<Teacher> selectHasTitleByDepartmentId(Integer departmentId);
+
+    Teacher selectByPaperPlanId(int paperPlanId);
+
+    Teacher selectById(Long id);
+
 }

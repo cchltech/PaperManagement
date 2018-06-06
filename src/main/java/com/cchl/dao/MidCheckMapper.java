@@ -17,4 +17,13 @@ public interface MidCheckMapper {
     int updateFilePath(@Param(value = "paperId") Integer paperId, @Param(value = "filePath") String filePath);
 
     MidCheck selectByPaperId(Integer paperId);
+
+    List<MidCheck> selectByDepartmentId(@Param(value = "departmentId") int departmentId,
+                                        @Param(value = "page") int page,
+                                        @Param(value = "limit") int limit);
+
+    int selectByDepartmentIdCount(@Param(value = "departmentId") int departmentId);
+
+    int updateStatus(@Param(value = "id")Integer id, @Param("status")int status);
+
 }

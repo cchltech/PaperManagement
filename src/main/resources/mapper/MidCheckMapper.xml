@@ -29,9 +29,54 @@
         FROM mid_check
         WHERE paper_plan_id = #{paperId}
     </select>
+
+    <select id="selectByUserId" resultType="com.cchl.entity.MidCheck">
+        SELECT
+            m.id,
+            m.file_path,
+            m.create_time
+        FROM mid_check m
+            LEFT JOIN paper_plan p ON m.paper_plan_id = p.id
+            LEFT JOIN user_paper u ON p.id = u.paper_plan_id
+        WHERE m.status = 0 AND u.id IN (SELECT student.user_id
+                                        FROM student
+                                        WHERE department_id = #{deparmentId})
+        LIMIT #{page}, #{limit}
+    </select>
+
+    <select id="selectByDepartmentId" resultType="com.cchl.entity.OpenReport">
+        SELECT
+            m.id,
+            m.file_path,
+            m.create_time,
+            m.paper_plan_id
+        FROM mid_check m
+            LEFT JOIN paper_plan p ON m.paper_plan_id = p.id
+            LEFT JOIN user_paper u ON p.id = u.paper_plan_id
+        WHERE m.status = 0 AND u.id IN (SELECT student.user_id
+                                        FROM student
+                                        WHERE department_id = #{departmentId})
+        LIMIT #{page}, #{limit}
+    </select>
+    <select id="selectByDepartmentIdCount" resultType="java.lang.Integer">
+        SELECT count(m.id)
+        FROM mid_check m
+            LEFT JOIN paper_plan p ON m.paper_plan_id = p.id
+            LEFT JOIN user_paper u ON p.id = u.paper_plan_id
+        WHERE m.status = 0 AND u.user_id IN (SELECT student.user_id
+                                        FROM student
+                                        WHERE department_id = #{departmentId})
+    </select>
+
     <update id="updateFilePath">
         UPDATE mid_check
         SET file_path = #{filePath}
         WHERE paper_plan_id = #{paperId}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE mid_check
+        SET status = #{status}
+        WHERE id = #{id}
     </update>
 </mapper>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件审核页面</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>中期检查文件待审列表</legend>
+</fieldset>
+<table class="layui-table" lay-data="{url:'/examine/midFile',page:true}" lay-filter="MidCheck" style="width: 80%">
+    <thead>
+    <tr>
+        <th lay-data="{field: 'fileName', align:'center', width:300}">文件名</th>
+        <th lay-data="{field: 'time', align:'center'}">上传时间</th>
+        <th lay-data="{field: 'id', align:'center'}">学号</th>
+        <th lay-data="{field: 'name', align:'center'}">学生姓名</th>
+        <th lay-data="{field: 'major', align:'center'}">专业</th>
+        <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barDemo1'}">操作</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/html" id="barDemo1">
+    <a class="layui-btn layui-btn-xs" lay-event="download">
+        <i class="layui-icon layui-icon-download-circle"></i>下载文件
+    </a>
+    <a class="layui-btn layui-btn-xs" lay-event="agree">同意</a>
+</script>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>开题报告文件待审列表</legend>
+</fieldset>
+<table class="layui-table" lay-data="{url:'/examine/openFile',page:true}" lay-filter="OpenReport" style="width: 80%">
+    <thead>
+    <tr>
+        <th lay-data="{field: 'fileName', align:'center', width:300}">文件名</th>
+        <th lay-data="{field: 'time', align:'center'}">上传时间</th>
+        <th lay-data="{field: 'id', align:'center'}">学号</th>
+        <th lay-data="{field: 'name', align:'center'}">学生姓名</th>
+        <th lay-data="{field: 'major', align:'center'}">专业</th>
+        <th lay-data="{fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}">操作</th>
+    </tr>
+    </thead>
+</table>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="download">
+        <i class="layui-icon layui-icon-download-circle"></i>下载文件
+    </a>
+    <a class="layui-btn layui-btn-xs" lay-event="agree">同意</a>
+</script>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use('table', function () {
+        var table = layui.table;
+        //监听工具条
+        table.on('tool(MidCheck)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'download') {
+                layer.confirm('确定要下载该文件吗', function(index){
+                    var form=$("<form>");//定义一个form表单
+                    form.attr("style","display:none");
+                    form.attr("target","");
+                    form.attr("method","get");
+                    form.attr("action","/examine/download");
+                    var input1=$("<input>");
+                    input1.attr("type","hidden");
+                    input1.attr("name","id");
+                    input1.attr("value",data.id);
+                    var input2=$("<input>");
+                    input2.attr("type","hidden");
+                    input2.attr("name","fileName");
+                    input2.attr("value",data.fileName);
+                    var input3=$("<input>");
+                    input3.attr("type","hidden");
+                    input3.attr("name","type");
+                    input3.attr("value","MidCheck");
+                    $("body").append(form);
+                    form.append(input1);
+                    form.append(input2);
+                    form.append(input3);
+                    form.submit();
+                    layer.close(index)
+                });
+            } else if (obj.event === 'agree') {
+                layer.confirm('确定同意此中期检查的审核吗', function(index){
+                    $.post('/examine/examineFile/MidCheck', {fileId: data.fileId}, function (data) {
+                        if (data.success) {
+                            layer.msg('已通过审核');
+                            obj.del();
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+        table.on('tool(OpenReport)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'download') {
+                layer.confirm('确定要下载该文件吗', function(index){
+                    var form=$("<form>");//定义一个form表单
+                    form.attr("style","display:none");
+                    form.attr("target","");
+                    form.attr("method","get");
+                    form.attr("action","/examine/download");
+                    var input1=$("<input>");
+                    input1.attr("type","hidden");
+                    input1.attr("name","id");
+                    input1.attr("value",data.id);
+                    var input2=$("<input>");
+                    input2.attr("type","hidden");
+                    input2.attr("name","fileName");
+                    input2.attr("value",data.fileName);
+                    var input3=$("<input>");
+                    input3.attr("type","hidden");
+                    input3.attr("name","type");
+                    input3.attr("value","OpenReport");
+                    $("body").append(form);
+                    form.append(input1);
+                    form.append(input2);
+                    form.append(input3);
+                    form.submit();
+                    layer.close(index)
+                });
+            } else if (obj.event === 'agree') {
+                layer.confirm('确定同意此开题报告的审核吗', function(index){
+                    $.post('/examine/examineFile/OpenReport', {fileId: data.fileId}, function (data) {
+                        if (data.success) {
+                            layer.msg('已通过审核');
+                            obj.del();
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

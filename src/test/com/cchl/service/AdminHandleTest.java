@@ -1,5 +1,6 @@
 package com.cchl.service;
 
+import com.cchl.entity.vo.FileInfo;
 import com.cchl.entity.vo.StudentMessage;
 import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.entity.Title;
@@ -62,7 +63,14 @@ public class AdminHandleTest {
         adminHandle.deleteTeacherMsg(1001,10);
     }
 
-
+    @Test
+    public void fileList() {
+        List<FileInfo> list = adminHandle.openFileInfoList(1000, 0, 10);
+        for (FileInfo fileInfo : list) {
+            System.out.println(fileInfo);
+        }
+        System.out.println(adminHandle.openCount(1000));
+    }
 
 
 }

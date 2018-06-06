@@ -27,6 +27,7 @@
             s.grade,
             s.major_id,
             s.phone,
+            s.user_id,
             d.id   department_id,
             d.name department_name,
             m.id   major_id,
@@ -98,7 +99,7 @@
         WHERE department_id = #{departmentId}
     </select>
     <select id="selectByDepartmentId" resultMap="student">
-        s.id,
+        SELECT
             s.id,
             s.name,
             s.sex,
@@ -111,10 +112,32 @@
             d.name department_name,
             m.id   major_id,
             m.name major_name
-        FROM user u, student s
+        FROM `user` u, student s
             LEFT JOIN department d ON s.department_id = d.id
             LEFT JOIN major m ON s.major_id = m.id
         WHERE s.department_id = #{departmentId}
+        ORDER BY s.id
+    </select>
+    <select id="selectByPaperPlanId" resultMap="student">
+        SELECT
+            s.id,
+            s.name,
+            s.sex,
+            s.email,
+            s.department_id,
+            s.grade,
+            s.major_id,
+            s.phone,
+            d.id   department_id,
+            d.name department_name,
+            m.id   major_id,
+            m.name major_name
+        FROM student s
+            LEFT JOIN department d ON s.department_id = d.id
+            LEFT JOIN major m ON s.major_id = m.id
+            LEFT JOIN user u ON s.user_id = u.id
+            LEFT JOIN user_paper up ON u.id = up.user_id
+        WHERE up.paper_plan_id = #{paperPlanId}
         ORDER BY s.id
     </select>
 </mapper>

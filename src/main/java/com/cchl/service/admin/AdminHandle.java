@@ -1,22 +1,17 @@
 package com.cchl.service.admin;
 
-import com.cchl.dao.PaperPlanMapper;
-import com.cchl.dao.StudentMapper;
-import com.cchl.dao.TitleMapper;
-import com.cchl.dao.UserPaperMapper;
+import com.cchl.dao.*;
 import com.cchl.dto.Result;
-import com.cchl.entity.PaperPlan;
-import com.cchl.entity.vo.StudentMessage;
-import com.cchl.entity.vo.TeacherMessage;
-import com.cchl.entity.UserPaper;
-import com.cchl.entity.vo.VersionRecord;
-import com.cchl.entity.vo.VoTimer;
+import com.cchl.entity.*;
+import com.cchl.entity.vo.*;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.DataInsertException;
 import com.cchl.execption.SystemException;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,7 +19,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,14 +35,22 @@ public class AdminHandle {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private static final String FilePath = "/home/beiyi/file/";
+
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private TeacherMapper teacherMapper;
     @Autowired
     private TitleMapper titleMapper;
     @Autowired
     private PaperPlanMapper paperPlanMapper;
     @Autowired
     private UserPaperMapper userPaperMapper;
+    @Autowired
+    private OpenReportMapper openReportMapper;
+    @Autowired
+    private MidCheckMapper midCheckMapper;
     //mongodb的操作类
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -252,5 +257,81 @@ public class AdminHandle {
     public int TimerCount(int department) {
         Criteria criteria = Criteria.where("department").is(department);
         return (int)mongoTemplate.count(query(criteria), VoTimer.class);
+    }
+
+    public List<FileInfo> midFileInfoList(Integer userId, int page, int limit) {
+        int departmentId = getDepartmentIdByUserId(userId);
+        List<FileInfo> fileInfos = new ArrayList<>();
+        //获取中期检查
+        List<MidCheck> midChecks = midCheckMapper.selectByDepartmentId(departmentId, page, limit);
+        //封装数据
+        for (MidCheck midCheck : midChecks) {
+            int paperPlanId = midCheck.getPaperPlanId();
+            Teacher teacher = teacherMapper.selectByPaperPlanId(paperPlanId);
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.setFileId(midCheck.getId());
+            fileInfo.setFileName(midCheck.getFilePath());
+            fileInfo.setTime(midCheck.getCreateTime());
+            fileInfo.setId(teacher.getId());
+            fileInfo.setName(teacher.getName());
+            fileInfos.add(fileInfo);
+        }
+        return fileInfos;
+    }
+
+    public List<FileInfo> openFileInfoList(Integer userId, int page, int limit) {
+        int departmentId = getDepartmentIdByUserId(userId);
+        List<FileInfo> fileInfos = new ArrayList<>();
+        //先获取开题报告
+        List<OpenReport> openReports = openReportMapper.selectByDepartmentId(departmentId, page, limit);
+        //封装数据
+        for (OpenReport openReport : openReports) {
+            int paperPlanId = openReport.getPaperPlanId();
+            Student student = studentMapper.selectByPaperPlanId(paperPlanId);
+            FileInfo fileInfo = new FileInfo();
+            fileInfo.setFileId(openReport.getId());
+            fileInfo.setFileName(openReport.getFilePath());
+            fileInfo.setTime(openReport.getCreateTime());
+            fileInfo.setId(student.getId());
+            fileInfo.setName(student.getName());
+            fileInfo.setMajor(student.getMajor().getName());
+            fileInfos.add(fileInfo);
+        }
+        return fileInfos;
+    }
+
+    public int midCount(int userId) {
+        int departmentId = getDepartmentIdByUserId(userId);
+        return midCheckMapper.selectByDepartmentIdCount(departmentId);
+    }
+
+    public int openCount(int userId) {
+        int departmentId = getDepartmentIdByUserId(userId);
+        return openReportMapper.selectByDepartmentIdCount(departmentId);
+    }
+
+    public File getFile(Long id, String fileName, String type) {
+        int userId;
+        if ("MidCheck".equals(type))
+            userId = studentMapper.selectById(id).getUserId();
+        else
+            userId = teacherMapper.selectById(id).getUserId();
+
+        int paperId = userPaperMapper.selectByUserId(userId);
+        return new File(FilePath + paperId + '/' + fileName);
+    }
+
+    public int examineFile(Integer id, String type, int status) {
+        if ("MidCheck".equals(type))
+            return midCheckMapper.updateStatus(id, status);
+        else if ("OpenReport".equals(type))
+            return openReportMapper.updateStatus(id, status);
+        else
+            return 0;
+    }
+
+    @Cacheable(cacheNames = "admin_userId",key = "#userId")
+    public int getDepartmentIdByUserId(int userId) {
+        return teacherMapper.selectDepartmentIdByUserId(userId);
     }
 }

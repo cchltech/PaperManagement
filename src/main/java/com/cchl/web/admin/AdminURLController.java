@@ -23,7 +23,13 @@ public class AdminURLController {
      * 跳转到注册审核界面
      */
     @RequestMapping(value = "/examineUser")
-    public String String() {return "admin/userExamine";}
+    public String examineUser() {return "admin/userExamine";}
+
+    /**
+     * 跳转到文件审核界面
+     */
+    @RequestMapping(value = "/examineFile")
+    public String examineFile() {return "admin/examineFile";}
 
     /**
      * 跳转到题目审核页面
