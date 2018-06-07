@@ -96,7 +96,8 @@
     <select id="totalNumber" resultType="java.lang.Integer">
         SELECT count(id)
         FROM student
-        WHERE department_id = #{departmentId}
+        LEFT JOIN user u on u.id = student.user_id
+        WHERE department_id = #{departmentId} AND user.status = 1
     </select>
     <select id="selectByDepartmentId" resultMap="student">
         SELECT

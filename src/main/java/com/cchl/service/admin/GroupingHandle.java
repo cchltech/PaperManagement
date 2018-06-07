@@ -19,11 +19,24 @@ public class GroupingHandle {
     @Autowired
     private StudentMapper studentMapper;
 
+    private int departmentId;
+
     int groupNumber;
     int restStudentNumber =0;
     List<GroupInfo> groupList = new ArrayList();
 
-    public void setStudentGroup(Integer departmentId) {
+    public List<GroupInfo> getGroupList(int userId) {
+        getDepartment(userId);
+        setStudentGroup();
+        setTeacherGroup();
+        return groupList;
+    }
+
+    private void getDepartment(int userId) {
+        this.departmentId =  teacherMapper.selectDepartmentIdByUserId(userId);
+    }
+
+    private void setStudentGroup() {
         int studentNumber = studentMapper.totalNumber(departmentId);
         groupNumber = studentNumber/4;
         if(studentNumber%4 != 0) {
@@ -32,12 +45,12 @@ public class GroupingHandle {
         }
         int groupInfo[][] = new int[groupNumber][4]; //存放每个小组组员编号
         Random rand = new Random();
-        boolean[] bool = new boolean[studentNumber];
+        boolean[] isSelected = new boolean[studentNumber];
         int randInt;
         int group = 0;
         for(int i=0;i<studentNumber;i++) {
             // 每次循环前先初始化布尔数组
-            bool[i]=false;
+            isSelected[i]=false;
         }
         do{
             if (group == groupNumber-1 && restStudentNumber!=0) {
@@ -45,8 +58,8 @@ public class GroupingHandle {
                 for(int i = 0;i < restStudentNumber; i++) {
                     do {
                         randInt = rand.nextInt(studentNumber);
-                    }while(bool[randInt]);
-                    bool[randInt] = true; //true表示该学生已被选择
+                    }while(isSelected[randInt]);
+                    isSelected[randInt] = true; //true表示该学生已被选择
                     groupInfo[group][i]=randInt+1;
                 }
                 group++;
@@ -55,8 +68,8 @@ public class GroupingHandle {
                 for (int i = 0; i < 4; i++) {
                     do {
                         randInt = rand.nextInt(studentNumber);
-                    } while (bool[randInt]);
-                    bool[randInt] = true; //true表示该学生已被选择
+                    } while (isSelected[randInt]);
+                    isSelected[randInt] = true; //true表示该学生已被选择
                     groupInfo[group][i] = randInt;
                 }
                 group++;
@@ -67,10 +80,10 @@ public class GroupingHandle {
 
         for (int j = 0;j < groupNumber;j++) {
             int i = 0;
+            GroupInfo g = new GroupInfo();
             do {
                 int student = groupInfo[j][i]; //提取数组存放的学生随机顺序数
                 Student s = students.get(student);
-                GroupInfo g = new GroupInfo();
 
                 g.setDepartmentId(s.getDepartmentId());
                 g.setGrade(s.getGrade());
@@ -88,28 +101,33 @@ public class GroupingHandle {
                     g.setStudentId4(s.getId());
                     g.setStudentName4(s.getName());
                 }
-                groupList.add(g);
                 i++;
             }while(groupInfo[j][i]==0); //判断是否有下一条数据
+            groupList.add(g);
         }
     }
 
-    public void setTeacherGroup(Integer departmentId) {
+    private void setTeacherGroup() {
         int teacherNumber = teacherMapper.totalNumber(false, (byte) 1, departmentId);
-        int allocation[][] = new int[teacherNumber][1]; //存放每个老师分配到的组数
+        int allocation[] = new int[teacherNumber]; //存放每个老师分配到的组数
         Random rand = new Random();
-        boolean[] bool = new boolean[teacherNumber]; //判断同一次循环中是否教师被重复选择
+        boolean[] isSelected = new boolean[teacherNumber]; //判断同一次循环中是否教师被重复选择
         int randInt;
         if (groupList.isEmpty()) {
             // 集合为空不进行操作
         }
         else {
             List<Teacher> teachers = teacherMapper.selectByDepartmentId(departmentId);
+
+            int location = 0;
             do {
+                GroupInfo g = groupList.get(location);// 获取当前小组信息的集合
+
                 for(int i=0;i<teacherNumber;i++) {
                     // 每次循环前先初始化布尔数组
-                    bool[i] = false;
+                    isSelected[i] = false;
                 }
+
                 int number;
                 if (groupNumber==1 && restStudentNumber!=0) {
                     // 判断是否为最后一组,因为可能存在不满四人的情况
@@ -119,21 +137,21 @@ public class GroupingHandle {
                     // 不为最后一组，则默认一组四人
                     number = 4;
                 }
+
                 for (int i = 0; i < number; i++) {
                     // 每小组随机选择"number"位老师
                     do {
                         randInt = rand.nextInt(teacherNumber);
-                        if (allocation[randInt][0] >= 2) {
+                        if (allocation[randInt] >= 2) {
                             // 每位老师最多负责两个小组
-                            bool[randInt] = true;
+                            isSelected[randInt] = true;
                         }
-                    } while (bool[randInt]);
-                    bool[randInt] = true; //true表示该教师已被选择
-                    allocation[randInt][0]++;
+                    } while (isSelected[randInt]);
+                    isSelected[randInt] = true; //true表示该教师已被选择
+                    allocation[randInt]++;
 
                     Teacher t = teachers.get(randInt);
-                    int location = 0;
-                    GroupInfo g = groupList.get(location);
+
                     if (i == 0) {
                         g.setTeacherName1(t.getName());
                     } else if (i == 1) {
@@ -143,8 +161,9 @@ public class GroupingHandle {
                     } else if (i == 3) {
                         g.setTeacherName4(t.getName());
                     }
-                    location++;
                 }
+                groupList.set(location,g);
+                location++;
             }while(groupNumber-- > 0);
         }
     }
