@@ -32,6 +32,7 @@
                     <dl class="layui-nav-child">
                         <dd><a>消息管理</a></dd>
                         <dd><a>定时任务</a></dd>
+                        <dd><a>题目调配</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -75,33 +76,33 @@
         element.on('nav(test)', function (data) {
             var show = $('#show');
             var val = data.init().context.innerText.substr(0,4);
-            if (val === '选题调配') {
+            if (val === '题目调配') {
                 show.empty();
-                show.append('<iframe src="/admin/examineUser" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/admin/allocate" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '注册审核') {
                 reset($('#user'), 'user');
                 show.empty();
-                show.append('<iframe src="/admin/examineUser" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/admin/examineUser" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '定时任务') {
                 show.empty();
-                show.append('<iframe src="/admin/timer" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/admin/timer" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '文件审核') {
                 reset($('#file'), 'file');
                 show.empty();
-                show.append('<iframe src="/admin/examineFile" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/admin/examineFile" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '题目审核') {
                 reset($('#title'), 'title');
                 show.empty();
-                show.append('<iframe src="/admin/titleExamine" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/admin/titleExamine" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '选题信息') {
                 show.empty();
-                show.append('<iframe src="/show/title" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/show/title" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '消息管理') {
                 show.empty();
-                show.append('<iframe src="/admin/msg" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/admin/msg" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '教师信息') {
                 show.empty();
-                show.append('<iframe src="/show/teacher" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/show/teacher" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             }
         });
     });

@@ -61,6 +61,6 @@ public interface TitleMapper {
      * 查找未被学生选满的课程
      * @return
      */
-    List<Title> selectUnFull();
+    List<Title> selectUnFull(int departmentId);
 
 }

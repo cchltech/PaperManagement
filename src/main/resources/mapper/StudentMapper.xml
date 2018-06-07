@@ -61,11 +61,14 @@
             d.name department_name,
             m.id   major_id,
             m.name major_name
-        FROM user u, student s
+        FROM student s
             LEFT JOIN department d ON s.department_id = d.id
             LEFT JOIN major m ON s.major_id = m.id
-        WHERE s.user_id = u.id AND u.id NOT IN (SELECT user_id
-                                                FROM user_paper)
+        WHERE s.department_id = #{departmentId} AND s.user_id IN (SELECT user_id
+                            FROM user_paper up
+                            WHERE up.paper_plan_id IN (SELECT id
+                                                       FROM paper_plan pp
+                                                       WHERE pp.title_id = 0))
         ORDER BY s.department_id, id
     </select>
     <select id="selectByUserId" resultMap="student">

@@ -16,7 +16,7 @@ public interface StudentMapper {
 
     Integer loginCheck(@Param("id")Long id, @Param("password")String password);
 
-    List<Student> selectUnTitle();
+    List<Student> selectUnTitle(int departmentId);
 
     Student selectByUserId(Integer userId);
 

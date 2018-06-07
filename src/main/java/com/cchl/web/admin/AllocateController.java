@@ -1,5 +1,6 @@
 package com.cchl.web.admin;
 
+import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
 import com.cchl.eumn.Dictionary;
 import com.cchl.execption.DataInsertException;
@@ -21,21 +22,14 @@ public class AllocateController {
     @Autowired
     private AdminHandle adminHandle;
 
-    /**
-     * @return 跳转到初始页面
-     */
-    @RequestMapping(value = "/index")
-    public String index() {
-        return "allocation";
-    }
 
-    @RequestMapping(value = "/index/{data}", method = RequestMethod.POST)
-    public Result getData(@PathVariable(value = "data") String data) {
+    @GetMapping(value = "/index/{data}")
+    public DataWithPage getData(@PathVariable(value = "data") String data) {
         try {
             logger.info("调课操作，选择的数据为：{}", data);
             return adminHandle.allocate(data);
         } catch (Exception e) {
-            return new Result(Dictionary.SYSTEM_ERROR);
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }
     }
 

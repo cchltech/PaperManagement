@@ -30,6 +30,8 @@ public class User {
     private String identity;
     //注册时间
     private String registerDate;
+    //性别
+    private byte sex;
 
     @Override
     public String toString() {
@@ -45,6 +47,7 @@ public class User {
                 ", departmentName='" + departmentName + '\'' +
                 ", identity='" + identity + '\'' +
                 ", registerDate='" + registerDate + '\'' +
+                ", sex='" + sex + '\'' +
                 '}';
     }
 
@@ -112,6 +115,14 @@ public class User {
         this.number = number;
     }
 
+    public byte getSex() {
+        return sex;
+    }
+
+    public void setSex(byte sex) {
+        this.sex = sex;
+    }
+
     public String getDepartmentName() {
         return departmentName;
     }
@@ -143,6 +154,7 @@ public class User {
             this.identity = "教师";
             this.departmentName = this.teacher.getDepartment().getName();
             this.registerDate = switchTime();
+            this.sex = this.teacher.getSex();
         }
         else {
             this.name = this.student.getName();
@@ -150,6 +162,7 @@ public class User {
             this.identity = "学生";
             this.departmentName = this.student.getDepartment().getName();
             this.registerDate = switchTime();
+            this.sex = this.student.getSex();
         }
     }
     public String switchTime() {
