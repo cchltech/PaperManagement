@@ -8,46 +8,82 @@
     <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
-<div class="layui-row">
-    <div class="layui-col-xs12 layui-col-md7" style="font-size: 15px;">
-        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-            <legend>教师论文题目审核表</legend>
-        </fieldset>
-        <div>
-            <form class="layui-form" action="#" id="titledata" name="titledata">
-                <div class="layui-form-item" id="name">
-                    <label class="layui-form-label" style="width: 20%">教师姓名-XXX</label><!-- 教师姓名自动获取，并添加在此处 -->
-                </div>
-                <div class="layui-form-item" id="department">
-                    <label class="layui-form-label" style="width: 20%">论文题目适用学院-XXX学院</label><!-- 学院名称自动获取，并添加在此处 -->
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" style="width: 20%">论文指导题目</label>
-                    <div class="layui-input-inline" style="width: 30%">
-                        <textarea name="title" rows="10" style="width: 600px" ></textarea>
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">填写题目申请</li>
+            <li>我的题目申请表</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-col-xs12 layui-col-md7" style="font-size: 15px;">
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>教师论文题目审核表</legend>
+                    </fieldset>
+                    <div>
+                        <form class="layui-form" action="" id="title" name="title">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="width: 20%">论文指导题目</label>
+                                <div class="layui-input-inline" style="width: 30%">
+                        <textarea id="content" name="content" class="layui-textarea"
+                                  placeholder="论文题目" lay-verify="required"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="width: 20%">题目说明</label>
+                                <div class="layui-input-inline" style="width: 30%">
+                        <textarea id="instruction" name="instruction" rows="10" style="width: 600px;"
+                                  class="layui-textarea"
+                                  placeholder="请在此处添加详细的题目说明" lay-verify="required"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="width: 20%">限选人数</label>
+                                <div class="layui-input-inline" style="width: 20%">
+                                    <select name="totalNumber" lay-verify="required" lay-search="">
+                                        <option value="">选择限选人数</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
-                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                    </div>
-                </div>
-            </form>
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table" id="title_list" lay-filter="title_list"></table>
+                <script type="text/html" id="status">
+                    {{d.status==0?'待审核':'已通过'}}
+                </script>
+                    <script type="text/html" id="operation">
+                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
+            </div>
         </div>
     </div>
-</div>
 <script src="../../../static/layer/layer.js"></script>
 <script src="../../../static/layui/layui.js"></script>
 <script>
-    layui.use(['form','layer'], function () {
+    layui.use(['form','layer', 'table', 'element'], function () {
         var form = layui.form;
+        var table = layui.table;
+        var element = layui.element;
         form.render();
         //表单提交
         form.on('submit(*)', function (data) {
             console.log(data.field);
             var url;
-            $.post(url, data.field, function(data){
+            $.post('/teacher/requestTitle', data.field, function(data){
                 if (data.success) {
                     layer.open({
                         title: '提交结果',
@@ -57,12 +93,45 @@
                 } else {
                     layer.open({
                         title: '提交结果',
-                        content: '题目提交失败，请检查您的论文指导题目',
+                        content: '题目提交失败，请稍后重试',
                         time:2000
                     });
                 }
             });
             return false;
+        });
+        table.on('tool(title_list)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                layer.open({
+                    title: '题目详细信息'
+                    ,
+                    content: "<div class='layui-text'>题目：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.content + "</div></div><br>"
+                    + "<div class='layui-text'>题目介绍：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.instruction + "</div></div><br>"
+                    + "<div class='layui-text'>限制选题人数：&nbsp;&nbsp;&nbsp;&nbsp;" + data.totalNumber + "</div>"
+                });
+            } else if (obj.event === 'del') {
+                layer.confirm('确定删除此题目审批表吗', function(index){
+                    $.post('/teacher/title/delete', {titleId: data.id}, function (data) {
+                        if (data.success) {
+                            layer.msg('已删除');
+                            obj.del();
+                            layer.close(index);
+                        }
+                    });
+                });
+            }
+        });
+        table.render({
+            elem:'#title_list',
+            url:'/teacher/title/list',
+            cols:[[
+                {field:'content', align:'center', title:'题目'},
+                {field:'instruction', align:'center', title:'介绍'},
+                {field:'totalNumber', align:'center', title:'限选人数'},
+                {field:'status', title:'状态', align:'center', templet:'#status'},
+                {field:'operation', title:'操作', align:'center', templet:'#operation'}
+            ]]
         })
     });
 </script>

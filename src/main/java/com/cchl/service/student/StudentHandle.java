@@ -285,7 +285,7 @@ public class StudentHandle {
      * @return
      */
     public File getFile(Integer userId, String fileName) {
-        Integer paperId = userPaperMapper.selectByUserId(userId);
+        Integer paperId = userPaperMapper.selectByUserId(userId).get(0);
         return new File(FilePath + paperId + '/' + fileName);
     }
 
@@ -296,7 +296,7 @@ public class StudentHandle {
      */
     public List<FileRecord> selectFileRecord(Integer userId) {
         //获取paper plan id
-        Integer paperId = userPaperMapper.selectByUserId(userId);
+        Integer paperId = userPaperMapper.selectByUserId(userId).get(0);
         List<FileRecord> records = new ArrayList<>(5);
         //查找是否有周计划
         WeeksPlan weeksPlan = weeksPlanMapper.selectByPaperId(paperId);
@@ -340,7 +340,7 @@ public class StudentHandle {
      * @return
      */
     public boolean saveFile(Integer userId, String fileName,  byte[] file, String type) {
-        Integer paperId = userPaperMapper.selectByUserId(userId);
+        Integer paperId = userPaperMapper.selectByUserId(userId).get(0);
         String filePath = FilePath + paperId + '/';
         File target = new File(filePath);
         if (!target.exists()) {
@@ -361,7 +361,7 @@ public class StudentHandle {
 
     private boolean saveFilePath(String type, Integer id, String filePath) {
         boolean success;
-        Integer paperId = userPaperMapper.selectByUserId(id);
+        Integer paperId = userPaperMapper.selectByUserId(id).get(0);
         System.out.println("论文计划ID为："+paperId + " 类型为：" + type);
         if (paperId == null)
             return false;
@@ -441,5 +441,10 @@ public class StudentHandle {
             paper.setPaperPlanId(paperId);
             return paperMapper.insert(paper);
         }
+    }
+
+    public Title getMyTitle(Integer userId) {
+        int paperPlanId = userPaperMapper.selectByUserId(userId).get(0);
+        return titleMapper.selectByPaperPlanId(paperPlanId);
     }
 }

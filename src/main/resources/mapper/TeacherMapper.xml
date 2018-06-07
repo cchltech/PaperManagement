@@ -120,4 +120,10 @@
         WHERE up.paper_plan_id = #{paperPlanId}
         ORDER BY t.id
     </select>
+    <update id="updatePhone">
+        UPDATE teacher SET phone = #{phone} WHERE id = #{id}
+    </update>
+    <update id="updateEmail">
+        UPDATE teacher SET email = #{email} WHERE id = #{id}
+    </update>
 </mapper>

@@ -122,13 +122,12 @@ public class StudentController {
             String downloadFileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");
             httpHeaders.setContentDispositionFormData("attachment", downloadFileName);
             httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        try {
             System.out.println("文件输出成功");
             return new ResponseEntity<>(FileUtils.readFileToByteArray(file),
                     httpHeaders, HttpStatus.OK);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
@@ -278,5 +277,35 @@ public class StudentController {
     public List<Teacher> teachers(@SessionAttribute(value = "user_id", required = false) Integer userId) {
         userId = testUser;
         return studentHandle.getTeacherList(userId);
+    }
+
+    /**
+     * 模板下载
+     */
+    @GetMapping(value = "/template/{type}")
+    public ResponseEntity<byte[]> getTemplate(@PathVariable(value = "type") String type) {
+        String filePath = "/home/beiyi/file/template/";
+        String fileName = type + ".docx";
+        filePath += fileName;
+        File file = new File(filePath);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        try {
+            String downloadFileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");
+            httpHeaders.setContentDispositionFormData("attachment", downloadFileName);
+            httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<>(FileUtils.readFileToByteArray(file),
+                    httpHeaders, HttpStatus.OK);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @GetMapping(value = "/titleInfo")
+    public Result titleInfo(@SessionAttribute(value = "userId", required = false)Integer userId) {
+        userId = testUser;
+        return new Result<>(true, studentHandle.getMyTitle(userId));
     }
 }

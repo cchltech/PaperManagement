@@ -12,9 +12,6 @@
         <h1 class="layui-icon-fonts" style="color: white; font-size: 30px; margin-left: 30px; float: left">论文管理系统</h1>
         <ul class="layui-nav" style="float: right">
             <li class="layui-nav-item">
-                <a href="" id="msg">新消息</a>
-            </li>
-            <li class="layui-nav-item">
                 <a href="">帮助</a>
             </li>
         </ul>
@@ -23,12 +20,25 @@
         <div class="layui-side layui-bg-black">
             <ul class="layui-nav layui-nav-tree" lay-filter="test" style="height: 100%">
                 <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:">关于我的</a>
+                    <dl class="layui-nav-child">
+                        <dd><a>个人信息</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:">文件操作</a>
                     <dl class="layui-nav-child">
                         <dd><a>任务书</a></dd>
                         <dd><a>周计划</a></dd>
                         <dd><a>中期检查</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:">其他功能</a>
+                    <dl class="layui-nav-child">
                         <dd><a>题目审核表</a></dd>
                         <dd><a>教师评价成绩与评语</a></dd>
+                        <dd><a id="message">系统消息</a></dd>
                     </dl>
                 </li>
             </ul>
@@ -57,23 +67,48 @@
             var val = data.init().context.innerText;
             if (val === '任务书') {
                 show.empty();
-                show.append('<iframe src="/teacher/planOfMission" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/teacher/planOfMission" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '周计划') {
                 show.empty();
-                show.append('<iframe src="/teacher/planOfWeek" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/teacher/planOfWeek" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '中期检查') {
                 show.empty();
-                show.append('<iframe src="/teacher/midCheck" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/teacher/midCheck" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             }else if (val === '题目审核表') {
                 show.empty();
-                show.append('<iframe src="/teacher/titleExamine" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/teacher/titleExamine" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             } else if (val === '教师评价成绩与评语') {
                 show.empty();
-                show.append('<iframe src="/teacher/valuationOfTeacher" width="100%" height="100%" frameborder="0" scrolling="no" marginwidth="0"></iframe>')
+                show.append('<iframe src="/teacher/valuationOfTeacher" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+            } else if (val === '个人信息') {
+                show.empty();
+                show.append('<iframe src="/teacher/myInfo" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+            } else if (val.substr(0,4) === '系统消息') {
+                var node = $('#message');
+                if (node.find('> span').length > 0){
+                    node.find('> span').remove();
+                }
+                show.empty();
+                show.append('<iframe src="/teacher/msg" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             }
         });
         //消息通知
-        $('#msg').append('<span class="layui-badge">8</span>')
+        var getMsg = function() {
+            var url = '/teacher/hasNewMsg';
+            $.get(url,function (data) {
+                if (data.success) {
+                    if (data.data !== null) {
+                        var node = $('#message');
+                        if (node.find('> span').length > 0){
+                            node.find('> span').remove();
+                        }
+                        node.append('<span class="layui-badge">' + data.data + '</span>')
+                    }
+                }
+            })
+        };
+        //定时请求
+        setInterval(getMsg, 10000);
     });
 </script>
 </body>

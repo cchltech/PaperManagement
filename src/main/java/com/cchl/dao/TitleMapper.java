@@ -63,4 +63,10 @@ public interface TitleMapper {
      */
     List<Title> selectUnFull(int departmentId);
 
+    Title selectByPaperPlanId(int paperPlanId);
+
+    List<Title> selectByTeacherId(Long teacherId);
+
+    int deleteTitle(@Param(value = "teacherId") Long id, @Param(value = "id") int titleId);
+
 }

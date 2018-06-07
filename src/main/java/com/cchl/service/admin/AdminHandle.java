@@ -318,7 +318,7 @@ public class AdminHandle {
         else
             userId = teacherMapper.selectById(id).getUserId();
 
-        int paperId = userPaperMapper.selectByUserId(userId);
+        int paperId = userPaperMapper.selectByUserId(userId).get(0);
         return new File(FilePath + paperId + '/' + fileName);
     }
 

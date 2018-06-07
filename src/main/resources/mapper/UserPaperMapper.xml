@@ -20,6 +20,6 @@
         SELECT paper_plan_id
         FROM user_paper
         WHERE user_id = #{userId}
-        LIMIT 0, 1
+        ORDER BY id DESC
     </select>
 </mapper>

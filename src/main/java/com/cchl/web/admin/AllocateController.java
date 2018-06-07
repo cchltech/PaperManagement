@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/allocate")
 public class AllocateController {
 
+    int test_id = 1000;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -24,10 +26,12 @@ public class AllocateController {
 
 
     @GetMapping(value = "/index/{data}")
-    public DataWithPage getData(@PathVariable(value = "data") String data) {
+    public DataWithPage getData(@PathVariable(value = "data") String data,
+                                @SessionAttribute(value = "user_id", required = false) Integer userId) {
         try {
+            userId = test_id;
             logger.info("调课操作，选择的数据为：{}", data);
-            return adminHandle.allocate(data);
+            return adminHandle.allocate(data, userId);
         } catch (Exception e) {
             return new DataWithPage(Dictionary.SYSTEM_ERROR);
         }

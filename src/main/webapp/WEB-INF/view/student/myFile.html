@@ -8,6 +8,34 @@
 </head>
 <body>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>我的论文题目</legend>
+</fieldset>
+<div style="margin-left: 10%; width: 80%">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div id="titleInfo" class="layui-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>指导教师信息</legend>
+</fieldset>
+<div style="margin-left: 10%; width: 80%">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div id="teacherInfo" class="layui-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
     <legend>文件上传记录</legend>
 </fieldset>
 <div style="margin-left: 10%; width: 80%">
@@ -27,6 +55,32 @@
         <i class="layui-icon layui-icon-download-circle"></i>下载文件
     </a>
 </script>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>模板文件下载</legend>
+</fieldset>
+<div style="margin-left: 10%; width: 80%">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header" style="background-color: #eeeeee">模板文件</div>
+                <div class="layui-card-body">
+                    <a class="layui-btn" onclick="temp('WeeksPlan')">
+                        <i class="layui-icon layui-icon-download-circle"></i>周计划下载
+                    </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="layui-btn" onclick="temp('Task')">
+                        <i class="layui-icon layui-icon-download-circle"></i>任务书下载
+                    </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="layui-btn" onclick="temp('OpenReport')">
+                        <i class="layui-icon layui-icon-download-circle"></i>开题报告下载
+                    </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="layui-btn" onclick="temp('MidCheck')">
+                        <i class="layui-icon layui-icon-download-circle"></i>中期检查下载
+                    </a>&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script src="../../../static/layui/layui.js"></script>
 <script>
@@ -53,6 +107,38 @@
                 });
             }
         });
-    })
+    });
+    //获取论文题目信息
+    $.get('/student/titleInfo', function (res) {
+        if (res.success) {
+            var data = res.data;
+            if (data !== null) {
+                var node = '<div><b>论文题目：</b></div><div>&nbsp;&nbsp;&nbsp;&nbsp;' + data.content + '</div>'
+                    + '<div><b>题目简介：</b></div><div>&nbsp;&nbsp;&nbsp;&nbsp;' + data.instruction + '</div>';
+                $('#titleInfo').append(node);
+                //选题不为空，获取指导老师信息
+                var teacher = data.teacher;
+                var tea = '<div><b>姓名：</b>&nbsp;&nbsp;&nbsp;&nbsp;' + teacher.name + '</div>'
+                    + '<div><b>联系方式：</b>&nbsp;&nbsp;&nbsp;&nbsp;' + teacher.phone + '</div>'
+                    + '<div><b>邮箱：</b>&nbsp;&nbsp;&nbsp;&nbsp;' + teacher.email + '</div>';
+                $('#teacherInfo').append(tea)
+            } else {
+                $('#titleInfo').append('<div>无选题信息</div>');
+                $('#teacherInfo').append('<div>无教师信息</div>')
+            }
+        }
+    });
+    function temp(type) {
+        layer.confirm('确定要下载该文件吗', function(index) {
+            var form = $("<form>");
+            form.attr("style", "display:none");
+            form.attr("target", "");
+            form.attr("method", "get");
+            form.attr("action", "/student/template/" + type);
+            $("body").append(form);
+            form.submit();
+            layer.close(index)
+        });
+    }
 </script>
 </html>

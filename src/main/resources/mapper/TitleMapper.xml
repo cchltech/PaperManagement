@@ -15,8 +15,8 @@
                      columnPrefix="teacher_"/>
     </resultMap>
     <insert id="insert" parameterType="com.cchl.entity.Title">
-        INSERT INTO title (content, instruction, status, total_number, department_id)
-            VALUE (#{content}, #{instruction}, #{status}, #{totalNumber}, #{department.id})
+        INSERT INTO title (content, instruction, status, total_number, department_id, teacher_id)
+            VALUE (#{content}, #{instruction}, #{status}, #{totalNumber}, #{departmentId}, #{teacherId})
     </insert>
     <select id="selectAll" resultMap="title">
         SELECT
@@ -123,4 +123,27 @@
             AND teacher_id = #{teacherId}
         </if>
     </select>
+    <select id="selectByPaperPlanId" resultMap="title">
+        SELECT
+            t.id,
+            t.content,
+            t.instruction,
+            t.total_number,
+            t.has_select,
+            t.teacher_id,
+            tea.id teacher_id,
+            tea.name teacher_name,
+            tea.phone teacher_phone,
+            tea.email teacher_email,
+            tea.sex teacher_sex
+        FROM title t
+            LEFT JOIN teacher tea ON t.teacher_id = tea.id
+        WHERE t.id = (SELECT paper_plan.title_id FROM paper_plan WHERE paper_plan.id = #{paperPlanId})
+    </select>
+    <select id="selectByTeacherId" resultType="com.cchl.entity.Title">
+        SELECT * FROM title WHERE teacher_id = #{teacherId}
+    </select>
+    <delete id="deleteTitle">
+        DELETE FROM title WHERE teacher_id = #{teacherId} AND id = #{id}
+    </delete>
 </mapper>

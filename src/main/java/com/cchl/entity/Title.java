@@ -20,6 +20,10 @@ public class Title {
     private int totalNumber;
     //已选人数
     private int hasSelect;
+    //教师工号
+    private Long teacherId;
+    //学院编号
+    private Integer departmentId;
     //所属学院
     private Department department;
     //所属教师
@@ -35,9 +39,26 @@ public class Title {
                 ", createTime=" + createTime +
                 ", totalNumber=" + totalNumber +
                 ", hasSelect=" + hasSelect +
+                ", teacherId=" + teacherId +
                 ", department=" + department +
                 ", teacher=" + teacher +
                 '}';
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public Long getTeacherId() {
+        return teacherId;
+    }
+
+    public void setTeacherId(Long teacherId) {
+        this.teacherId = teacherId;
     }
 
     public int getTotalNumber() {

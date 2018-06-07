@@ -27,7 +27,7 @@ public class TeacherHandleTest {
     @Test
     public void updateMsg() throws Exception {
         int userId = 12;
-        if (teacherHandle.hasNewMsg(userId)) {
+        if (teacherHandle.hasNewMsg(userId) > 0) {
             List<TeacherMessage> list = teacherHandle.getMsg(userId, 1);
             for (TeacherMessage message:list)
                 System.out.println(message);

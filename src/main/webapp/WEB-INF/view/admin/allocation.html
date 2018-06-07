@@ -89,18 +89,35 @@
                 studentId = data.id;
                 console.log(studentId);
                 console.log(titleId);
-                layer.confirm('确定同意该用户的审核吗', function(index) {
-                    $.post('/allocate/operate', {studentId: studentId, titleId: titleId}, function (data) {
-                        if (data.success) {
-                            layer.msg('添加成功');
-                            obj.del();
-                            layer.close(index);
-                            table.reload('title', {})
-                        }
-                    });
-                })
+                if (titleId.length < 1) {
+                    layer.alert('选题不能为空')
+                } else {
+                    layer.confirm('确定同意该用户的审核吗', function(index) {
+                        $.post('/allocate/operate', {studentId: studentId, titleId: titleId}, function (data) {
+                            if (data.success) {
+                                layer.msg('添加成功');
+                                obj.del();
+                                layer.close(index);
+                                table.reload('title', {})
+                            }
+                        });
+                    })
+                }
             }
         });
+        table.on('tool(title)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                layer.open({
+                    title: '题目详细信息'
+                    ,
+                    content: "<div class='layui-text'>题目：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.content + "</div></div><br>"
+                    + "<div class='layui-text'>题目介绍：<div>&nbsp;&nbsp;&nbsp;&nbsp;" + data.instruction + "</div></div><br>"
+                    + "<div class='layui-text'>已选人数：&nbsp;&nbsp;&nbsp;&nbsp;" + data.hasSelect + "</div><br>"
+                    + "<div class='layui-text'>限制选题人数：&nbsp;&nbsp;&nbsp;&nbsp;" + data.totalNumber + "</div>"
+                });
+            }
+        })
     });
     function test(obj) {
         titleId = $(obj).prev().val();

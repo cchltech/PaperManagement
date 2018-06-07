@@ -24,7 +24,7 @@ public class AdminHandleTest {
     public void allocate() throws Exception {
         //output 3
 //        adminHandle.allocate("student");
-        List<Title> titles = (List<Title>) adminHandle.allocate("title").getData();
+        List<Title> titles = (List<Title>) adminHandle.allocate("title", 1000).getData();
         for (Title title : titles)
             System.out.println(title.toString());
     }
