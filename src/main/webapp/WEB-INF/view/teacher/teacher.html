@@ -29,7 +29,7 @@
                     <a href="javascript:">文件操作</a>
                     <dl class="layui-nav-child">
                         <dd><a>文档提交</a></dd>
-                        <dd><a>中期检查</a></dd>
+                        <dd><a>文件下载</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -74,9 +74,9 @@
             if (val === '文档提交') {
                 show.empty();
                 show.append('<iframe src="/teacher/fileOperation" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
-            } else if (val === '中期检查') {
+            } else if (val === '文件下载') {
                 show.empty();
-                show.append('<iframe src="/teacher/midCheck" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+                show.append('<iframe src="/teacher/fileDownload" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             }else if (val === '题目审核表') {
                 show.empty();
                 show.append('<iframe src="/teacher/titleExamine" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')

@@ -3,8 +3,10 @@ package com.cchl.service.teacher;
 import com.cchl.dao.*;
 import com.cchl.entity.*;
 import com.cchl.entity.vo.AdminMsg;
+import com.cchl.entity.vo.FileRecord;
 import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.entity.vo.UserMsgRecord;
+import com.cchl.eumn.DocType;
 import com.cchl.service.MsgHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,8 @@ public class TeacherHandle {
     private OpenReportMapper openReportMapper;
     @Autowired
     private MidCheckMapper midCheckMapper;
+    @Autowired
+    private PaperMapper paperMapper;
 
     public int insertTitle(Title title) {
         int departmentId = teacherMapper.selectById(title.getTeacherId()).getDepartment().getId();
@@ -145,25 +149,29 @@ public class TeacherHandle {
      * 保存文件
      */
     public boolean saveFile(Integer useId, Integer titleId, String type, String fileName, byte[] file) {
-        Integer paperId = paperPlanMapper.selectByTitleId(titleId);
-        if (paperId == null)
-            return false;
-        String filePath = FilePath + paperId + '/';
-        File target = new File(filePath);
-        if (!target.exists()) {
-            target.mkdirs();
+        List<Integer> paperIds = paperPlanMapper.selectByTitleId(titleId);
+        boolean success = false;
+        if (paperIds != null) {
+            for (Integer paperId : paperIds) {
+                String filePath = FilePath + paperId + '/';
+                File target = new File(filePath);
+                if (!target.exists()) {
+                    target.mkdirs();
+                }
+                try {
+                    FileOutputStream stream = new FileOutputStream(filePath + fileName);
+                    stream.write(file);
+                    stream.flush();
+                    stream.close();
+                    //保存文件路径
+                    success =  saveFilePath(type, paperId, useId, fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
         }
-        try {
-            FileOutputStream stream = new FileOutputStream(filePath + fileName);
-            stream.write(file);
-            stream.flush();
-            stream.close();
-            //保存文件路径
-            return saveFilePath(type, paperId, useId, fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return success;
     }
 
     private boolean saveFilePath(String type, Integer paperId, Integer id, String filePath) {
@@ -217,15 +225,71 @@ public class TeacherHandle {
             return midCheckMapper.insert(midCheck);
         }
     }
-    private int saveOpenReport(Integer paperId, String filePath) {
-        if (openReportMapper.isExist(paperId) > 0) {
-            return openReportMapper.updateFilePath(paperId, filePath);
+
+    public File getFile(Integer paperPlanId, String fileType) {
+        String fileName = "";
+        if ("周计划".equals(fileType)) {
+            WeeksPlan weeksPlan = weeksPlanMapper.selectByPaperId(paperPlanId);
+            fileName = weeksPlan.getFilePath();
+        } else if ("任务书".equals(fileType)) {
+            Task task = taskMapper.selectByPaperId(paperPlanId);
+            fileName = task.getFilePath();
+        } else if ("中期检查".equals(fileType)) {
+            MidCheck midCheck = midCheckMapper.selectByPaperId(paperPlanId);
+            fileName = midCheck.getFilePath();
+        } else if ("开题报告".equals(fileType)) {
+            OpenReport openReport = openReportMapper.selectByPaperId(paperPlanId);
+            fileName = openReport.getFilePath();
         } else {
-            OpenReport openReport = new OpenReport();
-            openReport.setFilePath(filePath);
-            openReport.setPaperPlanId(paperId);
-            return openReportMapper.insert(openReport);
+            Paper paper = paperPlanMapper.selectByPaperId(paperPlanId);
+            fileName = paper.getFilePath();
         }
+        return new File(FilePath + '/' + paperPlanId + '/' + fileName);
+    }
+
+    /**
+     * 获取文件信息
+     */
+    public List<FileRecord> fileList(Integer titleId) {
+        List<FileRecord> records = new ArrayList<>();
+        List<Integer> paperPlanId = paperPlanMapper.selectByTitleId(titleId);
+        for (int i = 0; i < paperPlanId.size(); i++) {
+            Integer paperId = paperPlanId.get(i);
+            //因为周计划，任务书， 中期检查等在每一份选题中都只有一份，所以只需要查找一次即可
+            if (i == 0) {
+                //查找周计划
+                WeeksPlan weeksPlan = weeksPlanMapper.selectByPaperId(paperId);
+                if (weeksPlan != null) {
+                    FileRecord record = new FileRecord(paperId, "周计划", weeksPlan.getFilePath(), weeksPlan.getCreateTime());
+                    records.add(record);
+                }
+                //查找任务书
+                Task task = taskMapper.selectByPaperId(paperId);
+                if (task != null) {
+                    FileRecord record = new FileRecord(paperId, "任务书", task.getFilePath(), task.getCreateTime());
+                    records.add(record);
+                }
+                //查找中期检查
+                MidCheck midCheck = midCheckMapper.selectByPaperId(paperId);
+                if (midCheck != null) {
+                    FileRecord record = new FileRecord(paperId, "任务书", midCheck.getFilePath(), midCheck.getCreateTime());
+                    records.add(record);
+                }
+            }
+            //查找开题报告
+            OpenReport openReport = openReportMapper.selectByPaperId(paperId);
+            if (openReport != null) {
+                FileRecord record = new FileRecord(paperId, "任务书", openReport.getFilePath(), openReport.getCreateTime());
+                records.add(record);
+            }
+            //查找论文
+            Paper paper = paperMapper.selectByPaperId(paperId);
+            if (paper != null) {
+                FileRecord record = new FileRecord(paperId, "任务书", paper.getFilePath(), paper.getCreateTime());
+                records.add(record);
+            }
+        }
+        return records;
     }
 
 }

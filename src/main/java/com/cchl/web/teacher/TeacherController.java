@@ -3,14 +3,22 @@ package com.cchl.web.teacher;
 import com.cchl.dto.DataWithPage;
 import com.cchl.dto.Result;
 import com.cchl.entity.Title;
+import com.cchl.entity.vo.FileRecord;
 import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.eumn.Dictionary;
 import com.cchl.service.teacher.TeacherHandle;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -176,6 +184,43 @@ public class TeacherController {
         } catch (Exception e1) {
             e1.printStackTrace();
             return new Result(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 获取文件列表
+     */
+    @GetMapping(value = "/fileList")
+    public DataWithPage fileList(@RequestParam(value = "titleId")Integer titleId) {
+        try {
+            return new DataWithPage<>(0, 0, teacherHandle.fileList(titleId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 文件下载
+     */
+    @GetMapping(value = "/download/{paperPlanId}/{fileType}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable(value = "paperPlanId")Integer paperPlanId,
+                                               @PathVariable(value = "fileType")String fileType) {
+        File file = teacherHandle.getFile(paperPlanId, fileType);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        String fileName = file.getName();
+        try {
+            String downloadFileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");
+            httpHeaders.setContentDispositionFormData("attachment", downloadFileName);
+            httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            System.out.println("文件输出成功");
+            return new ResponseEntity<>(FileUtils.readFileToByteArray(file),
+                    httpHeaders, HttpStatus.OK);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 

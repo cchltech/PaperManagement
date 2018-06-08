@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="../../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../../static/js/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<div id="show">
+</div>
+</body>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use(['table', 'layer', 'upload'], function () {
+        var upload = layui.upload;
+        var table = layui.table;
+        var layer = layui.layer;
+        $.get('/teacher/title/list', function (res) {
+            var titles = res.data;
+            var show = $('#show');
+            if (res.code === 0) {
+                for (var i in titles) {
+                    if (titles[i].status === 1) {
+                        var padding = '<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">' +
+                            '    <legend>' + titles[i].content + '</legend>' +
+                            '</fieldset>';
+                        var data = '<table id="' + titles[i].id + '" lay-filter="test"></table>';
+                        show.append(padding);
+                        show.append(data);
+                        table.render({
+                            elem: '#' + titles[i].id
+                            ,size:'lg'
+                            ,url: '/teacher/fileList?titleId='+titles[i].id
+                            ,cols: [[
+                                {field: 'paperPlanId', title: '编号', sort: true}
+                                ,{field: 'type', title: '类型', sort: true}
+                                ,{field: 'name', title: '文件名'}
+                                ,{field: 'createTime', title: '上传时间'}
+                                ,{field: 'right', title:'下载', templet:'<div><a class="layui-btn" onclick="getFile(\'{{d.paperPlanId}}\', \'{{d.type}}\')">下载文件</a></div>'}
+                            ]]
+                        });
+                    }
+                }
+            }
+        });
+    });
+    function getFile(paperPlanId, type) {
+        layer.confirm('确定要下载该文件吗', function(index) {
+            var form = $("<form>");
+            form.attr("style", "display:none");
+            form.attr("target", "");
+            form.attr("method", "get");
+            form.attr("action", "/teacher/download/" + paperPlanId + '/' + type);
+            $("body").append(form);
+            form.submit();
+            layer.close(index)
+        });
+    }
+</script>
+</html>

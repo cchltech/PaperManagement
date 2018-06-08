@@ -5,6 +5,8 @@ package com.cchl.entity.vo;
  */
 public class FileRecord {
 
+    private Integer paperPlanId;
+
     private String type;
 
     private String name;
@@ -15,6 +17,16 @@ public class FileRecord {
         this.type = type;
         this.name = name;
         this.createTime = createTime;
+    }
+
+    public FileRecord(Integer paperPlanId, String type, String name, String createTime) {
+        this.paperPlanId = paperPlanId;
+        this.type = type;
+        this.name = name;
+        this.createTime = createTime;
+    }
+
+    public FileRecord() {
     }
 
     public String getType() {
@@ -39,5 +51,13 @@ public class FileRecord {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getPaperPlanId() {
+        return paperPlanId;
+    }
+
+    public void setPaperPlanId(Integer paperPlanId) {
+        this.paperPlanId = paperPlanId;
     }
 }

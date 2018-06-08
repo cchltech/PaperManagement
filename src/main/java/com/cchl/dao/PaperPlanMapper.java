@@ -1,5 +1,6 @@
 package com.cchl.dao;
 
+import com.cchl.entity.Paper;
 import com.cchl.entity.PaperPlan;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,8 @@ public interface PaperPlanMapper {
 
     int insertTitle(@Param("userId") int userId, @Param("titleId")int titleId);
 
-    Integer selectByTitleId(Integer titleId);
+    List<Integer> selectByTitleId(Integer titleId);
 
+    Paper selectByPaperId(int paperId);
 
 }
