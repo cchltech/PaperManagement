@@ -21,4 +21,7 @@
       UPDATE paper_plan SET title_id = #{titleId}
       WHERE id = (SELECT paper_plan_id FROM user_paper WHERE user_id = #{userId})
   </insert>
+  <select id="selectByTitleId" resultType="java.lang.Integer">
+    SELECT id FROM paper_plan WHERE title_id = #{titleId}
+  </select>
 </mapper>

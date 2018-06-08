@@ -1,14 +1,15 @@
 package com.cchl.service.teacher;
 
-import com.cchl.dao.TeacherMapper;
-import com.cchl.dao.TitleMapper;
-import com.cchl.entity.Teacher;
-import com.cchl.entity.Title;
+import com.cchl.dao.*;
+import com.cchl.entity.*;
+import com.cchl.entity.vo.AdminMsg;
 import com.cchl.entity.vo.TeacherMessage;
 import com.cchl.entity.vo.UserMsgRecord;
+import com.cchl.service.MsgHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,6 +20,10 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,15 +31,34 @@ public class TeacherHandle {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private static final String FilePath = "/home/beiyi/file/";
+
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
     private TeacherMapper teacherMapper;
     @Autowired
+    private StudentMapper studentMapper;
+    @Autowired
     private TitleMapper titleMapper;
+    @Autowired
+    private PaperPlanMapper paperPlanMapper;
+    @Autowired
+    private MsgHandle msgHandle;
+
+    @Autowired
+    private WeeksPlanMapper weeksPlanMapper;
+    @Autowired
+    private TaskMapper taskMapper;
+    @Autowired
+    private OpenReportMapper openReportMapper;
+    @Autowired
+    private MidCheckMapper midCheckMapper;
 
     public int insertTitle(Title title) {
-        title.setDepartmentId(teacherMapper.selectById(title.getTeacherId()).getDepartment().getId());
+        int departmentId = teacherMapper.selectById(title.getTeacherId()).getDepartment().getId();
+        title.setDepartmentId(departmentId);
+        msgHandle.addAdminMsg(AdminMsg.TYPE.TITLE, departmentId);
         return titleMapper.insert(title);
     }
 
@@ -111,6 +135,97 @@ public class TeacherHandle {
 
     public int updateEmail(String email, Long id) {
         return teacherMapper.updateEmail(email, id);
+    }
+
+    public List<Student> selectStudentList(int titleId) {
+        return studentMapper.selectByTitleId(titleId);
+    }
+
+    /**
+     * 保存文件
+     */
+    public boolean saveFile(Integer useId, Integer titleId, String type, String fileName, byte[] file) {
+        Integer paperId = paperPlanMapper.selectByTitleId(titleId);
+        if (paperId == null)
+            return false;
+        String filePath = FilePath + paperId + '/';
+        File target = new File(filePath);
+        if (!target.exists()) {
+            target.mkdirs();
+        }
+        try {
+            FileOutputStream stream = new FileOutputStream(filePath + fileName);
+            stream.write(file);
+            stream.flush();
+            stream.close();
+            //保存文件路径
+            return saveFilePath(type, paperId, useId, fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean saveFilePath(String type, Integer paperId, Integer id, String filePath) {
+        boolean success;
+        switch (type) {
+            case "WeeksPlan":
+                success = saveWeekPlan(paperId, filePath) > 0;
+                break;
+            case "Task":
+                success = saveTask(paperId, filePath) > 0;
+                break;
+            case "MidCheck":
+                success = saveMidCheck(paperId, filePath) > 0;
+                msgHandle.addAdminMsg(AdminMsg.TYPE.FILE, teacherMapper.selectDepartmentIdByUserId(id));
+                break;
+            default:
+                success = false;
+                break;
+        }
+        return success;
+    }
+
+    private int saveWeekPlan(Integer paperId, String filePath) {
+        if (weeksPlanMapper.isExist(paperId) > 0) {
+            return weeksPlanMapper.updateFilePath(paperId, filePath);
+        } else {
+            WeeksPlan weeksPlan = new WeeksPlan();
+            weeksPlan.setFilePath(filePath);
+            weeksPlan.setPaperPlanId(paperId);
+
+            return weeksPlanMapper.insert(weeksPlan);
+        }
+    }
+    private int saveTask(Integer paperId, String filePath) {
+        if (taskMapper.isExist(paperId) > 0) {
+            return taskMapper.updateFilePath(paperId, filePath);
+        } else {
+            Task task = new Task();
+            task.setFilePath(filePath);
+            task.setPaperPlanId(paperId);
+            return taskMapper.insert(task);
+        }
+    }
+    private int saveMidCheck(Integer paperId, String filePath) {
+        if (midCheckMapper.isExist(paperId) > 0) {
+            return midCheckMapper.updateFilePath(paperId,filePath);
+        } else {
+            MidCheck midCheck = new MidCheck();
+            midCheck.setFilePath(filePath);
+            midCheck.setPaperPlanId(paperId);
+            return midCheckMapper.insert(midCheck);
+        }
+    }
+    private int saveOpenReport(Integer paperId, String filePath) {
+        if (openReportMapper.isExist(paperId) > 0) {
+            return openReportMapper.updateFilePath(paperId, filePath);
+        } else {
+            OpenReport openReport = new OpenReport();
+            openReport.setFilePath(filePath);
+            openReport.setPaperPlanId(paperId);
+            return openReportMapper.insert(openReport);
+        }
     }
 
 }

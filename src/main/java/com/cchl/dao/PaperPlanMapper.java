@@ -14,5 +14,7 @@ public interface PaperPlanMapper {
 
     int insertTitle(@Param("userId") int userId, @Param("titleId")int titleId);
 
+    Integer selectByTitleId(Integer titleId);
+
 
 }

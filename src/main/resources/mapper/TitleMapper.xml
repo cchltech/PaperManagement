@@ -84,7 +84,7 @@
             tea.name teacher_name
         FROM title t
             LEFT JOIN department d ON t.department_id = d.id
-            LEFT JOIN teacher tea ON d.id = tea.department_id
+            LEFT JOIN teacher tea ON t.teacher_id = tea.id
         WHERE t.has_select <![CDATA[ < ]]> t.total_number
               AND t.status = 1 AND d.id = #{departmentId}
         ORDER BY department_id
@@ -141,7 +141,7 @@
         WHERE t.id = (SELECT paper_plan.title_id FROM paper_plan WHERE paper_plan.id = #{paperPlanId})
     </select>
     <select id="selectByTeacherId" resultType="com.cchl.entity.Title">
-        SELECT * FROM title WHERE teacher_id = #{teacherId}
+        SELECT * FROM title WHERE teacher_id = #{teacherId} ORDER BY id DESC
     </select>
     <delete id="deleteTitle">
         DELETE FROM title WHERE teacher_id = #{teacherId} AND id = #{id}

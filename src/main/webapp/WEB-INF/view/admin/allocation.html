@@ -92,7 +92,7 @@
                 if (titleId.length < 1) {
                     layer.alert('选题不能为空')
                 } else {
-                    layer.confirm('确定同意该用户的审核吗', function(index) {
+                    layer.confirm('确定此操作吗？', function(index) {
                         $.post('/allocate/operate', {studentId: studentId, titleId: titleId}, function (data) {
                             if (data.success) {
                                 layer.msg('添加成功');

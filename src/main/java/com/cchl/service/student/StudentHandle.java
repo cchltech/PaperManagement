@@ -257,7 +257,7 @@ public class StudentHandle {
         }
     }
 
-    @Cacheable(value = "token")
+    @Cacheable(cacheNames = "token", key = "#id")
     public String token(Integer id) {
         String token = DigestUtils.md5DigestAsHex((salt+id).getBytes());
         logger.info("生成的token值：{}", token);
@@ -269,12 +269,12 @@ public class StudentHandle {
      * @param departmentId
      * @return
      */
-    @Cacheable("departmentId")
+    @Cacheable(cacheNames = "major",key = "#departmentId")
     public List<Major> selectByDepartmentId(Integer departmentId) {
         return majorMapper.selectByDepartmentId(departmentId);
     }
 
-    @Cacheable(value = "userId")
+    @Cacheable(cacheNames = "departmentId", key = "#userId")
     public Integer selectDepartmentIdByUserId(int userId) {
         return studentMapper.selectByUserId(userId).getDepartmentId();
     }
@@ -340,7 +340,10 @@ public class StudentHandle {
      * @return
      */
     public boolean saveFile(Integer userId, String fileName,  byte[] file, String type) {
-        Integer paperId = userPaperMapper.selectByUserId(userId).get(0);
+        List<Integer> paperIds = userPaperMapper.selectByUserId(userId);
+        if (paperIds == null || paperIds.size() == 0)
+            return false;
+        Integer paperId = paperIds.get(0);
         String filePath = FilePath + paperId + '/';
         File target = new File(filePath);
         if (!target.exists()) {
@@ -352,19 +355,15 @@ public class StudentHandle {
             stream.flush();
             stream.close();
             //保存文件路径
-            return saveFilePath(type, userId, fileName);
+            return saveFilePath(type, paperId, userId, fileName);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    private boolean saveFilePath(String type, Integer id, String filePath) {
+    private boolean saveFilePath(String type, Integer paperId, Integer id, String filePath) {
         boolean success;
-        Integer paperId = userPaperMapper.selectByUserId(id).get(0);
-        System.out.println("论文计划ID为："+paperId + " 类型为：" + type);
-        if (paperId == null)
-            return false;
         switch (type) {
             case "WeeksPlan":
                 success = saveWeekPlan(paperId, filePath) > 0;

@@ -62,9 +62,10 @@
             m.id   major_id,
             m.name major_name
         FROM student s
+            LEFT JOIN user u ON s.user_id = u.id
             LEFT JOIN department d ON s.department_id = d.id
             LEFT JOIN major m ON s.major_id = m.id
-        WHERE s.department_id = #{departmentId} AND s.user_id IN (SELECT user_id
+        WHERE u.status = 1 AND s.department_id = #{departmentId} AND s.user_id IN (SELECT user_id
                             FROM user_paper up
                             WHERE up.paper_plan_id IN (SELECT id
                                                        FROM paper_plan pp
@@ -143,5 +144,20 @@
             LEFT JOIN user_paper up ON u.id = up.user_id
         WHERE up.paper_plan_id = #{paperPlanId}
         ORDER BY s.id
+    </select>
+    <select id="selectByTitleId" resultType="com.cchl.entity.Student">
+        SELECT
+            s.id,
+            s.name,
+            s.sex,
+            s.email,
+            s.department_id,
+            s.grade,
+            s.major_id,
+            s.phone
+        FROM student s
+            LEFT JOIN user_paper up ON s.user_id = up.user_id
+            LEFT JOIN paper_plan p ON up.paper_plan_id = p.id
+        WHERE p.title_id = #{titleId}
     </select>
 </mapper>

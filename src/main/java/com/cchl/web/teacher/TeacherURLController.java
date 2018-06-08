@@ -42,8 +42,8 @@ public class TeacherURLController {
     /**
      * 跳转到任务书界面
      */
-    @RequestMapping(value = "/planOfMission")
-    public String mission() {return "teacher/planOfMission";}
+    @RequestMapping(value = "/fileOperation")
+    public String mission() {return "teacher/fileOperation";}
 
     /**
      * 跳转到周计划页面

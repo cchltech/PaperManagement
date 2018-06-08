@@ -8,7 +8,9 @@ import com.cchl.eumn.Dictionary;
 import com.cchl.service.teacher.TeacherHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -140,6 +142,39 @@ public class TeacherController {
                 return new Result(Dictionary.SUBMIT_FAIL);
             }
         } catch (Exception e) {
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 学生列表
+     */
+    @GetMapping(value = "/studentList")
+    public DataWithPage studentList(@RequestParam(value = "titleId")Integer titleId) {
+        if (titleId != null) {
+            return new DataWithPage<>(0, 0, teacherHandle.selectStudentList(titleId));
+        } else {
+            return new DataWithPage(Dictionary.ILLEGAL_VISIT);
+        }
+    }
+
+    /**
+     * 文件上传
+     */
+    @PostMapping(value = "/upload/{type}/{titleId}")
+    public Result upload(@PathVariable(value = "type") String type,
+                         @PathVariable(value = "titleId")Integer title,
+                         @RequestParam(value = "file") MultipartFile file,
+                         @SessionAttribute(value = "user_id", required = false) Integer userId) {
+        try {
+            if (teacherHandle.saveFile(userId, title, type, file.getOriginalFilename(), file.getBytes()))
+                return new Result(Dictionary.SUCCESS);
+            else return new Result(Dictionary.SUBMIT_FAIL);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Result(Dictionary.SUBMIT_FAIL);
+        } catch (Exception e1) {
+            e1.printStackTrace();
             return new Result(Dictionary.SYSTEM_ERROR);
         }
     }

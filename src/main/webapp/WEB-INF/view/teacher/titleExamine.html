@@ -8,7 +8,7 @@
     <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
 <body>
-    <div class="layui-tab layui-tab-brief">
+    <div class="layui-tab layui-tab-brief" lay-filter="apply">
         <ul class="layui-tab-title">
             <li class="layui-this">填写题目申请</li>
             <li>我的题目申请表</li>
@@ -100,6 +100,22 @@
             });
             return false;
         });
+        element.on('tab(apply)', function(data){
+            if (data.index === 1) {
+                table.render({
+                    elem:'#title_list',
+                    url:'/teacher/title/list',
+                    cols:[[
+                        {field:'content', align:'center', title:'题目'},
+                        {field:'instruction', align:'center', title:'介绍'},
+                        {field:'totalNumber', align:'center', title:'限选人数'},
+                        {field:'hasSelect', align:'center', title:'已选人数'},
+                        {field:'status', title:'状态', align:'center', templet:'#status'},
+                        {field:'operation', title:'操作', align:'center', templet:'#operation'}
+                    ]]
+                })
+            }
+        });
         table.on('tool(title_list)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
@@ -122,17 +138,6 @@
                 });
             }
         });
-        table.render({
-            elem:'#title_list',
-            url:'/teacher/title/list',
-            cols:[[
-                {field:'content', align:'center', title:'题目'},
-                {field:'instruction', align:'center', title:'介绍'},
-                {field:'totalNumber', align:'center', title:'限选人数'},
-                {field:'status', title:'状态', align:'center', templet:'#status'},
-                {field:'operation', title:'操作', align:'center', templet:'#operation'}
-            ]]
-        })
     });
 </script>
 </body>
