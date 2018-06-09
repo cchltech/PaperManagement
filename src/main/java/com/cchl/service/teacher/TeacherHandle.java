@@ -1,12 +1,11 @@
 package com.cchl.service.teacher;
 
 import com.cchl.dao.*;
+import com.cchl.dto.Result;
 import com.cchl.entity.*;
-import com.cchl.entity.vo.AdminMsg;
-import com.cchl.entity.vo.FileRecord;
-import com.cchl.entity.vo.TeacherMessage;
-import com.cchl.entity.vo.UserMsgRecord;
+import com.cchl.entity.vo.*;
 import com.cchl.eumn.DocType;
+import com.cchl.eumn.TimerType;
 import com.cchl.service.MsgHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,10 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -226,24 +228,7 @@ public class TeacherHandle {
         }
     }
 
-    public File getFile(Integer paperPlanId, String fileType) {
-        String fileName = "";
-        if ("周计划".equals(fileType)) {
-            WeeksPlan weeksPlan = weeksPlanMapper.selectByPaperId(paperPlanId);
-            fileName = weeksPlan.getFilePath();
-        } else if ("任务书".equals(fileType)) {
-            Task task = taskMapper.selectByPaperId(paperPlanId);
-            fileName = task.getFilePath();
-        } else if ("中期检查".equals(fileType)) {
-            MidCheck midCheck = midCheckMapper.selectByPaperId(paperPlanId);
-            fileName = midCheck.getFilePath();
-        } else if ("开题报告".equals(fileType)) {
-            OpenReport openReport = openReportMapper.selectByPaperId(paperPlanId);
-            fileName = openReport.getFilePath();
-        } else {
-            Paper paper = paperPlanMapper.selectByPaperId(paperPlanId);
-            fileName = paper.getFilePath();
-        }
+    public File getFile(Integer paperPlanId, String fileName) {
         return new File(FilePath + '/' + paperPlanId + '/' + fileName);
     }
 
@@ -290,6 +275,55 @@ public class TeacherHandle {
             }
         }
         return records;
+    }
+
+    /**
+     * 获取题目申请时间
+     * @param userId
+     * @return
+     * @throws ParseException
+     */
+    public Result getTime(Integer userId) throws ParseException {
+        /*
+         * 先获取学生的学院id
+         * 再判断是否到了选课时间
+         */
+        int departmentId = getDepartmentId(userId);
+        Criteria criteria = Criteria.where("department").is(departmentId).and("type").is(TimerType.TITLE.getType());
+        List<VoTimer> timers = mongoTemplate.find(query(criteria), VoTimer.class);
+        VoTimer timer = null;
+        if (timers !=null && timers.size() > 0) {
+            timer = timers.get(0);
+        }
+        if (timer != null) {
+            long times = new Date().getTime();
+            long begin = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getBegin()).getTime();
+            //如果当前时间小于开始选题的时间
+            if (times < begin) {
+                logger.info("题目申请未开始，剩余时间：{}", (begin - times));
+                //返回剩余时间
+                return new Result<>(true, timer.getBegin());
+            } else {
+                long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
+                //如果当前时间大于开始时间但小于结束时间
+                if (times < end) {
+                    return new Result<>(true, 0);
+                } else {
+                    //返回-1代表已经超时
+                    return new Result<>(false, -1);
+                }
+            }
+        } else {
+            //返回-2代表未开始
+            return new Result<>(false, -2);
+        }
+    }
+
+    /**
+     * 论文评价
+     */
+    public int updatePaper(Long studentId, int grade, String content) {
+        return paperMapper.updatePaper(studentId, grade, content);
     }
 
 }

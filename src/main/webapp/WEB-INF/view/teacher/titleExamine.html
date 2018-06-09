@@ -17,7 +17,7 @@
             <div class="layui-tab-item layui-show">
                 <div class="layui-col-xs12 layui-col-md7" style="font-size: 15px;">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-                        <legend>教师论文题目审核表</legend>
+                        <legend id="msg"></legend>
                     </fieldset>
                     <div>
                         <form class="layui-form" action="" id="title" name="title">
@@ -51,7 +51,7 @@
                             </div>
                             <div class="layui-form-item">
                                 <div class="layui-input-block">
-                                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                                    <button lay-submit lay-filter="*" id="sub">立即提交</button>
                                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                                 </div>
                             </div>
@@ -74,15 +74,50 @@
 <script src="../../../static/layer/layer.js"></script>
 <script src="../../../static/layui/layui.js"></script>
 <script>
-    layui.use(['form','layer', 'table', 'element'], function () {
+    layui.use(['form','layer', 'table', 'element', 'util'], function () {
         var form = layui.form;
         var table = layui.table;
         var element = layui.element;
+        var util = layui.util;
         form.render();
+        var btn = $('#sub');
+        btn.addClass("layui-btn layui-btn-disabled");
+        btn.attr('disabled',"true");
+        $.ajax({
+            url:'/teacher/time',
+            type:'get',
+            success: function (data) {
+                if (data.success) {
+                    if (data.data !== '0') {
+                        var begin = Date.parse(new Date(data.data))+1000;
+                        var serverTime = new Date().getTime();
+                        util.countdown(begin, serverTime, function (date, serverTime, timer) {
+                            var str = date[0] + '天' + date[1] + '时' + date[2] + '分' + date[3] + '秒';
+                            layui.$('#msg').html('距离开放题目申请还有：' + str);
+                            if (date[0] === 0 && date[1] === 0 && date[2] === 0 && date[3] === 0) {
+                                $('#msg').text('请填写您的题目审批表');
+                                btn.removeClass("layui-btn-disabled");
+                                btn.removeAttr("disabled");
+                            }
+                        });
+                    } else {
+                        $('#msg').text('请填写您的题目审批表');
+                        btn.removeClass("layui-btn-disabled");
+                        btn.removeAttr("disabled");
+                    }
+                } else {
+                    if (data.data === -1) {
+                        $('#msg').text('题目申请时间已结束');
+                    } else if (data.data === -2) {
+                        $('#msg').text('题目申请尚未开始');
+                    } else {
+                        $('#msg').text(data.message);
+                    }
+                }
+            }
+        });
         //表单提交
         form.on('submit(*)', function (data) {
-            console.log(data.field);
-            var url;
             $.post('/teacher/requestTitle', data.field, function(data){
                 if (data.success) {
                     layer.open({

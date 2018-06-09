@@ -122,7 +122,6 @@ public class StudentController {
             String downloadFileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");
             httpHeaders.setContentDispositionFormData("attachment", downloadFileName);
             httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            System.out.println("文件输出成功");
             return new ResponseEntity<>(FileUtils.readFileToByteArray(file),
                     httpHeaders, HttpStatus.OK);
         } catch (UnsupportedEncodingException e) {
@@ -176,7 +175,7 @@ public class StudentController {
      * 获取选题的剩余时间
      */
     @GetMapping(value = "/time")
-    public Result getTime(@SessionAttribute(value = "id", required = false) Long studentId, HttpServletRequest request) {
+    public Result getTime(@SessionAttribute(value = "id", required = false) Long studentId) {
         try {
             /*
              * 先判断是否到了学生选题的时间,如果到了返回题目列表，否则返回剩余时间

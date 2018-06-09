@@ -24,7 +24,6 @@
     </fieldset>
     <table class="layui-table" lay-data="{id:'student', url:'/allocate/index/student'}"
            lay-filter="student" id="student">
-
     </table>
     <script type="text/html" id="sex">
         {{d.sex==0?'女':'男'}}
@@ -32,9 +31,6 @@
     <script type="text/html" id="select">
         <select class="layui-select" lay-ignore name="selectTitle">
             <option value=""></option>
-            <option value="1">test2</option>
-            <option value="2">test3</option>
-            <option value="3">test4</option>
         </select>
         <a class="layui-btn layui-btn-xs" lay-event="agree" onclick="test(this)">确定</a>
     </script>

@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -203,12 +204,11 @@ public class TeacherController {
     /**
      * 文件下载
      */
-    @GetMapping(value = "/download/{paperPlanId}/{fileType}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable(value = "paperPlanId")Integer paperPlanId,
-                                               @PathVariable(value = "fileType")String fileType) {
-        File file = teacherHandle.getFile(paperPlanId, fileType);
+    @GetMapping(value = "/download")
+    public ResponseEntity<byte[]> downloadFile(@RequestParam(value = "paperPlanId")Integer paperPlanId,
+                                               @RequestParam(value = "fileName")String fileName) {
+        File file = teacherHandle.getFile(paperPlanId, fileName);
         HttpHeaders httpHeaders = new HttpHeaders();
-        String fileName = file.getName();
         try {
             String downloadFileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");
             httpHeaders.setContentDispositionFormData("attachment", downloadFileName);
@@ -222,6 +222,47 @@ public class TeacherController {
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
+    }
+
+    /**
+     * 获取题目申请的剩余时间
+     */
+    @GetMapping(value = "/time")
+    public Result getTime(@SessionAttribute(value = "user_id", required = false) Integer userId) {
+        try {
+            /*
+             * 先判断是否到了学生选题的时间,如果到了返回题目列表，否则返回剩余时间
+             */
+            userId = testUser;
+            return teacherHandle.getTime(userId);
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+            System.out.println("时间格式转换异常");
+            return new Result(Dictionary.SYSTEM_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 提交评价表
+     */
+    @PostMapping(value = "/rate")
+    public Result rate(@RequestParam(value = "studentId")String studentId,
+                       @RequestParam(value = "grade")String grade,
+                       @RequestParam(value = "content")String content) {
+        try {
+            Long sId = Long.parseLong(studentId);
+            Integer g = Integer.parseInt(grade);
+            if (teacherHandle.updatePaper(sId, g, content) > 0)
+                return new Result(Dictionary.SUCCESS);
+            else
+                return new Result(Dictionary.SUBMIT_FAIL);
+        } catch (NumberFormatException e) {
+            return new Result(Dictionary.ILLEGAL);
+        }
+
     }
 
 }

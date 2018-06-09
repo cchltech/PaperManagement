@@ -217,3 +217,6 @@ ALTER TABLE paper ADD COLUMN create_time DATETIME ON UPDATE current_timestamp DE
 # 添加文件审核状态标示
 ALTER TABLE open_report ADD COLUMN status TINYINT DEFAULT 0;
 ALTER TABLE mid_check ADD COLUMN status TINYINT DEFAULT 0;
+
+# 论文添加评语
+ALTER TABLE paper ADD COLUMN content VARCHAR(255);

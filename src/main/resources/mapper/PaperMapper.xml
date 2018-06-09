@@ -35,4 +35,13 @@
     <update id="updateFilePath">
         UPDATE paper SET file_path = #{filePath} WHERE paper_plan_id = #{paperId}
     </update>
+    <update id="updatePaper">
+        UPDATE paper
+        SET score = #{grade}, content = #{content}
+        WHERE paper_plan_id = (SELECT user_paper.paper_plan_id
+                               FROM user_paper
+                               WHERE user_id = (SELECT user_id
+                                                FROM student
+                                                WHERE student.id = #{studentId}))
+    </update>
 </mapper>

@@ -17,6 +17,6 @@ public interface PaperPlanMapper {
 
     List<Integer> selectByTitleId(Integer titleId);
 
-    Paper selectByPaperId(int paperId);
+    int updateTitle(@Param(value = "id") Long id, @Param(value = "titleId") int titleId);
 
 }

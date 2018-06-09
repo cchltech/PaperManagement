@@ -88,24 +88,12 @@ public class AdminHandle {
             Long sId = Long.valueOf(studentId);
             //题目人数+1
             if (titleMapper.updateTotal(tId) > 0) {
-                //生成新的论文计划表，添加题目
-                PaperPlan paperPlan = new PaperPlan();
-                paperPlan.setTitleId(tId);
-                if (paperPlanMapper.insert(paperPlan) > 0) {
-                    //获取用户id
-                    UserPaper userPaper = new UserPaper();
-                    userPaper.setUserId(studentMapper.selectById(sId).getUserId());
-                    userPaper.setPaperPlanId(paperPlan.getId());
-                    //绑定用户与论文计划
-                    if (userPaperMapper.insert(userPaper) > 0) {
-                        return new Result(Dictionary.SUCCESS);
-                    } else {
-                        logger.error("绑定用户账户与论文计划失败");
-                        throw new DataInsertException("绑定用户账户与论文计划失败");
-                    }
+                //更新论文计划
+                if (paperPlanMapper.updateTitle(sId, tId) > 0) {
+                    return new Result(Dictionary.SUCCESS);
                 } else {
                     //插入数据失败
-                    logger.error("插入论文计划表失败");
+                    logger.error("更新论文计划失败");
                     throw new DataInsertException("插入论文计划表失败");
                 }
             } else {
@@ -222,8 +210,10 @@ public class AdminHandle {
         int num = (int)mongoTemplate.count(query(new Criteria()), VoTimer.class);
         timer.setId(num + 1000);
         mongoTemplate.insert(timer);
-        String content = timer.getContent() + "，开始时间为：" + timer.getBegin() + ", 结束时间为：" + timer.getEnd() + "。请同学们做好准备";
-        addMsg(0 ,content, timer.getDepartment());
+        String content = timer.getContent() + "，开始时间为：" + timer.getBegin() + ", 结束时间为：" + timer.getEnd() + "。";
+        if (timer.getTarget() == 0)
+            content += "请同学们做好准备";
+        addMsg(timer.getTarget() ,content, timer.getDepartment());
     }
     /**
      * 更新定时任务

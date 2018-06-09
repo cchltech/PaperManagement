@@ -10,51 +10,101 @@
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
     <legend>教师评价成绩和评语</legend>
 </fieldset>
-<div class="layui-collapse" lay-filter="test">
-    <div class="layui-colla-item">
-        <h2 class="layui-colla-title" >第一个论文题目</h2>
-        <div class="layui-colla-content">
-            <p>姓名 - XXX</p> <!-- 动态添加学生名字 -->
-            <p>简介 - XXX......</p> <!-- 动态添加论文简介 -->
-            <form id="form1" method="post">
-                <p>成绩评分</p>
-                <div id="test8"></div>
-                <p>评语</p>
-                <textarea type="t" id="text1" rows="10" style="width:600px;" ></textarea><!-- 评语文本框 -->
-                <br>
-                <input type="submit" value="确定" class="layui-btn">
-                &nbsp;&nbsp;
-                <input type="reset" value="清除评语" class="layui-btn">
-            </form>
-        </div>
-    </div>
+<div class="layui-collapse" lay-accordion="" id="show">
 </div>
+<div id="test"></div>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="">填写成绩与评价</a>
 </script>
 <script src="../../../static/layui/layui.js"></script>
 <script>
     //折叠触发功能js，不能删
-    layui.use(['element', 'layer'], function(){
-        var element = layui.element;
+    layui.use(['table', 'layer', 'element', 'upload', 'form', 'rate'], function () {
+        var upload = layui.upload;
+        var table = layui.table;
         var layer = layui.layer;
-    });
-    layui.use('layer', function(){
-        layui.use(['rate'], function(){
-            var rate = layui.rate;
-            rate.render({
-                elem: '#test8'
-                ,length: 10 //自定义长度
-                ,value: 8 //初始值
-                ,theme: '#009688'//定义颜色
-                ,half: true //定义半星
-                ,text: true //文本提示
-                ,setText: function(value){
-                    this.span.text(value*10+'分'); //分数值
+        var element = layui.element;
+        var form = layui.form;
+        var rate = layui.rate;
+        $.get('/teacher/title/list', function (res) {
+            var titles = res.data;
+            var show = $('#show');
+            if (res.code === 0) {
+                for (var i in titles) {
+                    var div = $("<div>");
+                    div.attr("class", "layui-colla-item");
+                    var h2 = $("<h2>");
+                    h2.attr("class", "layui-colla-title");
+                    h2.text(titles[i].content);
+                    div.append(h2);
+                    //添加表单
+                    $.ajax({
+                        async:false,
+                        url: '/teacher/studentList?titleId='+titles[i].id,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.code === 0) {
+                                var student = result.data;
+                                for (var j in student) {
+                                    var div1 = $("<div>");   div1.attr("class", "layui-colla-content");
+                                    var form = $("<form>");  form.attr("id", student[j].id); form.attr("class", "layui-form");
+
+                                    var studentId = $("<input>");  studentId.attr("type", "hidden");  studentId.attr("name", "studentId");  studentId.attr("value", student[j].id);
+
+                                    var div2 = $("<div>"); div2.attr("class", "layui-form-item");
+                                    var label1 = $("<label>"); label1.attr("class", "layui-form-label"); label1.text("学生姓名：");
+                                    var div2_1 = $("<div>"); div2_1.attr("class", "layui-input-inline");
+                                    var name = $("<input>"); name.attr("type", "text"); name.attr("class", "layui-input"); name.attr("value", student[j].name); name.attr("disabled", true);
+                                    div2_1.append(name); div2.append(label1);div2.append(div2_1);
+
+                                    var div5 = $("<div>"); div5.attr("class", "layui-form-item");
+                                    var label3 = $("<label>"); label3.attr("class", "layui-form-label"); label3.text("分数：");
+                                    var div5_1 = $("<div>"); div5_1.attr("class", "layui-input-inline");
+                                    var grade = $("<input>"); grade.attr("type", "text"); grade.attr("class", "layui-input"); grade.attr("name", "grade");
+                                    div5_1.append(grade); div5.append(label3); div5.append(div5_1);
+
+                                    var div3 = $("<div>"); div3.attr("class", "layui-form-item");
+                                    var label2 = $("<label>"); label2.attr("class", "layui-form-label"); label2.text("评语：");
+                                    var div3_1 = $("<div>"); div3_1.attr("class", "layui-input-block");
+                                    var content = $("<textarea>");  content.attr("name", "content"); content.attr("class", "layui-textarea"); content.attr("style", "width:30%");
+                                    div3_1.append(content); div3.append(label2); div3.append(div3_1);
+
+                                    var div4 = $("<div>"); div4.attr("class", "layui-form-item");
+                                    var div4_1 = $("<div>"); div4_1.attr("class", "layui-input-block");
+                                    div4_1.append('<a class="layui-btn" onclick="submitForm(' + student[j].id + ')">提交</a>');
+                                    var reset = $("<input>");  reset.attr("type", "reset"); reset.attr("class", "layui-btn layui-btn-primary");
+                                    div4_1.append(reset); div4.append(div4_1);
+                                    form.append(studentId);
+                                    form.append(div2);
+                                    form.append(div5);
+                                    form.append(div3);
+                                    form.append(div4);
+                                    div1.append(form);
+                                    div.append(div1);
+                                }
+                            }
+                        }
+                    });
+                    show.append(div)
                 }
-            });
+            }
+            element.render()
         });
     });
+    function submitForm(id) {
+        var form = $('#'+id);
+        var json = form.serializeArray();
+        var studentId = json[0].value;
+        var grade = json[1].value;
+        var content = json[2].value;
+        console.log(studentId+' '+grade+' '+content);
+        $.post('/teacher/rate', {studentId:studentId,grade:grade,content:content}, function (res) {
+            layui.use('layer', function () {
+                layui.layer.alert(res.message)
+            })
+        })
+    }
 </script>
 </body>
 </html>

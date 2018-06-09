@@ -37,7 +37,7 @@
                                 ,{field: 'type', title: '类型', sort: true}
                                 ,{field: 'name', title: '文件名'}
                                 ,{field: 'createTime', title: '上传时间'}
-                                ,{field: 'right', title:'下载', templet:'<div><a class="layui-btn" onclick="getFile(\'{{d.paperPlanId}}\', \'{{d.type}}\')">下载文件</a></div>'}
+                                ,{field: 'right', title:'下载', templet:'<div><a class="layui-btn" onclick="getFile(\'{{d.paperPlanId}}\', \'{{d.name}}\')">下载文件</a></div>'}
                             ]]
                         });
                     }
@@ -45,13 +45,21 @@
             }
         });
     });
-    function getFile(paperPlanId, type) {
+    function getFile(paperPlanId, name) {
         layer.confirm('确定要下载该文件吗', function(index) {
             var form = $("<form>");
             form.attr("style", "display:none");
             form.attr("target", "");
             form.attr("method", "get");
-            form.attr("action", "/teacher/download/" + paperPlanId + '/' + type);
+            form.attr("action", "/teacher/download");
+            var input1 = $("<input>");
+            input1.attr("name", "paperPlanId");
+            input1.attr("value", paperPlanId);
+            var input2 = $("<input>");
+            input2.attr("name", "fileName");
+            input2.attr("value", name);
+            form.append(input1);
+            form.append(input2);
             $("body").append(form);
             form.submit();
             layer.close(index)

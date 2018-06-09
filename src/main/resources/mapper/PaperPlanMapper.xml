@@ -32,9 +32,14 @@
         FROM paper_plan
         WHERE title_id = #{titleId}
     </select>
-    <select id="selectByPaperId" resultType="com.cchl.entity.Paper">
-        SELECT *
-        FROM paper
-        WHERE paper_plan_id = #{paperPlanId}
-    </select>
+
+    <update id="updateTitle">
+        UPDATE paper_plan
+        SET title_id = #{titleId}
+        WHERE id = (SELECT paper_plan_id
+                    FROM user_paper
+                    WHERE user_id = (SELECT s.user_id
+                                     FROM student s
+                                     WHERE s.id = #{id}))
+    </update>
 </mapper>
