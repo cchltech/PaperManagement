@@ -1,5 +1,6 @@
 package com.cchl.web.student;
 
+import com.cchl.entity.Paper;
 import com.cchl.service.student.StudentHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,10 +20,10 @@ public class StudentURLController {
     private StudentHandle studentHandle;
 
     @RequestMapping
-    public ModelAndView index() {
+    public ModelAndView index(@SessionAttribute(value = "id")Long id) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("student/student");
-        modelAndView.addObject("student",studentHandle.selectById(100111L));
+        modelAndView.addObject("student",studentHandle.selectById(id));
         return modelAndView;
     }
 
@@ -33,7 +34,6 @@ public class StudentURLController {
      */
     @GetMapping(value = "/myInfo")
     public ModelAndView myInfo(@SessionAttribute(value = "id", required = false)Long id) {
-        id = 100111L;
         ModelAndView model = new ModelAndView();
         model.setViewName("student/myInfo");
         model.addObject("student", studentHandle.selectById(id));
@@ -68,5 +68,14 @@ public class StudentURLController {
     @GetMapping(value = "/msg")
     public String msg() {
         return "student/msg";
+    }
+
+    @GetMapping(value = "/myScore")
+    public ModelAndView myScore(@SessionAttribute(value = "user_id", required = false)Integer userId) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("student/myScore");
+        Paper paper = studentHandle.selectMyScore(userId);
+        modelAndView.addObject(paper);
+        return modelAndView;
     }
 }

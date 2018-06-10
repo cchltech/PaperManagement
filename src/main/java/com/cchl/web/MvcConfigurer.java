@@ -1,6 +1,7 @@
 package com.cchl.web;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.validation.MessageCodesResolver;
@@ -15,16 +16,19 @@ import java.util.List;
 /**
  * 全局定制化spring mvc特性
  */
-@Configuration
-public class MvcConfigurer implements WebMvcConfigurer {
+@SpringBootConfiguration
+public class MvcConfigurer extends WebMvcConfigurerAdapter {
 
+
+    @Autowired
+    private AllInterceptor allInterceptor;
     /**
      * 拦截器
      * @param interceptorRegistry 使用拦截操作
      */
     @Override
     public void addInterceptors(InterceptorRegistry interceptorRegistry) {
-        interceptorRegistry.addInterceptor(new AllInterceptor()).addPathPatterns("/");
+        interceptorRegistry.addInterceptor(allInterceptor).addPathPatterns("/**");
     }
 
     @Override

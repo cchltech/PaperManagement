@@ -19,10 +19,11 @@ public interface MidCheckMapper {
     MidCheck selectByPaperId(Integer paperId);
 
     List<MidCheck> selectByDepartmentId(@Param(value = "departmentId") int departmentId,
+                                        @Param(value = "type") int type,
                                         @Param(value = "page") int page,
                                         @Param(value = "limit") int limit);
 
-    int selectByDepartmentIdCount(@Param(value = "departmentId") int departmentId);
+    int selectByDepartmentIdCount(@Param(value = "departmentId") int departmentId, @Param(value = "type")int type);
 
     int updateStatus(@Param(value = "id")Integer id, @Param("status")int status);
 

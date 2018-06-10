@@ -43,9 +43,9 @@
     </insert>
     <select id="loginCheck" resultType="java.lang.Integer">
         SELECT s.user_id
-        FROM student s, user
-        WHERE s.id = #{id} AND password = #{password}
-              AND user.id = s.id AND user.status = 1
+        FROM student s
+            LEFT JOIN user u ON s.user_id = u.id
+        WHERE s.id = #{id} AND password = #{password} AND u.status = 1
     </select>
     <select id="selectUnTitle" resultMap="student">
         SELECT

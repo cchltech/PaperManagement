@@ -38,7 +38,7 @@
         FROM user u
         LEFT JOIN student s ON u.id = s.user_id
         LEFT JOIN teacher t ON u.id = t.user_id
-        WHERE status = 0 AND (t.department_id = #{departmentId} OR s.department_id = #{departmentId})
+        WHERE status = #{type} AND (t.department_id = #{departmentId} OR s.department_id = #{departmentId})
         LIMIT #{limit},#{number}
     </select>
 

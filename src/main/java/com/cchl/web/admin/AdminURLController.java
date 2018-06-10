@@ -19,6 +19,11 @@ public class AdminURLController {
         return "admin/admin";
     }
 
+    @RequestMapping(value = "/department")
+    public String department() {
+        return "admin/departmentAdmin";
+    }
+
     /**
      * 跳转到调配页面
      */

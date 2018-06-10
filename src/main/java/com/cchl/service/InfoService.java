@@ -1,5 +1,6 @@
 package com.cchl.service;
 
+import com.cchl.dao.AdminMapper;
 import com.cchl.dao.TeacherMapper;
 import com.cchl.dao.TitleMapper;
 import com.cchl.entity.Teacher;
@@ -22,6 +23,8 @@ public class InfoService {
     private TitleMapper titleMapper;
     @Autowired
     private TeacherMapper teacherMapper;
+    @Autowired
+    private AdminMapper adminMapper;
 
     public List<Title> titles(int page, int limit, int userId) {
         //查找对应的学院id
@@ -66,6 +69,6 @@ public class InfoService {
 
     @Cacheable(value = "userId")
     public Integer selectDepartmentId(int userId) {
-        return teacherMapper.selectDepartmentIdByUserId(userId);
+        return adminMapper.selectById(userId).getDepartmentId();
     }
 }

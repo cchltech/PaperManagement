@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>学生</title>
+    <title>管理员</title>
     <link href="../../../static/layui/css/layui.css" rel="stylesheet">
     <script src="../../../static/js/jquery-1.10.2.min.js"></script>
 </head>
@@ -11,9 +11,6 @@
     <div class="layui-header">
         <h1 class="layui-icon-fonts" style="color: white; font-size: 30px; margin-left: 30px; float: left">论文管理系统</h1>
         <ul class="layui-nav" style="float: right">
-            <li  class="layui-nav-item">
-                <span style="font-size: 18px">你好，${student.name}</span>
-            </li>
             <li class="layui-nav-item">
                 <a href="" style="font-size: 18px;"><i class="layui-icon layui-icon-survey" style="font-size: 18px;"></i>&nbsp;查看帮助</a>
             </li>
@@ -23,24 +20,18 @@
         <div class="layui-side layui-bg-black">
             <ul class="layui-nav layui-nav-tree" lay-filter="test" style="height: 100%">
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a href="javascript:">关于我的</a>
+                    <a href="javascript:">系统审核</a>
                     <dl class="layui-nav-child">
-                        <dd><a id="user">个人信息</a></dd>
-                        <dd><a>论文成绩</a></dd>
+                        <dd><a id="user">注册审核</a></dd>
+                        <dd><a id="title">题目审核</a></dd>
+                        <dd><a id="file">文件审核</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
-                    <a href="javascript:">文件操作</a>
+                    <a href="javascript:">查看</a>
                     <dl class="layui-nav-child">
-                        <dd><a>上传文件</a></dd>
-                        <dd><a>我的论文</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a href="javascript:">其他功能</a>
-                    <dl class="layui-nav-child">
-                        <dd><a>论文选题</a></dd>
-                        <dd><a id="msg">系统消息</a></dd>
+                        <dd><a>选题信息</a></dd>
+                        <dd><a>教师信息</a></dd>
                     </dl>
                 </li>
             </ul>
@@ -49,7 +40,7 @@
             <div class="layui-body layui-tab-content" id="show" style="overflow-y: hidden;">
                 <div style="font-size: 30px">
                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-                        <legend>快乐写论文</legend>
+                        <legend>让论文管理更加简单</legend>
                     </fieldset>
                     <blockquote class="layui-elem-quote layui-quote-nm">
                         厚德 明智 博学 力行！
@@ -76,47 +67,55 @@
         element.on('nav(test)', function (data) {
             var show = $('#show');
             var val = data.init().context.innerText.substr(0,4);
-            if (val === '个人信息') {
+            if (val === '题目调配') {
                 show.empty();
-                show.append('<iframe src="/student/myInfo" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
-            } else if (val === '上传文件') {
+                show.append('<iframe src="/admin/allocate" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+            } else if (val === '注册审核') {
+                reset($('#user'), 'user');
                 show.empty();
-                show.append('<iframe src="/student/uploadFile" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
-            } else if (val === '我的论文') {
+                show.append('<iframe src="/admin/examineUser" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+            } else if (val === '文件审核') {
+                reset($('#file'), 'file');
                 show.empty();
-                show.append('<iframe src="/student/myFile" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
-            } else if (val === '论文选题') {
+                show.append('<iframe src="/admin/examineFile" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+            } else if (val === '题目审核') {
+                reset($('#title'), 'title');
                 show.empty();
-                show.append('<iframe src="/student/choice" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
-            } else if (val === '系统消息') {
-                var node = $('#msg');
-                if (node.find('> span').length > 0){
-                    node.find('> span').remove();
-                }
+                show.append('<iframe src="/admin/titleExamine" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+            } else if (val === '选题信息') {
                 show.empty();
-                show.append('<iframe src="/student/msg" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
-            } else if (val === '论文成绩') {
+                show.append('<iframe src="/show/title" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+            } else if (val === '教师信息') {
                 show.empty();
-                show.append('<iframe src="/student/myScore" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
+                show.append('<iframe src="/show/teacher" width="100%" height="100%" frameborder="0" scrolling="auto" marginwidth="0"></iframe>')
             }
         });
     });
     var getMsg = function() {
-        var url = '/student/hasNewMsg';
+        var url = '/msg/get/admin';
         $.post(url,{},function (data) {
-            if (data.success) {
-                if (data.data !== null) {
-                    var node = $('#msg');
+            for (var i in data.data) {
+                var node = $('#'+data.data[i].type+'');
+                if (data.data[i].number > 0) {
                     if (node.find('> span').length > 0){
                         node.find('> span').remove();
                     }
-                    node.append('<span class="layui-badge">' + data.data + '</span>')
+                    node.append('<span class="layui-badge">' + data.data[i].number + '</span>')
                 }
             }
         })
     };
     //定时请求
-    setInterval(getMsg, 10000);
+    setInterval(getMsg, 5000);
+    //重置信息
+    function reset(node, type) {
+        if (node.find('> span').length > 0) {
+            node.find('> span').remove();
+            $.post('/msg/reset/' + type, {}, function (data) {
+                console.log(data);
+            })
+        }
+    }
 </script>
 </body>
 </html>

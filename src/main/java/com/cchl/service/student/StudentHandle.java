@@ -446,4 +446,23 @@ public class StudentHandle {
         int paperPlanId = userPaperMapper.selectByUserId(userId).get(0);
         return titleMapper.selectByPaperPlanId(paperPlanId);
     }
+
+    /**
+     * 获取成绩
+     */
+    public Paper selectMyScore(Integer userId) {
+        Integer paperId = userPaperMapper.selectByUserId(userId).get(0);
+        Paper paper = paperMapper.selectByPaperId(paperId);
+        if (paper == null) {
+            paper = new Paper();
+            paper.setScore(0);
+            paper.setContent("未评价");
+        } else {
+            if (paper.getScore() == null)
+                paper.setScore(0);
+            if (paper.getContent() == null || "".equals(paper.getContent()))
+                paper.setContent("未评价");
+        }
+        return paper;
+    }
 }

@@ -17,7 +17,7 @@ public interface ExamineService {
      * @param userId
      * @return 结果集
      */
-    int totalNumber(int type, int userId);
+    int totalNumber(int type, int userId, int status);
 
     /**
      * @param page 第几页
@@ -37,7 +37,7 @@ public interface ExamineService {
     /**
      * @return 返回待审核的题目申请表
      */
-    List<Title> title(int page, int limit, int userId);
+    List<Title> title(int page, int limit, int userId, int type);
 
     /**
      * 题目审核结果集

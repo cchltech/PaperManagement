@@ -21,21 +21,19 @@ public class MsgController {
     @Autowired
     private MsgHandle msgHandle;
 
-    //TODO 测试id
-    int test_id = 1000;
 
     @PostMapping(value = "/get/{type}")
     @ResponseBody
     public Result getMsg(@PathVariable(value = "type")String type,
                          @SessionAttribute(value = "user_id", required = false)Integer userId) {
+        if (userId == null) {
+            return new Result(Dictionary.ILLEGAL_VISIT);
+        }
         if ("student".equals(type)) {
-            userId = 1006;
             return new Result<>(true, msgHandle.getAdminMsg(studentHandle.selectDepartmentIdByUserId(userId)));
         } else if ("teacher".equals(type)) {
-            userId = 1012;
             return new Result<>(true, msgHandle.getAdminMsg(teacherHandle.getDepartmentId(userId)));
         } else if ("admin".equals(type)){
-            userId = test_id;
             return new Result<>(true, msgHandle.getAdminMsg(teacherHandle.getDepartmentId(userId)));
         } else {
             return new Result(Dictionary.ILLEGAL_VISIT);
@@ -46,7 +44,9 @@ public class MsgController {
     @ResponseBody
     public Result resetMsg(@PathVariable(value = "type")String type,
                            @SessionAttribute(value = "user_id", required = false)Integer userId) {
-        userId = test_id;
+        if (userId == null) {
+            return new Result(Dictionary.ILLEGAL_VISIT);
+        }
         if (AdminMsg.TYPE.USER.getType().equals(type)) {
             msgHandle.resetAdminMsg(AdminMsg.TYPE.USER, teacherHandle.getDepartmentId(userId));
             return new Result<>(Dictionary.SUCCESS);

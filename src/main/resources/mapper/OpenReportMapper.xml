@@ -43,7 +43,7 @@
         FROM open_report m
             LEFT JOIN paper_plan p ON m.paper_plan_id = p.id
             LEFT JOIN user_paper u ON p.id = u.paper_plan_id
-        WHERE m.status = 0 AND u.user_id IN (SELECT student.user_id
+        WHERE m.status = #{type} AND u.user_id IN (SELECT student.user_id
                                         FROM student
                                         WHERE department_id = #{departmentId})
         LIMIT #{page}, #{limit}
@@ -53,7 +53,7 @@
         FROM open_report m
             LEFT JOIN paper_plan p ON m.paper_plan_id = p.id
             LEFT JOIN user_paper u ON p.id = u.paper_plan_id
-        WHERE m.status = 0 AND u.user_id IN (SELECT student.user_id
+        WHERE m.status = #{type} AND u.user_id IN (SELECT student.user_id
                                         FROM student
                                         WHERE department_id = #{departmentId})
     </select>

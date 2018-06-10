@@ -24,6 +24,7 @@ import java.util.zip.DataFormatException;
  * 注册与登录控制
  */
 @Controller
+@RequestMapping
 public class LoginController {
 
     @Autowired
@@ -43,6 +44,14 @@ public class LoginController {
 
     //日志记录
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
+
+    /**
+     * 返回错误界面
+     */
+    @RequestMapping(value = "/fail")
+    public String error() {
+        return "fail";
+    }
 
     /**
      * @return 跳转到初始页面
@@ -151,9 +160,11 @@ public class LoginController {
      * @param type     选择身份
      * @return 视图
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView login(@RequestParam(value = "id") String id, @RequestParam(value = "password") String password, @RequestParam(value = "type") String type, HttpServletRequest request) {
-        ModelAndView model = new ModelAndView();
+    @RequestMapping(value = "/login")
+    public String login(@RequestParam(value = "id") String id,
+                              @RequestParam(value = "password") String password,
+                              @RequestParam(value = "type") String type,
+                              HttpServletRequest request) {
         HttpSession session = request.getSession();
         try {
             /*
@@ -164,35 +175,75 @@ public class LoginController {
             if ("student".equals(type)) {
                 userId = studentLoginService.loginCheck(id, password);
                 if (userId > 0) {
-                    model.setViewName("student");
                     session.setAttribute("id", id);
                     session.setAttribute("user_id", userId);
+                    session.setAttribute("token", "student");
+                    return "redirect:/student";
                 }
             } else if ("teacher".equals(type)) {
                 userId = teacherLoginService.loginCheck(id, password);
                 if (userId > 0) {
-                    model.setViewName("teacher");
                     session.setAttribute("id", id);
                     session.setAttribute("user_id", userId);
+                    session.setAttribute("token", "teacher");
+                    return "redirect:/teacher";
                 }
             } else if ("admin".equals(type)) {
                 userId = adminLoginService.loginCheck(id, password);
                 if (userId > 0) {
-                    model.setViewName("admin");
-                    session.setAttribute("id", id);
-                    session.setAttribute("user_id", userId);
+                    session.setAttribute("user_id", id);
+                    session.setAttribute("type", userId);
+                    session.setAttribute("token", "teacher  ");
+                    if (userId == 1)
+                        return "redirect:/admin";
+                    else
+                        return "redirect:/admin/department";
                 }
             } else {
                 logger.error("未知身份");
-                model.setViewName("login");
-                model.addObject("error", "账号或密码错误");
+                return "redirect:/fail";
             }
-            return model;
+            return "error";
         } catch (Exception e) {
             logger.error("系统异常");
-            model.setViewName("error");
-            return model;
+            return "redirect:/fail";
         }
+    }
+
+    @RequestMapping(value = "/loginCheck", method = RequestMethod.POST)
+    @ResponseBody
+    public Result loginCheck(@RequestParam(value = "id") String id,
+                              @RequestParam(value = "password") String password,
+                              @RequestParam(value = "type") String type) {
+        try {
+            /*
+             * 判断登录身份
+             * 成功之后将学号/工号，用户id存进session
+             */
+            logger.info("登录检查");
+            int userId;
+            if ("student".equals(type)) {
+                userId = studentLoginService.loginCheck(id, password);
+                if (userId > 0) {
+                    return new Result(Dictionary.SUCCESS);
+                }
+            } else if ("teacher".equals(type)) {
+                userId = teacherLoginService.loginCheck(id, password);
+                if (userId > 0) {
+                    return new Result(Dictionary.SUCCESS);
+                }
+            } else if ("admin".equals(type)) {
+                userId = adminLoginService.loginCheck(id, password);
+                if (userId > 0) {
+                    return new Result(Dictionary.SUCCESS);
+                }
+            } else {
+                return new Result(Dictionary.LOGIN_FAIL);
+            }
+        } catch (Exception e) {
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+        return new Result(Dictionary.LOGIN_FAIL);
     }
 
     @RequestMapping(value = "/majorList")

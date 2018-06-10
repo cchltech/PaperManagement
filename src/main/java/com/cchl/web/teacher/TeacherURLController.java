@@ -18,7 +18,6 @@ public class TeacherURLController {
     @Autowired
     private TeacherHandle teacherHandle;
 
-    Long testId = 10011L;
 
     /**
      * 跳转到教师主页面
@@ -34,7 +33,6 @@ public class TeacherURLController {
      */
     @RequestMapping(value = "/myInfo")
     public ModelAndView myInfo(@SessionAttribute(value = "id", required = false)Long id) {
-        id = testId;
         ModelAndView modelAndView = new ModelAndView("teacher/myInfo");
         modelAndView.addObject("teacher", teacherHandle.getInfoById(id));
         return modelAndView;

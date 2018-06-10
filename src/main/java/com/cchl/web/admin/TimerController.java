@@ -19,8 +19,6 @@ public class TimerController {
     @Autowired
     private AdminHandle adminHandle;
 
-    //TODO 测试id
-    int test_id = 1000;
 
     /**
      * 添加定时任务
@@ -42,7 +40,7 @@ public class TimerController {
         try {
             TimerType timerType = TimerType.stateOf(type);
             //TODO 测试账号
-            int department = teacherHandle.getDepartmentId(test_id);
+            int department = adminHandle.getDepartmentIdByUserId(userId);
             if (timerType != null) {
                 VoTimer timer = new VoTimer(target, timerType, content, begin, end, department);
                 adminHandle.addTimer(timer);
@@ -62,8 +60,7 @@ public class TimerController {
                               @RequestParam(value = "end") String end,
                               @SessionAttribute(value = "user_id", required = false) Integer userId) {
         try {
-            //TODO 测试账号
-            int department = teacherHandle.getDepartmentId(test_id);
+            int department = adminHandle.getDepartmentIdByUserId(userId);
             adminHandle.updateTimer(id, content, begin, end);
             return new Result(Dictionary.SUCCESS);
         } catch (Exception e) {
@@ -81,8 +78,7 @@ public class TimerController {
                 page = 1;
                 limit = 10;
             }
-            //TODO 测试账号
-            int department = teacherHandle.getDepartmentId(test_id);
+            int department = adminHandle.getDepartmentIdByUserId(userId);
             return new DataWithPage<>(0, adminHandle.TimerCount(department), adminHandle.selectByDepartmentId(department, (page-1)*10, limit));
         } catch (Exception e) {
             e.printStackTrace();

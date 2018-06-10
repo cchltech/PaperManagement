@@ -29,13 +29,9 @@ public class TeacherController {
     @Autowired
     private TeacherHandle teacherHandle;
 
-    Long testId = 10011L;
-    Integer testUser = 1002;
-
     @GetMapping(value = "/hasNewMsg")
     public Result hasNewMsg(@SessionAttribute(value = "user_id", required = false) Integer userId) {
         try {
-            userId = testUser;
             int num = teacherHandle.hasNewMsg(userId);
             if (num > 0)
                 return new Result<>(true, num);
@@ -49,7 +45,6 @@ public class TeacherController {
     @GetMapping(value = "/getMsg")
     public DataWithPage getMsg(@SessionAttribute(value = "user_id", required = false) Integer userId,
                                @RequestParam(value = "page", required = false) Integer page) {
-        userId = testUser;
         if (page == null)
             page = 1;
         try {
@@ -71,7 +66,6 @@ public class TeacherController {
     public Result update(@PathVariable(value = "type") String type,
                          @RequestParam(value = "text") String text,
                          @SessionAttribute(value = "id", required = false) Long id) {
-        id = testId;
         if ("phone".equals(type)) {
             try {
                 Long phone = Long.valueOf(text);
@@ -104,7 +98,6 @@ public class TeacherController {
                                @RequestParam(value = "instruction")String instruction,
                                @RequestParam(value = "totalNumber")String totalNumber) {
         try {
-            id = testId;
             if (content != null && instruction != null && totalNumber != null) {
                 Title title = new Title();
                 title.setContent(content);
@@ -129,7 +122,6 @@ public class TeacherController {
      */
     @RequestMapping(value = "/title/list")
     public DataWithPage titleList(@SessionAttribute(value = "id", required = false)Long id) {
-        id = testId;
         try {
             return new DataWithPage<>(0, 0, teacherHandle.selectTitleList(id));
         } catch (Exception e) {
@@ -143,7 +135,6 @@ public class TeacherController {
     @RequestMapping(value = "/title/delete")
     public Result deleteTitle(@RequestParam(value = "titleId")Integer titleId,
                               @SessionAttribute(value = "id", required = false)Long id) {
-        id = testId;
         try {
             if (teacherHandle.deleteTitle(id, titleId) > 0) {
                 return new Result(Dictionary.SUCCESS);
@@ -233,7 +224,6 @@ public class TeacherController {
             /*
              * 先判断是否到了学生选题的时间,如果到了返回题目列表，否则返回剩余时间
              */
-            userId = testUser;
             return teacherHandle.getTime(userId);
         } catch (ParseException e1) {
             e1.printStackTrace();

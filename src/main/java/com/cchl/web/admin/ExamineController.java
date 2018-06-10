@@ -31,9 +31,6 @@ public class ExamineController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    //TODO 测试id
-    int test_id = 1000;
-
     /**
      * 注入审核处理的bean
      */
@@ -52,11 +49,9 @@ public class ExamineController {
                              @RequestParam(value = "limit", required = false) Integer limit,
                              @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
-            //TODO 测试用的userId
-            userId = test_id;
             if (userId == null)
                 return new DataWithPage(Dictionary.ILLEGAL_VISIT);
-            return new DataWithPage<>(0, examineService.totalNumber(0, userId), examineService.users(userId, (page - 1) * limit, limit));
+            return new DataWithPage<>(0, examineService.totalNumber(0, userId, 0), examineService.users(userId, (page - 1) * limit, limit));
         } catch (IllegalVisitException e1) {
             return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e) {
@@ -65,7 +60,8 @@ public class ExamineController {
     }
 
     @PostMapping(value = "/examineUser")
-    public Result examineUser(@RequestParam(value = "ids", required = false) Integer[] ids, @RequestParam("status") Byte[] status) {
+    public Result examineUser(@RequestParam(value = "ids", required = false) Integer[] ids,
+                              @RequestParam("status") Byte[] status) {
         try {
             if (ids != null && ids.length > 0 && status != null && status.length > 0) {
                 Integer[] results = examineService.resultUser(ids, status);
@@ -87,15 +83,14 @@ public class ExamineController {
     @GetMapping(value = "/title")
     public DataWithPage title(@RequestParam(value = "page", required = false) Integer page,
                               @RequestParam(value = "limit", required = false) Integer limit,
-                              @SessionAttribute(value = "user_id", required = false)Integer userId) {
+                              @SessionAttribute(value = "user_id", required = false)Integer userId,
+                              @SessionAttribute(value = "type", required = false)Integer type) {
         try {
-            //TODO 测试用的userId
-            userId = test_id;
             if (userId == null) {
                 return new DataWithPage(Dictionary.DATA_LOST);
             }
-            List<Title> list = examineService.title((page-1)*limit, limit, userId);
-            return new DataWithPage<>(0, examineService.totalNumber(1, userId), list);
+            List<Title> list = examineService.title((page-1)*limit, limit, userId, type-1);
+            return new DataWithPage<>(0, examineService.totalNumber(1, userId, type-1), list);
         } catch (IllegalVisitException e1) {
             return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         } catch (Exception e) {
@@ -104,9 +99,11 @@ public class ExamineController {
     }
 
     @PostMapping(value = "/examineTitle")
-    public Result examineTitle(@RequestParam(value = "ids", required = false) Integer[] ids, @RequestParam("status") Byte[] status) {
+    public Result examineTitle(@RequestParam(value = "ids", required = false) Integer[] ids,
+                               @SessionAttribute(value = "type", required = false)Integer type) {
         try {
-            if (ids != null && ids.length > 0 && status != null && status.length > 0) {
+            if (ids != null && ids.length > 0) {
+                Byte[] status = new Byte[]{(byte)((int)type)};
                 Integer[] results = examineService.resultTitle(ids, status);
                 if (results.length == 0)
                     return new Result<>(false, "插入数据出现错误", results);
@@ -122,18 +119,18 @@ public class ExamineController {
 
     @GetMapping(value = "/midFile")
     public DataWithPage midFile(@RequestParam(value = "page", required = false) Integer page,
-                             @RequestParam(value = "limit", required = false) Integer limit,
-                             @SessionAttribute(value = "user_id", required = false)Integer userId) {
-        userId = test_id;
-        return new DataWithPage<>(0, adminHandle.midCount(userId), adminHandle.midFileInfoList(userId, (page-1)*limit, limit));
+                                @RequestParam(value = "limit", required = false) Integer limit,
+                                @SessionAttribute(value = "user_id", required = false)Integer userId,
+                                @SessionAttribute(value = "type", required = false)Integer type) {
+        return new DataWithPage<>(0, adminHandle.midCount(userId, type), adminHandle.midFileInfoList(userId, type, (page-1)*limit, limit));
     }
 
     @GetMapping(value = "/openFile")
     public DataWithPage openFile(@RequestParam(value = "page", required = false) Integer page,
-                             @RequestParam(value = "limit", required = false) Integer limit,
-                             @SessionAttribute(value = "user_id", required = false)Integer userId) {
-        userId = test_id;
-        return new DataWithPage<>(0, adminHandle.openCount(userId), adminHandle.openFileInfoList(userId, (page-1)*limit, limit));
+                                 @RequestParam(value = "limit", required = false) Integer limit,
+                                 @SessionAttribute(value = "user_id", required = false)Integer userId,
+                                 @SessionAttribute(value = "type", required = false)Integer type) {
+        return new DataWithPage<>(0, adminHandle.openCount(userId, type), adminHandle.openFileInfoList(userId, type,(page-1)*limit, limit));
     }
 
     /**
@@ -169,8 +166,9 @@ public class ExamineController {
      */
     @PostMapping(value = "/examineFile/{type}")
     public Result examineFile(@RequestParam(value = "fileId")Integer id,
-                              @PathVariable(value = "type")String type) {
-        if (adminHandle.examineFile(id, type, 1) > 0)
+                              @PathVariable(value = "type")String type,
+                              @SessionAttribute(value = "type")Integer status) {
+        if (adminHandle.examineFile(id, type, status) > 0)
             return new Result(Dictionary.SUCCESS);
         else
             return new Result(Dictionary.SUBMIT_FAIL);

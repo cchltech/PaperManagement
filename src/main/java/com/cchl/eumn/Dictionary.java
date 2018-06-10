@@ -12,7 +12,8 @@ public enum Dictionary {
     ILLEGAL(false, "非法操作"),
     NUMBER_IS_FULL(false, "抱歉，该选题人数已满"),
     ILLEGAL_VISIT(false, "非法访问"),
-    NOT_BEGINNING(false, "不在选题时段内")
+    NOT_BEGINNING(false, "不在选题时段内"),
+    LOGIN_FAIL(false, "登录失败，请检查您的用户名和密码")
     ;
 
     Dictionary(boolean success, String msg) {

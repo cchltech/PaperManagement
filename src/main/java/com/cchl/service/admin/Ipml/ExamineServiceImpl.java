@@ -26,17 +26,18 @@ public class ExamineServiceImpl implements ExamineService {
     private UserMapper userMapper;
     @Autowired
     private TitleMapper titleMapper;
-    @Autowired
-    private TeacherMapper teacherMapper;
+
     @Autowired
     private InfoService infoService;
     @Autowired
     private PaperPlanMapper paperPlanMapper;
     @Autowired
     private UserPaperMapper userPaperMapper;
+    @Autowired
+    private AdminMapper adminMapper;
 
     @Override
-    public int totalNumber(int type, int userId) {
+    public int totalNumber(int type, int userId, int status) {
         int result = 0;
         Integer departmentId = infoService.selectDepartmentId(userId);
         if (departmentId == null)
@@ -46,7 +47,7 @@ public class ExamineServiceImpl implements ExamineService {
                 result = userMapper.totalNumber(false, (byte) 0, departmentId);
                 break;
             case 1:
-                result = titleMapper.totalNumber(false, (byte) 0, departmentId);
+                result = titleMapper.totalNumber(false, (byte) status, departmentId);
                 break;
             default:
                 break;
@@ -57,8 +58,8 @@ public class ExamineServiceImpl implements ExamineService {
     @Override
     public List<User> users(int userId, int page, int limit) {
         try {
-            int departmentId = teacherMapper.selectDepartmentIdByUserId(userId);
-            List<User> users = userMapper.selectUnaudited(departmentId, page, limit);
+            int departmentId = adminMapper.selectById(userId).getDepartmentId();
+            List<User> users = userMapper.selectUnaudited(departmentId, 0, page, limit);
             for (User user : users) {
                 user.happyGive();
                 logger.info(user.toString());
@@ -88,14 +89,11 @@ public class ExamineServiceImpl implements ExamineService {
     }
 
     @Override
-    public List<Title> title(int page, int limit, int userId) {
+    public List<Title> title(int page, int limit, int userId, int type) {
         try {
             //查找用户的所属学院id
-            Integer departmentId = teacherMapper.selectDepartmentIdByUserId(userId);
-            if (departmentId == null) {
-                throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
-            }
-            return titleMapper.selectByStatus(page, limit, 0, false, departmentId);
+            Integer departmentId = adminMapper.selectById(userId).getDepartmentId();
+            return titleMapper.selectByStatus(page, limit, type, false, departmentId);
         } catch (Exception e) {
             throw new SystemException(Dictionary.SYSTEM_ERROR);
         }

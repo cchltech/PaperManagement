@@ -22,7 +22,7 @@ public interface UserMapper {
     /**
      * 查找未审核的用户集合
      */
-    List<User> selectUnaudited(@Param(value = "departmentId")int departmentId, @Param(value = "limit") int limit, @Param(value = "number") int number);
+    List<User> selectUnaudited(@Param(value = "departmentId")int departmentId, @Param(value = "type")int type, @Param(value = "limit") int limit, @Param(value = "number") int number);
 
     /**
      * @param all 是否需要查找所有条数

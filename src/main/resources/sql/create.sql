@@ -220,3 +220,16 @@ ALTER TABLE mid_check ADD COLUMN status TINYINT DEFAULT 0;
 
 # 论文添加评语
 ALTER TABLE paper ADD COLUMN content VARCHAR(255);
+
+DROP TABLE admin;
+# 添加管理员表
+CREATE TABLE admin(
+  `userId` INT NOT NULL,
+  `password` VARCHAR(20) NOT NULL ,
+  `department_id` INT NOT NULL ,
+  `type` TINYINT NOT NULL ,
+  PRIMARY KEY (userId)
+);
+ALTER TABLE admin ADD CONSTRAINT fk_department_admin FOREIGN KEY admin(department_id) REFERENCES department(id);
+INSERT INTO admin VALUE (123456, 'beiyi', 1001, 1);
+INSERT INTO admin VALUE (654321, 'admin', 1001, 2);

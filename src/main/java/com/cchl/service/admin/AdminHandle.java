@@ -6,6 +6,7 @@ import com.cchl.dto.Result;
 import com.cchl.entity.*;
 import com.cchl.entity.vo.*;
 import com.cchl.eumn.Dictionary;
+import com.cchl.eumn.TimerType;
 import com.cchl.execption.DataInsertException;
 import com.cchl.execption.SystemException;
 import org.apache.ibatis.annotations.Param;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +42,8 @@ public class AdminHandle {
 
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private AdminMapper adminMapper;
     @Autowired
     private TeacherMapper teacherMapper;
     @Autowired
@@ -63,13 +67,33 @@ public class AdminHandle {
      * @return
      */
     public DataWithPage allocate(String data, int userId) {
+        //先判断是否选题结束了再确定是否返回数据
         int departmentId = getDepartmentIdByUserId(userId);
-        if (data != null && "student".equals(data)) {
-            return new DataWithPage<>(0, 0, studentMapper.selectUnTitle(departmentId));
-        } else if (data != null && "title".equals(data)) {
-            return new DataWithPage<>(0, 0, titleMapper.selectUnFull(departmentId));
+        Criteria criteria = Criteria.where("department").is(departmentId).and("type").is(TimerType.TITLE.getType());
+        List<VoTimer> timers = mongoTemplate.find(query(criteria), VoTimer.class);
+        VoTimer timer = null;
+        if (timers !=null && timers.size() > 0) {
+            timer = timers.get(0);
+            try {
+                long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
+                long now = new Date().getTime();
+                if (now < end) {
+                    return new DataWithPage(1, "选题时间未结束");
+                } else {
+                    if (data != null && "student".equals(data)) {
+                        return new DataWithPage<>(0, 0, studentMapper.selectUnTitle(departmentId));
+                    } else if (data != null && "title".equals(data)) {
+                        return new DataWithPage<>(0, 0, titleMapper.selectUnFull(departmentId));
+                    } else {
+                        return new DataWithPage(Dictionary.ILLEGAL_VISIT);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return new DataWithPage(Dictionary.SYSTEM_ERROR);
+            }
         } else {
-            return new DataWithPage(Dictionary.ILLEGAL_VISIT);
+            return new DataWithPage(1, "尚未开始选题");
         }
     }
 
@@ -250,11 +274,11 @@ public class AdminHandle {
         return (int)mongoTemplate.count(query(criteria), VoTimer.class);
     }
 
-    public List<FileInfo> midFileInfoList(Integer userId, int page, int limit) {
+    public List<FileInfo> midFileInfoList(Integer userId, int type, int page, int limit) {
         int departmentId = getDepartmentIdByUserId(userId);
         List<FileInfo> fileInfos = new ArrayList<>();
         //获取中期检查
-        List<MidCheck> midChecks = midCheckMapper.selectByDepartmentId(departmentId, page, limit);
+        List<MidCheck> midChecks = midCheckMapper.selectByDepartmentId(departmentId, type-1, page, limit);
         //封装数据
         for (MidCheck midCheck : midChecks) {
             int paperPlanId = midCheck.getPaperPlanId();
@@ -270,11 +294,11 @@ public class AdminHandle {
         return fileInfos;
     }
 
-    public List<FileInfo> openFileInfoList(Integer userId, int page, int limit) {
+    public List<FileInfo> openFileInfoList(Integer userId, int type, int page, int limit) {
         int departmentId = getDepartmentIdByUserId(userId);
         List<FileInfo> fileInfos = new ArrayList<>();
         //先获取开题报告
-        List<OpenReport> openReports = openReportMapper.selectByDepartmentId(departmentId, page, limit);
+        List<OpenReport> openReports = openReportMapper.selectByDepartmentId(departmentId, type-1, page, limit);
         //封装数据
         for (OpenReport openReport : openReports) {
             int paperPlanId = openReport.getPaperPlanId();
@@ -291,14 +315,14 @@ public class AdminHandle {
         return fileInfos;
     }
 
-    public int midCount(int userId) {
+    public int midCount(int userId, int type) {
         int departmentId = getDepartmentIdByUserId(userId);
-        return midCheckMapper.selectByDepartmentIdCount(departmentId);
+        return midCheckMapper.selectByDepartmentIdCount(departmentId, type-1);
     }
 
-    public int openCount(int userId) {
+    public int openCount(int userId, int type) {
         int departmentId = getDepartmentIdByUserId(userId);
-        return openReportMapper.selectByDepartmentIdCount(departmentId);
+        return openReportMapper.selectByDepartmentIdCount(departmentId, type-1);
     }
 
     public File getFile(Long id, String fileName, String type) {
@@ -323,6 +347,6 @@ public class AdminHandle {
 
     @Cacheable(cacheNames = "admin_userId",key = "#userId")
     public int getDepartmentIdByUserId(int userId) {
-        return teacherMapper.selectDepartmentIdByUserId(userId);
+        return adminMapper.selectById(userId).getDepartmentId();
     }
 }

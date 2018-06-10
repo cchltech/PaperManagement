@@ -47,12 +47,12 @@ input, button {
 
 .demo {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     margin-left: -15rem;
     margin-top: -26.5rem;
     width: 30rem;
-    height: 53rem;
+    height: 60rem;
     overflow: hidden;
 }
 
@@ -92,7 +92,7 @@ input, button {
     top: 50%;
     left: 0;
     width: 100%;
-    height: 50%;
+
     padding: 1.5rem 2.5rem;
     text-align: center;
 }

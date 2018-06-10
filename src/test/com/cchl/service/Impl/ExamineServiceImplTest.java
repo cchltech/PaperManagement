@@ -18,13 +18,6 @@ public class ExamineServiceImplTest {
     @Autowired
     private ExamineService examineService;
 
-    @Test
-    public void totalNumber() throws Exception {
-        //output 3
-        System.out.println(examineService.totalNumber(0,1));
-        //output 1
-        System.out.println(examineService.totalNumber(1,1));
-    }
 
     @Test
     public void users() throws Exception {
@@ -42,13 +35,7 @@ public class ExamineServiceImplTest {
         }
     }
 
-    @Test
-    public void title() throws Exception {
-        List<Title> results = examineService.title(0, 10,1);
-        for (Title title:results) {
-            System.out.println(title);
-        }
-    }
+
 
     @Test
     public void resultTitle() throws Exception {

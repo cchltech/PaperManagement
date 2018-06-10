@@ -16,6 +16,8 @@ public class Paper {
     private PaperPlan paperPlan;
     //创建时间
     private String createTime;
+    //评价
+    private String content;
 
     @Override
     public String toString() {
@@ -23,8 +25,19 @@ public class Paper {
                 "id=" + id +
                 ", filePath='" + filePath + '\'' +
                 ", score=" + score +
+                ", paperPlanId=" + paperPlanId +
                 ", paperPlan=" + paperPlan +
+                ", createTime='" + createTime + '\'' +
+                ", content='" + content + '\'' +
                 '}';
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public PaperPlan getPaperPlan() {

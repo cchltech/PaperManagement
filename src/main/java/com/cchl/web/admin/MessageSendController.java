@@ -20,13 +20,8 @@ public class MessageSendController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    //TODO 测试id
-    int test_id = 1000;
-
     @Autowired
     private AdminHandle adminHandle;
-    @Autowired
-    private TeacherHandle teacherHandle;
 
     /**
      * 添加系统消息
@@ -38,8 +33,7 @@ public class MessageSendController {
                        @RequestParam(value = "content", required = false)String content,
                        @SessionAttribute(value = "user_id", required = false)Integer userId) {
         try {
-            userId = test_id;
-            int departmentId = teacherHandle.getDepartmentId(userId);
+            int departmentId = adminHandle.getDepartmentIdByUserId(userId);
             return adminHandle.addMsg(target, content, departmentId);
         } catch (Exception e) {
             return new Result(Dictionary.SYSTEM_ERROR);
@@ -78,8 +72,7 @@ public class MessageSendController {
                             @RequestParam(value = "version", required = false) Integer version,
                             @PathVariable(value = "type") Integer type) {
         try {
-            userId = test_id;
-            int departmentId = teacherHandle.getDepartmentId(userId);
+            int departmentId = adminHandle.getDepartmentIdByUserId(userId);
             if (type == 1)
                 adminHandle.deleteTeacherMsg(departmentId, version);
             else
