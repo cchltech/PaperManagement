@@ -233,3 +233,6 @@ CREATE TABLE admin(
 ALTER TABLE admin ADD CONSTRAINT fk_department_admin FOREIGN KEY admin(department_id) REFERENCES department(id);
 INSERT INTO admin VALUE (123456, 'beiyi', 1001, 1);
 INSERT INTO admin VALUE (654321, 'admin', 1001, 2);
+
+INSERT INTO admin VALUE (111111, '111111', 1005, 1);
+INSERT INTO admin VALUE (222222, '222222', 1005, 2);

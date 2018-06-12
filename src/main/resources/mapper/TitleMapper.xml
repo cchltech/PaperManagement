@@ -103,7 +103,7 @@
             tea.sex teacher_sex
         FROM title t
             LEFT JOIN teacher tea ON t.teacher_id = tea.id
-        WHERE t.department_id = #{departmentId} AND status = 1
+        WHERE t.department_id = #{departmentId} AND status = 2
               <if test="content!=null and content != ''">
                   AND t.content LIKE concat('%', #{content}, '%')
               </if>

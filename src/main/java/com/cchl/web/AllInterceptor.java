@@ -20,10 +20,13 @@ public class AllInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
         String url = request.getRequestURI();
         logger.info("路径：{}", url);
-        if (request.getRequestURI().contains("index")
-                || request.getRequestURI().contains("registry")
-                || request.getRequestURI().contains("login")
-                || request.getRequestURI().contains("fail"))
+        if (url.contains("index")
+                || url.contains("registry")
+                || url.contains("login")
+                || url.contains("fail")
+                || url.contains("majorList")
+                || url.contains("studentRegister")
+                || url.contains("teacherRegister"))
             return true;
         if (session.getAttribute("id") == null || session.getAttribute("token") == null) {
             response.sendRedirect("/index");
@@ -36,6 +39,11 @@ public class AllInterceptor implements HandlerInterceptor {
                     response.sendRedirect("/index");
                 return false;
             } else if (url.contains("admin") && !"admin".equals(session.getAttribute("token"))){
+                response.sendRedirect("/index");
+                return false;
+            } else if (url.contains("teacherList")){
+                if ("student".equals(session.getAttribute("token")))
+                    return true;
                 response.sendRedirect("/index");
                 return false;
             } else if (url.contains("teacher") && !"teacher".equals(session.getAttribute("token"))) {

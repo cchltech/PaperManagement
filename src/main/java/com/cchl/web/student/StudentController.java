@@ -287,7 +287,12 @@ public class StudentController {
     }
 
     @GetMapping(value = "/titleInfo")
-    public Result titleInfo(@SessionAttribute(value = "userId", required = false)Integer userId) {
-        return new Result<>(true, studentHandle.getMyTitle(userId));
+    public Result titleInfo(@SessionAttribute(value = "user_id", required = false)Integer userId) {
+        try{
+            return new Result<>(true, studentHandle.getMyTitle(userId));
+        } catch (Exception e) {
+            return new Result(Dictionary.SYSTEM_ERROR);
+        }
+
     }
 }

@@ -116,7 +116,7 @@ public class StudentHandle {
             if (times < begin) {
                 logger.info("选题未开始，剩余时间：{}", (begin - times));
                 //返回剩余时间
-                return new Result<>(true, timer.getBegin());
+                return new Result<>(true, String.valueOf(new Date().getTime()), timer.getBegin());
             } else {
                 long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
                 //如果当前时间大于开始时间但小于结束时间
@@ -166,7 +166,7 @@ public class StudentHandle {
                 throw new NumberFullException(Dictionary.NUMBER_IS_FULL);
             }
         } else {
-            return new Result<>(Dictionary.DATA_INSERT_FAIL);
+            return new Result<>(Dictionary.REPEAT_CHOICE);
         }
     }
 
@@ -195,17 +195,18 @@ public class StudentHandle {
 
     public int hasNewMsg(int userId) {
         UserMsgRecord record = mongoTemplate.findById(userId, UserMsgRecord.class);
+        int departmentId = selectDepartmentIdByUserId(userId);
         if (record == null) {
             //新增一个用户记录
             record = new UserMsgRecord();
             record.setId(userId);
             record.setType(0);
             //查找用户所属的学院的id
-            record.setDepartmentId(studentMapper.selectByUserId(userId).getDepartmentId());
+            record.setDepartmentId(departmentId);
             record.setVersion(0);
             mongoTemplate.insert(record);
         }
-        Criteria criteria = Criteria.where("version").gt(record.getVersion());
+        Criteria criteria = Criteria.where("version").gt(record.getVersion()).and("departmentId").is(departmentId);
         List<StudentMessage> list = mongoTemplate.find(query(criteria), StudentMessage.class);
         if (list == null || list.size() == 0)
             return 0;

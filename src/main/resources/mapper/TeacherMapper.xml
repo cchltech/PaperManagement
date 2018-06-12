@@ -102,7 +102,7 @@
             t.id
         FROM teacher tea
             LEFT JOIN title t ON tea.id = t.teacher_id
-        WHERE tea.department_id = #{departmentId} AND t.status = 1
+        WHERE tea.department_id = #{departmentId} AND t.status = 2
     </select>
     <select id="selectByPaperPlanId" resultMap="teacher">
         SELECT

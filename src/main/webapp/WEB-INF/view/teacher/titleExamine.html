@@ -90,7 +90,7 @@
                 if (data.success) {
                     if (data.data !== '0') {
                         var begin = Date.parse(new Date(data.data))+1000;
-                        var serverTime = new Date().getTime();
+                        var serverTime = data.message;
                         util.countdown(begin, serverTime, function (date, serverTime, timer) {
                             var str = date[0] + '天' + date[1] + '时' + date[2] + '分' + date[3] + '秒';
                             layui.$('#msg').html('距离开放题目申请还有：' + str);

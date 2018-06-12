@@ -52,8 +52,9 @@
             success: function (data) {
                 if (data.success) {
                     if (data.data !== '0') {
+                        console.log(data.data+' '+data.message);
                         var begin = Date.parse(new Date(data.data))+1000;
-                        var serverTime = new Date().getTime();
+                        var serverTime = data.message;
                         showList('', 0);
                         util.countdown(begin, serverTime, function (date, serverTime, timer) {
                             var str = date[0] + '天' + date[1] + '时' + date[2] + '分' + date[3] + '秒';

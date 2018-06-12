@@ -4,6 +4,7 @@ import com.cchl.dto.Result;
 import com.cchl.entity.vo.AdminMsg;
 import com.cchl.eumn.Dictionary;
 import com.cchl.service.MsgHandle;
+import com.cchl.service.admin.AdminHandle;
 import com.cchl.service.student.StudentHandle;
 import com.cchl.service.teacher.TeacherHandle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ public class MsgController {
     private TeacherHandle teacherHandle;
     @Autowired
     private StudentHandle studentHandle;
+    @Autowired
+    private AdminHandle adminHandle;
     @Autowired
     private MsgHandle msgHandle;
 
@@ -34,7 +37,7 @@ public class MsgController {
         } else if ("teacher".equals(type)) {
             return new Result<>(true, msgHandle.getAdminMsg(teacherHandle.getDepartmentId(userId)));
         } else if ("admin".equals(type)){
-            return new Result<>(true, msgHandle.getAdminMsg(teacherHandle.getDepartmentId(userId)));
+            return new Result<>(true, msgHandle.getAdminMsg(adminHandle.getDepartmentIdByUserId(userId)));
         } else {
             return new Result(Dictionary.ILLEGAL_VISIT);
         }
@@ -48,13 +51,13 @@ public class MsgController {
             return new Result(Dictionary.ILLEGAL_VISIT);
         }
         if (AdminMsg.TYPE.USER.getType().equals(type)) {
-            msgHandle.resetAdminMsg(AdminMsg.TYPE.USER, teacherHandle.getDepartmentId(userId));
+            msgHandle.resetAdminMsg(AdminMsg.TYPE.USER, adminHandle.getDepartmentIdByUserId(userId));
             return new Result<>(Dictionary.SUCCESS);
         } else if (AdminMsg.TYPE.FILE.getType().equals(type)) {
-            msgHandle.resetAdminMsg(AdminMsg.TYPE.FILE, teacherHandle.getDepartmentId(userId));
+            msgHandle.resetAdminMsg(AdminMsg.TYPE.FILE, adminHandle.getDepartmentIdByUserId(userId));
             return new Result<>(Dictionary.SUCCESS);
         } else if (AdminMsg.TYPE.TITLE.getType().equals(type)){
-            msgHandle.resetAdminMsg(AdminMsg.TYPE.TITLE, teacherHandle.getDepartmentId(userId));
+            msgHandle.resetAdminMsg(AdminMsg.TYPE.TITLE, adminHandle.getDepartmentIdByUserId(userId));
             return new Result(Dictionary.SUCCESS);
         } else {
             return new Result(Dictionary.ILLEGAL_VISIT);

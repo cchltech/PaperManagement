@@ -87,16 +87,17 @@ public class TeacherHandle {
          * 没有就新增一个
          */
         UserMsgRecord record = mongoTemplate.findById(userId, UserMsgRecord.class);
+        int departmentId = getDepartmentId(userId);
         if (record == null) {
             record = new UserMsgRecord();
             record.setId(userId);
             record.setType(1);
-            record.setDepartmentId(teacherMapper.selectDepartmentIdByUserId(userId));
+            record.setDepartmentId(departmentId);
             record.setVersion(0);
             mongoTemplate.insert(record);
         }
         //查找消息列表中大于用户记录的版本号的
-        Criteria criteria = Criteria.where("version").gt(record.getVersion());
+        Criteria criteria = Criteria.where("version").gt(record.getVersion()).and("departmentId").is(departmentId);
         List<TeacherMessage> list = mongoTemplate.find(query(criteria), TeacherMessage.class);
         if (list != null && list.size() > 0)
             return list.size();
@@ -302,7 +303,7 @@ public class TeacherHandle {
             if (times < begin) {
                 logger.info("题目申请未开始，剩余时间：{}", (begin - times));
                 //返回剩余时间
-                return new Result<>(true, timer.getBegin());
+                return new Result<>(true, String.valueOf(new Date().getTime()), timer.getBegin());
             } else {
                 long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
                 //如果当前时间大于开始时间但小于结束时间

@@ -31,7 +31,7 @@ public class InfoService {
         Integer departmentId = selectDepartmentId(userId);
         if (departmentId == null)
             throw new IllegalVisitException(Dictionary.ILLEGAL_VISIT);
-        return titleMapper.selectByStatus((page - 1) * limit, limit, 1, false, departmentId);
+        return titleMapper.selectByStatus((page - 1) * limit, limit, 2, false, departmentId);
     }
 
     public List<Teacher> teachers(int page, int limit, int userId) {
@@ -47,7 +47,7 @@ public class InfoService {
         int result = 0;
         switch (type) {
             case 0:
-                result = titleMapper.totalNumber(false, (byte) 1, selectDepartmentId(userId));
+                result = titleMapper.totalNumber(false, (byte) 2, selectDepartmentId(userId));
                 break;
             default:
                 break;

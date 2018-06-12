@@ -29,6 +29,7 @@ public class ShowController {
     public String teacher() {
         return "admin/teacherInfo";
     }
+
     @RequestMapping(value = "/getTitle")
     @ResponseBody
     public DataWithPage getTitle(@RequestParam(value = "page")Integer page,
