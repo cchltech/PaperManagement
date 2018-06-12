@@ -191,9 +191,10 @@ public class LoginController {
             } else if ("admin".equals(type)) {
                 userId = adminLoginService.loginCheck(id, password);
                 if (userId > 0) {
+                    session.setAttribute("id", id);
                     session.setAttribute("user_id", id);
                     session.setAttribute("type", userId);
-                    session.setAttribute("token", "teacher  ");
+                    session.setAttribute("token", "admin");
                     if (userId == 1)
                         return "redirect:/admin";
                     else

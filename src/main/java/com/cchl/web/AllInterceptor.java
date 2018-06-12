@@ -19,20 +19,29 @@ public class AllInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
         HttpSession session = request.getSession();
         String url = request.getRequestURI();
-        logger.info("url:{}", url);
-        if (request.getRequestURI().contains("index") || request.getRequestURI().contains("registry") || request.getRequestURI().contains("login") || request.getRequestURI().contains("fail"))
+        logger.info("路径：{}", url);
+        if (request.getRequestURI().contains("index")
+                || request.getRequestURI().contains("registry")
+                || request.getRequestURI().contains("login")
+                || request.getRequestURI().contains("fail"))
             return true;
         if (session.getAttribute("id") == null || session.getAttribute("token") == null) {
             response.sendRedirect("/index");
             return false;
         } else {
-            if (url.contains("student") && !"student".equals(session.getAttribute("token"))) {
+            if (url.contains("show") || url.contains("msg/select")){
+                if ("admin".equals(session.getAttribute("token")))
+                    return true;
+                else
+                    response.sendRedirect("/index");
+                return false;
+            } else if (url.contains("admin") && !"admin".equals(session.getAttribute("token"))){
                 response.sendRedirect("/index");
                 return false;
             } else if (url.contains("teacher") && !"teacher".equals(session.getAttribute("token"))) {
                 response.sendRedirect("/index");
                 return false;
-            } else if (url.contains("admin") && !"admin".equals(session.getAttribute("admin"))){
+            } else if (url.contains("student") && !"student".equals(session.getAttribute("token"))) {
                 response.sendRedirect("/index");
                 return false;
             }

@@ -23,7 +23,7 @@ public class GroupingHandle {
 
     int groupNumber;
     int restStudentNumber =0;
-    List<GroupInfo> groupList = new ArrayList();
+    List<GroupInfo> groupList = new ArrayList<>();
 
     public List<GroupInfo> getGroupList(int userId) {
         getDepartment(userId);

@@ -39,6 +39,8 @@ mybatis:
 logging:
   level:
     com.cchl.dao: debug
+  file: /home/beiyi/file/logs/info/info.log
+
 
 
 
