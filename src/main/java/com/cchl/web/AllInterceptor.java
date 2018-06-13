@@ -46,7 +46,9 @@ public class AllInterceptor implements HandlerInterceptor {
                     return true;
                 response.sendRedirect("/index");
                 return false;
-            } else if (url.contains("teacher") && !"teacher".equals(session.getAttribute("token"))) {
+            } else if (url.contains("teacher")) {
+                if ("teacher".equals(session.getAttribute("token")))
+                    return true;
                 response.sendRedirect("/index");
                 return false;
             } else if (url.contains("student") && !"student".equals(session.getAttribute("token"))) {

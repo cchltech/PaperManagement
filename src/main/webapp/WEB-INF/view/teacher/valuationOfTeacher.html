@@ -46,6 +46,9 @@
                         success: function (result) {
                             if (result.code === 0) {
                                 var student = result.data;
+                                if (student.length === 0) {
+                                    h2.text('无数据')
+                                }
                                 for (var j in student) {
                                     var div1 = $("<div>");   div1.attr("class", "layui-colla-content");
                                     var form = $("<form>");  form.attr("id", student[j].id); form.attr("class", "layui-form");

@@ -14,10 +14,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class GroupingHandle {
@@ -61,7 +59,9 @@ public class GroupingHandle {
     }
 
     private void buildModel(List<GroupInfo> list) {
-        HSSFSheet sheet = workbook.createSheet("分组信息表");
+        Date date = new Date();
+        String day = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(date);
+        HSSFSheet sheet = workbook.createSheet(day);
         HSSFRow row;
         HSSFCell cell;
         for (int i = 0; i < list.size(); i++) {
@@ -193,7 +193,7 @@ public class GroupingHandle {
         }
     }
 
-    private void setTeacherGroup() {
+    private boolean setTeacherGroup() {
         int teacherNumber = teacherMapper.totalNumber(false, (byte) 1, departmentId);
         int allocation[] = new int[teacherNumber]; //存放每个老师分配到的组数
         Random rand = new Random();
@@ -201,6 +201,7 @@ public class GroupingHandle {
         int randInt;
         if (groupList.isEmpty()) {
             // 集合为空不进行操作
+            return false;
         }
         else {
             List<Teacher> teachers = teacherMapper.selectByDepartmentId(departmentId);
@@ -251,6 +252,7 @@ public class GroupingHandle {
                 groupList.set(location,g);
                 location++;
             }while(--groupNumber > 0);
+            return true;
         }
     }
 }

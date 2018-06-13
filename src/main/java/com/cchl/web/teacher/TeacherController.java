@@ -152,7 +152,7 @@ public class TeacherController {
     @GetMapping(value = "/studentList")
     public DataWithPage studentList(@RequestParam(value = "titleId")Integer titleId) {
         if (titleId != null) {
-            return new DataWithPage<>(0, 0, teacherHandle.selectStudentList(titleId));
+            return new DataWithPage<>(0, 0, teacherHandle.  selectStudentList(titleId));
         } else {
             return new DataWithPage(Dictionary.ILLEGAL_VISIT);
         }
