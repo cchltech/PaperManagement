@@ -1,14 +1,21 @@
 package com.cchl.service.admin;
 
+import com.cchl.dao.AdminMapper;
 import com.cchl.dao.StudentMapper;
 import com.cchl.dao.TeacherMapper;
 import com.cchl.entity.GroupInfo;
 import com.cchl.entity.Student;
 import com.cchl.entity.Teacher;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,6 +25,8 @@ public class GroupingHandle {
     private TeacherMapper teacherMapper;
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private AdminMapper adminMapper;
 
     private int departmentId;
 
@@ -25,7 +34,72 @@ public class GroupingHandle {
     int restStudentNumber =0;
     List<GroupInfo> groupList = new ArrayList<>();
 
-    public List<GroupInfo> getGroupList(int userId) {
+    private HSSFWorkbook workbook = new HSSFWorkbook();
+
+    public boolean getFile(int userId, int n) {
+        int departmentId = adminMapper.selectById(userId).getDepartmentId();
+        String filePath = "/home/beiyi/file/excel/" + departmentId;
+        if (n == 0) {
+            File target =new File(filePath+"/group.xlsx");
+            if (target.exists()) {
+                return true;
+            }
+        }
+        List<GroupInfo> list = getGroupList(userId);
+        buildModel(list);
+        try {
+            File target =new File(filePath);
+            if (!target.exists()) {
+                target.mkdirs();
+            }
+            workbook.write(new File(filePath+"/group.xlsx"));
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void buildModel(List<GroupInfo> list) {
+        HSSFSheet sheet = workbook.createSheet("分组信息表");
+        HSSFRow row;
+        HSSFCell cell;
+        for (int i = 0; i < list.size(); i++) {
+            row = sheet.createRow(i);
+            cell = row.createCell(0);
+            cell.setCellValue("第" + (i+1) + "组");
+            if (list.get(i).getStudentId1() != null) {
+                row = sheet.createRow(i+1);
+                cell = row.createCell(0); cell.setCellValue("教师姓名");
+                cell = row.createCell(1); cell.setCellValue("学生学号");
+                cell = row.createCell(2); cell.setCellValue("学生姓名");
+                row = sheet.createRow(i+2);
+                cell = row.createCell(0); cell.setCellValue(list.get(i).getTeacherName1());
+                cell = row.createCell(1); cell.setCellValue(list.get(i).getStudentId1());
+                cell = row.createCell(2); cell.setCellValue(list.get(i).getStudentName1());
+            }
+            if (list.get(i).getStudentId2() != null) {
+                row = sheet.createRow(i+3);
+                cell = row.createCell(0); cell.setCellValue(list.get(i).getTeacherName2());
+                cell = row.createCell(1); cell.setCellValue(list.get(i).getStudentId2());
+                cell = row.createCell(2); cell.setCellValue(list.get(i).getStudentName2());
+            }
+            if (list.get(i).getStudentId3() != null) {
+                row = sheet.createRow(i+4);
+                cell = row.createCell(0); cell.setCellValue(list.get(i).getTeacherName3());
+                cell = row.createCell(1); cell.setCellValue(list.get(i).getStudentId3());
+                cell = row.createCell(2); cell.setCellValue(list.get(i).getStudentName3());
+            }
+            if (list.get(i).getStudentId4() != null) {
+                row = sheet.createRow(i+5);
+                cell = row.createCell(0); cell.setCellValue(list.get(i).getTeacherName4());
+                cell = row.createCell(1); cell.setCellValue(list.get(i).getStudentId4());
+                cell = row.createCell(2); cell.setCellValue(list.get(i).getStudentName4());
+            }
+        }
+    }
+
+    private List<GroupInfo> getGroupList(int userId) {
         getDepartment(userId);
         setStudentGroup();
         setTeacherGroup();
@@ -33,7 +107,7 @@ public class GroupingHandle {
     }
 
     private void getDepartment(int userId) {
-        this.departmentId =  teacherMapper.selectDepartmentIdByUserId(userId);
+        this.departmentId =  adminMapper.selectById(userId).getDepartmentId();
     }
 
     private void setStudentGroup() {
@@ -44,51 +118,62 @@ public class GroupingHandle {
             groupNumber++;
         }
         int groupInfo[][] = new int[groupNumber][4]; //存放每个小组组员编号
-        Random rand = new Random();
-        boolean[] isSelected = new boolean[studentNumber];
-        int randInt;
-        int group = 0;
-        for(int i=0;i<studentNumber;i++) {
-            // 每次循环前先初始化布尔数组
-            isSelected[i]=false;
+
+        List<Integer> list = new LinkedList<>();
+        for (int i = 1; i <= studentNumber; i++)
+            list.add(i);
+        for (int i = 0; i < studentNumber; i++) {
+            int r = new Random().nextInt(list.size());
+            int x = i / 4;  //第一个下标
+            int y = i % 4;  //第二个下标
+            groupInfo[x][y] = list.get(r);
+            list.remove(r);
         }
-        do{
-            if (group == groupNumber-1 && restStudentNumber!=0) {
-                // 判断是否为最后一组,因为可能存在不满四人的情况
-                for(int i = 0;i < restStudentNumber; i++) {
-                    do {
-                        randInt = rand.nextInt(studentNumber);
-                    }while(isSelected[randInt]);
-                    isSelected[randInt] = true; //true表示该学生已被选择
-                    groupInfo[group][i]=randInt+1;
-                }
-                group++;
-            }
-            else {
-                for (int i = 0; i < 4; i++) {
-                    do {
-                        randInt = rand.nextInt(studentNumber);
-                    } while (isSelected[randInt]);
-                    isSelected[randInt] = true; //true表示该学生已被选择
-                    groupInfo[group][i] = randInt;
-                }
-                group++;
-            }
-        }while (group < groupNumber);
+
+//        Random rand = new Random();
+//        boolean[] isSelected = new boolean[studentNumber];
+//        int randInt;
+//        int group = 0;
+//        for(int i=0;i<studentNumber;i++) {
+//            // 每次循环前先初始化布尔数组
+//            isSelected[i]=false;
+//        }
+//        do{
+//            if (group == groupNumber-1 && restStudentNumber!=0) {
+//                // 判断是否为最后一组,因为可能存在不满四人的情况
+//                for(int i = 0;i < restStudentNumber; i++) {
+//                    do {
+//                        randInt = rand.nextInt(studentNumber);
+//                    }while(isSelected[randInt]);
+//                    isSelected[randInt] = true; //true表示该学生已被选择
+//                    groupInfo[group][i]=randInt+1;
+//                }
+//                group++;
+//            }
+//            else {
+//                for (int i = 0; i < 4; i++) {
+//                    do {
+//                        randInt = rand.nextInt(studentNumber);
+//                    } while (isSelected[randInt]);
+//                    isSelected[randInt] = true; //true表示该学生已被选择
+//                    groupInfo[group][i] = randInt;
+//                }
+//                group++;
+//            }
+//        }while (group < groupNumber);
 
         List<Student> students = studentMapper.selectByDepartmentId(departmentId);
 
-        for (int j = 0;j < groupNumber;j++) {
+        for (int j = 0; j < groupNumber; j++) {
             int i = 0;
             GroupInfo g = new GroupInfo();
             do {
-                int student = groupInfo[j][i]; //提取数组存放的学生随机顺序数
+                int student = groupInfo[j][i]-1; //提取数组存放的学生随机顺序数
                 Student s = students.get(student);
-
-                g.setDepartmentId(s.getDepartmentId());
-                g.setGrade(s.getGrade());
-                g.setMajorId(s.getMajorId());
                 if (i == 0) {
+                    g.setDepartmentId(s.getDepartmentId());
+                    g.setGrade(s.getGrade());
+                    g.setMajorId(s.getMajorId());
                     g.setStudentId1(s.getId());
                     g.setStudentName1(s.getName());
                 } else if (i == 1) {
@@ -100,9 +185,10 @@ public class GroupingHandle {
                 } else if (i == 3) {
                     g.setStudentId4(s.getId());
                     g.setStudentName4(s.getName());
+                    break;
                 }
                 i++;
-            }while(groupInfo[j][i]==0); //判断是否有下一条数据
+            } while (groupInfo[j][i] != 0); //判断是否有下一条数据
             groupList.add(g);
         }
     }
@@ -164,7 +250,7 @@ public class GroupingHandle {
                 }
                 groupList.set(location,g);
                 location++;
-            }while(groupNumber-- > 0);
+            }while(--groupNumber > 0);
         }
     }
 }

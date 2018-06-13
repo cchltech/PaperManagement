@@ -98,10 +98,10 @@
         UPDATE student SET phone = #{phone} WHERE id = #{id}
     </update>
     <select id="totalNumber" resultType="java.lang.Integer">
-        SELECT count(id)
-        FROM student
-        LEFT JOIN user u on u.id = student.user_id
-        WHERE department_id = #{departmentId} AND user.status = 1
+        SELECT count(s.id)
+        FROM student s
+        LEFT JOIN user u on u.id = s.user_id
+        WHERE s.department_id = #{departmentId} AND u.status = 1
     </select>
     <select id="selectByDepartmentId" resultMap="student">
         SELECT
@@ -117,10 +117,11 @@
             d.name department_name,
             m.id   major_id,
             m.name major_name
-        FROM `user` u, student s
+        FROM student s
             LEFT JOIN department d ON s.department_id = d.id
             LEFT JOIN major m ON s.major_id = m.id
-        WHERE s.department_id = #{departmentId}
+            LEFT JOIN user u ON s.user_id = u.id
+        WHERE s.department_id = #{departmentId} AND u.status = 1
         ORDER BY s.id
     </select>
     <select id="selectByPaperPlanId" resultMap="student">

@@ -92,7 +92,8 @@
             d.name department_name
         FROM teacher t
             LEFT JOIN department d ON t.department_id = d.id
-        WHERE t.department_id = #{departmentId}
+            LEFT JOIN user u ON t.user_id = u.id
+        WHERE t.department_id = #{departmentId} AND u.status = 1
         ORDER BY t.id
     </select>
     <select id="selectHasTitleByDepartmentId" resultMap="teacher">

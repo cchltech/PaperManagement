@@ -32,6 +32,27 @@ public class GroupInfo {
     //专业编号
     private Integer majorId;
 
+    @Override
+    public String toString() {
+        return "GroupInfo{" +
+                "studentId1=" + studentId1 +
+                ", studentId2=" + studentId2 +
+                ", studentId3=" + studentId3 +
+                ", studentId4=" + studentId4 +
+                ", studentName1='" + studentName1 + '\'' +
+                ", studentName2='" + studentName2 + '\'' +
+                ", studentName3='" + studentName3 + '\'' +
+                ", studentName4='" + studentName4 + '\'' +
+                ", teacherName1='" + teacherName1 + '\'' +
+                ", teacherName2='" + teacherName2 + '\'' +
+                ", teacherName3='" + teacherName3 + '\'' +
+                ", teacherName4='" + teacherName4 + '\'' +
+                ", departmentId=" + departmentId +
+                ", grade=" + grade +
+                ", majorId=" + majorId +
+                '}';
+    }
+
     public Long getStudentId1() {
         return studentId1;
     }

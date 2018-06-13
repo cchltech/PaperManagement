@@ -12,7 +12,13 @@
         <h1 class="layui-icon-fonts" style="color: white; font-size: 30px; margin-left: 30px; float: left">论文管理系统</h1>
         <ul class="layui-nav" style="float: right">
             <li class="layui-nav-item">
-                <a href="" style="font-size: 18px;"><i class="layui-icon layui-icon-survey" style="font-size: 18px;"></i>&nbsp;查看帮助</a>
+                <a href="" style="font-size: 18px;">
+                    <i class="layui-icon layui-icon-survey" style="font-size: 18px;"></i>&nbsp;更多
+                    <dl class="layui-nav-child">
+                        <dd><a onclick="group(0)">获取答辩分组</a></dd>
+                        <dd><a onclick="group(1)">获取答辩分组</a></dd>
+                    </dl>
+                </a>
             </li>
         </ul>
     </div>
@@ -106,7 +112,7 @@
         })
     };
     //定时请求
-    setInterval(getMsg, 5000);
+    setInterval(getMsg, 2000);
     //重置信息
     function reset(node, type) {
         if (node.find('> span').length > 0) {
@@ -115,6 +121,14 @@
                 console.log(data);
             })
         }
+    }
+    function group(num) {
+        var form = $('<form>');
+        form.attr("action", "/admin/getGroup");
+        var input = $('<input>');
+        input.attr("name", "new");
+        input.attr("value", num);
+        form.submit();
     }
 </script>
 </body>
