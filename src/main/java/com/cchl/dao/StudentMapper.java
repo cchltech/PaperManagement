@@ -20,6 +20,8 @@ public interface StudentMapper {
 
     Student selectByUserId(Integer userId);
 
+    int selectDepartmentIdByUserId(Integer userId);
+
     int updateEmail(@Param(value = "email") String email, @Param(value = "id") Long id);
 
     int updatePhone(@Param(value = "phone") Long phone, @Param(value = "id") Long id);

@@ -61,10 +61,7 @@
             </div>
             <div class="layui-tab-item">
                 <table class="layui-table" id="title_list" lay-filter="title_list"></table>
-                <script type="text/html" id="status">
-                    {{d.status==0?'待审核':'已通过'}}
-                </script>
-                    <script type="text/html" id="operation">
+                <script type="text/html" id="operation">
                     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
                     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
                 </script>
@@ -122,7 +119,7 @@
                 if (data.success) {
                     layer.open({
                         title: '提交结果',
-                        content: '题目提交成功',
+                        content: '题目提交成功，等待管理员审核',
                         time:2000
                     });
                 } else {
@@ -138,16 +135,29 @@
         element.on('tab(apply)', function(data){
             if (data.index === 1) {
                 table.render({
-                    elem:'#title_list',
-                    url:'/teacher/title/list',
-                    cols:[[
-                        {field:'content', align:'center', title:'题目'},
-                        {field:'instruction', align:'center', title:'介绍'},
-                        {field:'totalNumber', align:'center', title:'限选人数'},
-                        {field:'hasSelect', align:'center', title:'已选人数'},
-                        {field:'status', title:'状态', align:'center', templet:'#status'},
-                        {field:'operation', title:'操作', align:'center', templet:'#operation'}
+                    elem: '#title_list',
+                    url: '/teacher/title/list',
+                    cols: [[
+                        {field: 'content', align: 'center', title: '题目'},
+                        {field: 'instruction', align: 'center', title: '介绍'},
+                        {field: 'totalNumber', align: 'center', title: '限选人数'},
+                        {field: 'hasSelect', align: 'center', title: '已选人数'},
+                        {field: 'status', title: '状态', align: 'center'},
+                        {field: 'operation', title: '操作', align: 'center', templet: '#operation'}
                     ]]
+                    ,done: function(res, page, count){
+                        $("[data-field='status']").children().each(function(){
+                            if($(this).text()==='2'){
+                                $(this).text("已通过")
+                            }else if($(this).text()==='1'){
+                                $(this).text("审核中")
+                            }else if($(this).text()==='0'){
+                                $(this).text("待审核")
+                            }else if($(this).text()==='-1'){
+                                $(this).text("未通过")
+                            }
+                        })
+                    }
                 })
             }
         });

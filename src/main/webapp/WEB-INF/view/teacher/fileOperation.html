@@ -21,9 +21,11 @@
         $.get('/teacher/title/list', function (res) {
             var titles = res.data;
             var show = $('#show');
+            var t=0;
             if (res.code === 0) {
                 for (var i in titles) {
-                    if (titles[i].status === 1) {
+                    if (titles[i].status === 2) {
+                        t=1;
                         var padding = '<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">' +
                             '    <legend>' + titles[i].content + '</legend>' +
                             '</fieldset>';
@@ -41,17 +43,23 @@
                                 ,{field: 'email', title: '邮箱'}
                             ]]
                         });
+                        var uploadFile = '<button type="button" class="layui-btn test" lay-data="{url:\'/teacher/upload/WeeksPlan/'+titles[i].id+'\', accept: \'file\'}">' +
+                            '                 <i class="layui-icon">&#xe67c;</i>上传周计划' +
+                            '             </button>&nbsp;&nbsp;&nbsp;&nbsp;' +
+                            '             <button type="button" class="layui-btn test" lay-data="{url:\'/teacher/upload/Task/'+titles[i].id+'\', accept: \'file\'}">' +
+                            '                 <i class="layui-icon">&#xe67c;</i>上传任务书' +
+                            '             </button>&nbsp;&nbsp;&nbsp;&nbsp;' +
+                            '             <button type="button" class="layui-btn test" lay-data="{url:\'/teacher/upload/MidCheck/'+titles[i].id+'\', accept: \'file\'}">' +
+                            '                 <i class="layui-icon">&#xe67c;</i>上传中期检查' +
+                            '             </button>&nbsp;&nbsp;&nbsp;&nbsp;';
+                        show.append(uploadFile);
                     }
-                    var uploadFile = '<button type="button" class="layui-btn test" lay-data="{url:\'/teacher/upload/WeeksPlan/'+titles[i].id+'\', accept: \'file\'}">' +
-                        '                 <i class="layui-icon">&#xe67c;</i>上传周计划' +
-                        '             </button>&nbsp;&nbsp;&nbsp;&nbsp;' +
-                        '             <button type="button" class="layui-btn test" lay-data="{url:\'/teacher/upload/Task/'+titles[i].id+'\', accept: \'file\'}">' +
-                        '                 <i class="layui-icon">&#xe67c;</i>上传任务书' +
-                        '             </button>&nbsp;&nbsp;&nbsp;&nbsp;' +
-                        '             <button type="button" class="layui-btn test" lay-data="{url:\'/teacher/upload/MidCheck/'+titles[i].id+'\', accept: \'file\'}">' +
-                        '                 <i class="layui-icon">&#xe67c;</i>上传中期检查' +
-                        '             </button>&nbsp;&nbsp;&nbsp;&nbsp;';
-                    show.append(uploadFile);
+                }
+                if (t === 0) {
+                    var text = '<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">' +
+                        '    <legend>无数据</legend>' +
+                        '</fieldset>';
+                    show.append(text)
                 }
             }
             var uploadInst = upload.render({

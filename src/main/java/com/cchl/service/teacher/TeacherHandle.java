@@ -130,7 +130,7 @@ public class TeacherHandle {
         return (int)mongoTemplate.count(query(criteria), TeacherMessage.class);
     }
 
-    @Cacheable(value = "userId")
+    @Cacheable(cacheNames = "teacherDepartmentId", key = "#userId")
     public Integer getDepartmentId(int userId) {
         return teacherMapper.selectDepartmentIdByUserId(userId);
     }

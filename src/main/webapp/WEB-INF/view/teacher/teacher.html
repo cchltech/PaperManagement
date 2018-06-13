@@ -65,7 +65,8 @@
 </div>
 <script src="../../../static/layui/layui.js"></script>
 <script>
-    layui.use('element', function () {
+    layui.use(['element','layer'], function () {
+        var layer = layui.layer;
         var element = layui.element;
         //一些事件监听
         element.on('nav(test)', function (data) {
@@ -111,7 +112,7 @@
             })
         };
         //定时请求
-        setInterval(getMsg, 10000);
+        setInterval(getMsg, 3000);
     });
 </script>
 </body>

@@ -15,7 +15,7 @@
                 <span style="font-size: 18px">你好，${student.name}</span>
             </li>
             <li class="layui-nav-item">
-                <a href="" style="font-size: 18px;"><i class="layui-icon layui-icon-survey" style="font-size: 18px;"></i>&nbsp;查看帮助</a>
+                <a style="font-size: 18px;" onclick="help()"><i class="layui-icon layui-icon-survey" style="font-size: 18px;"></i>&nbsp;查看帮助</a>
             </li>
         </ul>
     </div>
@@ -70,8 +70,9 @@
 </div>
 <script src="../../../static/layui/layui.js"></script>
 <script>
-    layui.use('element', function () {
+    layui.use(['element', 'layer'], function () {
         var element = layui.element;
+        var layer = layui.layer;
         //一些事件监听
         element.on('nav(test)', function (data) {
             var show = $('#show');
@@ -116,7 +117,14 @@
         })
     };
     //定时请求
-    setInterval(getMsg, 10000);
+    setInterval(getMsg, 3000);
+
+    function help() {
+        layer.open({
+            title: '帮助',
+            content: '请自力更生'
+        })
+    }
 </script>
 </body>
 </html>

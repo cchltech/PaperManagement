@@ -18,8 +18,9 @@ public class AllInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
         HttpSession session = request.getSession();
-        String url = request.getRequestURI();
-        logger.info("路径：{}", url);
+        String urls = request.getRequestURI();
+        String url = urls.split("/")[1];
+        logger.info("路径：{}", urls);
         if (url.contains("index")
                 || url.contains("registry")
                 || url.contains("login")
@@ -32,27 +33,11 @@ public class AllInterceptor implements HandlerInterceptor {
             response.sendRedirect("/index");
             return false;
         } else {
-            if (url.contains("show") || url.contains("msg/select")){
-                if ("admin".equals(session.getAttribute("token")))
-                    return true;
-                else
-                    response.sendRedirect("/index");
+            if ("admin".contains(url) && !"admin".equals(session.getAttribute("token"))) {
                 return false;
-            } else if (url.contains("admin") && !"admin".equals(session.getAttribute("token"))){
-                response.sendRedirect("/index");
+            } else if ("student".contains(url) && !"student".equals(session.getAttribute("token"))) {
                 return false;
-            } else if (url.contains("teacherList")){
-                if ("student".equals(session.getAttribute("token")))
-                    return true;
-                response.sendRedirect("/index");
-                return false;
-            } else if (url.contains("teacher")) {
-                if ("teacher".equals(session.getAttribute("token")))
-                    return true;
-                response.sendRedirect("/index");
-                return false;
-            } else if (url.contains("student") && !"student".equals(session.getAttribute("token"))) {
-                response.sendRedirect("/index");
+            } else if ("teacher".contains(url) && !"teacher".equals(session.getAttribute("token"))) {
                 return false;
             }
             return true;

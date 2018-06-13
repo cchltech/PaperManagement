@@ -100,11 +100,14 @@ public class ExamineController {
 
     @PostMapping(value = "/examineTitle")
     public Result examineTitle(@RequestParam(value = "ids", required = false) Integer[] ids,
-                               @SessionAttribute(value = "type", required = false)Integer type) {
+                               @RequestParam(value = "status", required = false)Integer status,
+                               @RequestParam(value = "type", required = false)Integer type) {
         try {
             if (ids != null && ids.length > 0) {
-                Byte[] status = new Byte[]{(byte)((int)type)};
-                Integer[] results = examineService.resultTitle(ids, status);
+                if (status == 1)
+                    status = type;
+                Byte[] _status = new Byte[]{(byte)((int)status)};
+                Integer[] results = examineService.resultTitle(ids, _status);
                 if (results.length == 0)
                     return new Result<>(false, "插入数据出现错误", results);
                 return new Result<>(Dictionary.SUCCESS);

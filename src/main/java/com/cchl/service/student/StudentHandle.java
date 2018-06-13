@@ -275,9 +275,9 @@ public class StudentHandle {
         return majorMapper.selectByDepartmentId(departmentId);
     }
 
-    @Cacheable(cacheNames = "departmentId", key = "#userId")
+    @Cacheable("s_departmentId")
     public Integer selectDepartmentIdByUserId(int userId) {
-        return studentMapper.selectByUserId(userId).getDepartmentId();
+        return studentMapper.selectDepartmentIdByUserId(userId);
     }
 
     /**

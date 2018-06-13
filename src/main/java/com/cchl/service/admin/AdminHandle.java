@@ -231,8 +231,12 @@ public class AdminHandle {
      * @param timer
      */
     public void addTimer(VoTimer timer) {
-        int num = (int)mongoTemplate.count(query(new Criteria()), VoTimer.class);
-        timer.setId(num + 1000);
+        VoTimer voTimer = mongoTemplate.findOne(
+                query(new Criteria())
+                        .with(new Sort(Sort.Direction.DESC, "id"))
+                        .limit(1), VoTimer.class);
+        System.out.println(voTimer.getId());
+        timer.setId(voTimer.getId() + 1);
         mongoTemplate.insert(timer);
         String content = timer.getContent() + "，开始时间为：" + timer.getBegin() + ", 结束时间为：" + timer.getEnd() + "。";
         if (timer.getTarget() == 0)
