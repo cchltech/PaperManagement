@@ -34,4 +34,6 @@ public interface StudentMapper {
 
     List<Student> selectByTitleId(int titleId);
 
+    List<Student> selectByTitleIdWithPaper(int titleId);
+
 }

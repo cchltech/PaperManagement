@@ -1,5 +1,6 @@
 package com.cchl.service.teacher;
 
+import com.cchl.entity.Student;
 import com.cchl.entity.vo.TeacherMessage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,13 @@ public class TeacherHandleTest {
             for (TeacherMessage message:list)
                 System.out.println(message);
         }
+    }
+
+    @Test
+    public void select() {
+        List<Student> students = teacherHandle.getScoreList(10011L);
+        for (Student student: students)
+            System.out.println(student.toString());
     }
 
 

@@ -130,6 +130,15 @@ public class TeacherHandle {
         return (int)mongoTemplate.count(query(criteria), TeacherMessage.class);
     }
 
+    public List<Student> getScoreList(Long id) {
+        List<Student> students = new ArrayList<>();
+        List<Title> titles = selectTitleList(id);
+        for (Title title : titles) {
+            students.addAll(studentMapper.selectByTitleIdWithPaper(title.getId()));
+        }
+        return students;
+    }
+
     @Cacheable(cacheNames = "teacherDepartmentId", key = "#userId")
     public Integer getDepartmentId(int userId) {
         return teacherMapper.selectDepartmentIdByUserId(userId);
@@ -258,20 +267,20 @@ public class TeacherHandle {
                 //查找中期检查
                 MidCheck midCheck = midCheckMapper.selectByPaperId(paperId);
                 if (midCheck != null) {
-                    FileRecord record = new FileRecord(paperId, "任务书", midCheck.getFilePath(), midCheck.getCreateTime());
+                    FileRecord record = new FileRecord(paperId, "中期检查", midCheck.getFilePath(), midCheck.getCreateTime());
                     records.add(record);
                 }
             }
             //查找开题报告
             OpenReport openReport = openReportMapper.selectByPaperId(paperId);
             if (openReport != null) {
-                FileRecord record = new FileRecord(paperId, "任务书", openReport.getFilePath(), openReport.getCreateTime());
+                FileRecord record = new FileRecord(paperId, "开题报告", openReport.getFilePath(), openReport.getCreateTime());
                 records.add(record);
             }
             //查找论文
             Paper paper = paperMapper.selectByPaperId(paperId);
             if (paper != null) {
-                FileRecord record = new FileRecord(paperId, "任务书", paper.getFilePath(), paper.getCreateTime());
+                FileRecord record = new FileRecord(paperId, "论文", paper.getFilePath(), paper.getCreateTime());
                 records.add(record);
             }
         }

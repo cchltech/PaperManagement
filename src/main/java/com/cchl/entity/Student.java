@@ -30,6 +30,8 @@ public class Student {
     private Major major;
     //关联账户表
     private User user;
+    //论文
+    private Paper paper;
 
     @Override
     public String toString() {
@@ -47,7 +49,16 @@ public class Student {
                 ", department=" + department +
                 ", major=" + major +
                 ", user=" + user +
+                ", paper=" + paper +
                 '}';
+    }
+
+    public Paper getPaper() {
+        return paper;
+    }
+
+    public void setPaper(Paper paper) {
+        this.paper = paper;
     }
 
     public Department getDepartment() {

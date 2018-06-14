@@ -101,7 +101,7 @@ public class ExamineController {
     @PostMapping(value = "/examineTitle")
     public Result examineTitle(@RequestParam(value = "ids", required = false) Integer[] ids,
                                @RequestParam(value = "status", required = false)Integer status,
-                               @RequestParam(value = "type", required = false)Integer type) {
+                               @SessionAttribute(value = "type", required = false)Integer type) {
         try {
             if (ids != null && ids.length > 0) {
                 if (status == 1)

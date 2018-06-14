@@ -116,7 +116,7 @@ public class StudentHandle {
             if (times < begin) {
                 logger.info("选题未开始，剩余时间：{}", (begin - times));
                 //返回剩余时间
-                return new Result<>(true, String.valueOf(new Date().getTime()), timer.getBegin());
+                return new Result<>(true, String.valueOf(new Date().getTime()), begin);
             } else {
                 long end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(timer.getEnd()).getTime();
                 //如果当前时间大于开始时间但小于结束时间

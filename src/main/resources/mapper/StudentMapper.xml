@@ -16,6 +16,20 @@
                      resultMap="com.cchl.dao.DepartmentMapper.department"/>
         <association property="major" columnPrefix="major_" resultMap="com.cchl.dao.MajorMapper.major"/>
     </resultMap>
+    <resultMap id="student1" type="com.cchl.entity.Student">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="sex" jdbcType="TINYINT" property="sex"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="grade" jdbcType="TINYINT" property="grade"/>
+        <result column="major_id" jdbcType="INTEGER" property="majorId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="phone" jdbcType="BIGINT" property="phone"/>
+        <association property="major" columnPrefix="major_" resultMap="com.cchl.dao.MajorMapper.major"/>
+        <association property="paper" columnPrefix="paper_" resultMap="com.cchl.dao.PaperMapper.paper"/>
+    </resultMap>
 
     <select id="selectById" resultMap="student">
         SELECT
@@ -161,6 +175,25 @@
             LEFT JOIN user_paper up ON s.user_id = up.user_id
             LEFT JOIN paper_plan p ON up.paper_plan_id = p.id
         WHERE p.title_id = #{titleId}
+    </select>
+    <select id="selectByTitleIdWithPaper" resultMap="student1">
+        SELECT
+            s.id,
+            s.name,
+            s.sex,
+            s.email,
+            s.department_id,
+            s.grade,
+            s.major_id,
+            s.phone,
+            p.id paper_id,
+            p.score paper_score,
+            p.content paper_content
+        FROM student s
+            LEFT JOIN user_paper up ON s.user_id = up.user_id
+            LEFT JOIN paper_plan pp ON up.paper_plan_id = pp.id
+            LEFT JOIN paper p ON pp.id = p.paper_plan_id
+        WHERE pp.title_id = #{titleId} AND p.id IS NOT NULL
     </select>
     <select id="selectDepartmentIdByUserId" resultType="java.lang.Integer">
         SELECT department_id FROM student WHERE user_id = #{userId}

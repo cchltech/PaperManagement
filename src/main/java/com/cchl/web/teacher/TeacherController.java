@@ -255,4 +255,15 @@ public class TeacherController {
 
     }
 
+    @GetMapping(value = "/scoreList")
+    public DataWithPage scoreList(@SessionAttribute(value = "id")Long id) {
+        try{
+            return new DataWithPage<>(0,0,teacherHandle.getScoreList(id));
+
+        } catch (Exception e) {
+            return new DataWithPage(Dictionary.SYSTEM_ERROR);
+        }
+
+    }
+
 }
